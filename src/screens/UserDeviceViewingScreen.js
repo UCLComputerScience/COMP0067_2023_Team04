@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const Loans = () => {
+const UserDeviceViewingScreen = () => {
   const [currentTab, setCurrentTab] = useState('ongoing');
   const [filteredData, setFilteredData] = useState([]);
 
@@ -184,4 +184,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Loans;
+export default UserDeviceViewingScreen;

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
-const SettingScreen = () => {
+const UserSettingsScreen = () => {
   const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
 
   const handleLogout = () => {
@@ -43,7 +43,7 @@ const SettingScreen = () => {
 
         <TouchableOpacity style={styles.section} activeOpacity={0.8}>
           <Text style={styles.sectionTitle}>Personal Details</Text>
-          <Text style={styles.sectionSubTitle}>></Text>
+          <Text style={styles.sectionSubTitle}>&gt;</Text>
         </TouchableOpacity>
 
         <View style={styles.generalContainer}>
@@ -52,12 +52,12 @@ const SettingScreen = () => {
 
         <TouchableOpacity style={styles.section} activeOpacity={0.8}>
           <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.sectionSubTitle}>Version 1.0.0 ></Text>
+          <Text style={styles.sectionSubTitle}>Version 1.0.0 &gt;</Text>
         </TouchableOpacity>
 
       </View>
 
-      <TouchableOpacity style={styles.section} activeOpacity={0.8} onPress={this,handleLogout}>
+      <TouchableOpacity style={styles.section} activeOpacity={0.8} onPress={handleLogout}>
         <Text style={styles.sectionTitle}>Log Out</Text>
       </TouchableOpacity>
       
@@ -147,4 +147,4 @@ const styles = StyleSheet.create({
  
 });
 
-export default SettingScreen;
+export default UserSettingsScreen;
