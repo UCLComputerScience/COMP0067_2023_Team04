@@ -13,7 +13,7 @@ const Tab = createBottomTabNavigator();
 const ScanButton = ({children, onPress}) => (
     <TouchableOpacity
         style={{
-            top: 0,
+            top: 5,
             justifyContent: 'center',
             alignContent: 'center',
             //...styles.shadow
@@ -46,7 +46,7 @@ const Tabs = () =>{
                     elevation: 0,
                     backgroundColor: '#ffffff',
                     borderRadius: 15,
-                    height: 90,
+                    height: 80,
                     ...styles.shadow
                 }
             }}        
@@ -67,9 +67,8 @@ const Tabs = () =>{
                                     tintColor: focused ? '#AC145A' : '#A6AAB2'
                                 }}
                             />
-                            <Text 
-                                style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
-                                Devices
+                            <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
+                                Schedule
                             </Text>
                         </View>
                     )
@@ -91,8 +90,7 @@ const Tabs = () =>{
                                     tintColor: focused ? '#AC145A' : '#A6AAB2'
                                 }}
                             />
-                            <Text 
-                                style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
+                            <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
                                 Loans
                             </Text>
                         </View>
@@ -139,8 +137,7 @@ const Tabs = () =>{
                                 tintColor: focused ? '#AC145A' : '#A6AAB2'
                             }}
                         />
-                        <Text 
-                            style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
+                        <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
                             Devices
                         </Text>
                     </View>
@@ -163,8 +160,7 @@ const Tabs = () =>{
                                 tintColor: focused ? '#AC145A' : '#A6AAB2'
                             }}
                         />
-                        <Text 
-                            style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
+                        <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
                             Settings
                         </Text>
                     </View>
@@ -183,7 +179,7 @@ const styles = StyleSheet.create({
         shadowColor: '#7F5DF0',
         shadowOffset:{
             width: 0,
-            height: 10,
+            height: 5,
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
