@@ -6,7 +6,7 @@ import UserTabs from './navigation/UserTabs';
 const App = () =>{
   return(
     <NavigationContainer>
-      <Tabs />
+      <UserTabs />
     </NavigationContainer>
 
 
