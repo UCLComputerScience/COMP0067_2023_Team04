@@ -41,13 +41,12 @@ function App() {
     const [password, setPassword] = useState('');
 
     function handleLogin() {
-      // 假设验证通过，并且用户的角色为'admin'或'user'，则将userRole状态设置为对应的值
+      // Login logic
       const role = username === 'admin' && password === '123' ? 'admin' : username === 'user' && password === '123' ? 'user' : null;
       if (role) {
         setUserRole(role);
       }
 
-      // 跳转到对应的屏幕组件
       if (role === 'admin') {
         navigation.navigate('AdminTab', { screen: 'Schedule' });
       } else if (role === 'user') {
