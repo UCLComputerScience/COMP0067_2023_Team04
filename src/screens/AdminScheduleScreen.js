@@ -6,7 +6,7 @@ const AdminScheduleScreen = () => {
   const [filteredData, setFilteredData] = useState([]);
 
   const loanTable = [    { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-09'  },      
-  { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-09'  },  ];
+  { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-10'  },  ];
 
   const now = new Date();
 
