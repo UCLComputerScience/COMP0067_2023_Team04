@@ -2,11 +2,11 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import AdminDevicesScreen from '../src/screens/AdminDevicesScreen';
-import AdminLoansScreen from '../src/screens/AdminLoansScreen';
-import AdminScanScreen from '../src/screens/AdminScanScreen';
-import AdminScheduleScreen from '../src/screens/AdminScheduleScreen';
-import AdminSettingsScreen from '../src/screens/AdminSettingsScreen';
+import AdminDevicesScreen from '../screens/AdminDevicesScreen';
+import AdminLoansScreen from '../screens/AdminLoansScreen';
+import AdminScanScreen from '../screens/AdminScanScreen';
+import AdminScheduleScreen from '../screens/AdminScheduleScreen';
+import AdminSettingsScreen from '../screens/AdminSettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -59,7 +59,7 @@ const Tabs = () =>{
                     tabBarIcon: ({focused}) =>(
                         <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                             <Image 
-                                source={require('../src/components/icons/Schedule.png')}
+                                source={require('../components/icons/Schedule.png')}
                                 resizeMode = 'contain'
                                 style={{
                                     width: 25,
@@ -82,7 +82,7 @@ const Tabs = () =>{
                     tabBarIcon: ({focused}) =>(
                         <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                             <Image 
-                                source={require('../src/components/icons/Loans.png')}
+                                source={require('../components/icons/Loans.png')}
                                 resizeMode = 'contain'
                                 style={{
                                     width: 25,
@@ -105,7 +105,7 @@ const Tabs = () =>{
                 options = {{
                     tabBarIcon: ({focused}) => (
                         <Image 
-                            source={ require('../src/components/icons/Scan.png')}
+                            source={ require('../components/icons/Scan.png')}
                             resizeMode = 'contain'
                             style={{
                                 width: 25,
@@ -129,7 +129,7 @@ const Tabs = () =>{
                 tabBarIcon: ({focused}) =>(
                     <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                         <Image 
-                            source={require('../src/components/icons/Devices.png')}
+                            source={require('../components/icons/Devices.png')}
                             resizeMode = 'contain'
                             style={{
                                 width: 25,
@@ -152,7 +152,7 @@ const Tabs = () =>{
                 tabBarIcon: ({focused}) =>(
                     <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                         <Image 
-                            source={require('../src/components/icons/Settings.png')}
+                            source={require('../components/icons/Settings.png')}
                             resizeMode = 'contain'
                             style={{
                                 width: 25,
