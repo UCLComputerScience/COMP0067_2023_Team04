@@ -1,11 +1,65 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
 
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 const AdminScheduleScreen = () => {
   const [currentTab, setCurrentTab] = useState('today');
   const [filteredData, setFilteredData] = useState([]);
+  const [expandedDays, setExpandedDays] = useState([]);
 
-  const loanTable = [    { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-09'  },        { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-09'  },  ];
+  const handleExpand = day => {
+    if (expandedDays.includes(day)) {
+      setExpandedDays(expandedDays.filter(d => d !== day));
+    } else {
+      setExpandedDays([...expandedDays, day]);
+    }
+  };
+
+  const loanTable = [
+    {
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      user: 'ucabj38',
+      state: 'Loan',
+      startDate: '2023-03-06'
+    },
+    {
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      user: 'ucabj38',
+      state: 'Loan',
+      startDate: '2023-03-07'
+    },
+    {
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      user: 'ucabj38',
+      state: 'Loan',
+      startDate: '2023-03-08'
+    },
+    {
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      user: 'ucabj38',
+      state: 'Loan',
+      startDate: '2023-03-09'
+    },
+    {
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      user: 'ucabj38',
+      state: 'Loan',
+      startDate: '2023-03-10'
+    },
+    {
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      user: 'ucabj38',
+      state: 'Loan',
+      startDate: '2023-03-11'
+    },
+    {
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      user: 'ucabj38',
+      state: 'Loan',
+      startDate: '2023-03-12'
+    },
+  ];
 
   const now = new Date();
 
@@ -37,25 +91,26 @@ const AdminScheduleScreen = () => {
     console.log(`Clicked row ${index}`);
   };
 
-  const renderItem = ({ item, index }) => (
-    <TouchableOpacity
-      style={styles.dataRow}
-      key={index}
-      onPress={() => handleRowPress(index)}>
-      <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
-      <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
-      <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
-    </TouchableOpacity>
-  );
+  const groupedLoans = loanTable.reduce((acc, loan) => {
+    const date = new Date(loan.startDate);
+    const day = DAYS[date.getUTCDay() - 1];
+
+    if (!acc[day]) {
+      acc[day] = [];
+    }
+
+    acc[day].push(loan);
+
+    return acc;
+  }, {});
 
   return (
     <View style={styles.container}>      
       <View style={styles.tabBar}>
-
+  
         <TouchableOpacity
           style={[
             styles.tabButton,
-            styles.activeTabButton,
             currentTab === 'today' && styles.activeTabButton,
             { marginLeft: -7 }
           ]}
@@ -69,17 +124,8 @@ const AdminScheduleScreen = () => {
           <Text style={[styles.tabButtonText, { color: currentTab === 'thisWeek' ? '#000' : '#ccc' }]}>This week</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={[styles.separator]} />
-
-        <View style={[styles.header]}>
-          <Text style={[styles.headerText, { flex: 2 }]}>Device</Text>
-          <Text style={[styles.headerText, { flex: 1, textAlign: 'center' }]}>User</Text>
-          <Text style={[styles.headerText, { flex: 0.7, textAlign: 'center' }]}>State</Text>
-        </View>
-
-        <View style={styles.separator} />
-
+  
+      { currentTab === 'today' ? (
         <FlatList
           style={styles.dataContainer}
           data={filteredData}
@@ -98,15 +144,51 @@ const AdminScheduleScreen = () => {
               <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
               <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
               <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
-
+  
             </TouchableOpacity>
-      )}
-    />
-  </View>
+          )}
+        />
+      ) : currentTab === 'thisWeek' ? (
+        
+        <View style={styles.container}>
+          <View style={styles.dayBar}>
+            {DAYS.map(day => (
+              <View key={day}>
+                <TouchableOpacity
+                  style={[
+                    styles.tabButton,
+                    expandedDays.includes(day) && styles.activeTabButton
+                  ]}
+                  onPress={() => handleExpand(day)}
+                >
+                  <Text style={styles.tabButtonText}>{day}</Text>
+                </TouchableOpacity>
+                {expandedDays.includes(day) && groupedLoans[day] && (
+                  <FlatList
+                    style={styles.dataContainer}
+                    data={groupedLoans[day]}
+                    keyExtractor={(item, index) => index.toString()}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={styles.dataRow}
+                        onPress={() => handleRowPress(index)}
+                    >
+                      <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
+                      <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
+                      <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
+                    </TouchableOpacity>
+                  )}
+                />
+              )}
+            </View>
+          ))}
+        </View>
+      </View>
+    ):null}
+    </View>
+)
+                    };
 
-
-  );
-};
 
 const styles = StyleSheet.create({
   container: {
@@ -170,6 +252,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
     alignItems: 'left',
+  },
+
+  dayBar: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    marginLeft:-25
   },
   
   deviceText: {
