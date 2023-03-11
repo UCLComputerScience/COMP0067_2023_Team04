@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
+import { Image, View, Text, TextInput, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AdminTabScreen from './AdminTabs';
@@ -29,7 +29,7 @@ function LoginTab() {
           <Stack.Screen
             name="Login"
             component={LoginScreen}
-            options={{ title: 'Login Screen' }}
+            options={{ title: 'Login', headerShown: true }}
           />
         )}
       </Stack.Navigator>
@@ -50,20 +50,32 @@ function LoginTab() {
     }
 
     return (
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text>Login Screen</Text>
+      <View style={{ flex: 1, padding: 20, backgroundColor: '#fff' }}>
+        <Image 
+            source={require('../components/icons/UCL.png')}
+            resizeMode = 'contain'
+            style={{
+                width: 100,
+                height: 50,
+            }}
+        />
+        <Text style={{ fontWeight: 'bold', fontSize: 24, marginBottom: 10, textAlign: 'left' }}>Sign in</Text>
         <TextInput
-          placeholder="Username"
+          style = {{width:'95%' ,height:40, borderColor: 'gray', borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 10}}
+          placeholder="Login with your userID@ucl.ac.uk"
           value={username}
           onChangeText={setUsername}
         />
         <TextInput
+          style={{width:'95%', height: 40, borderColor: 'gray', borderBottomWidth: 1, marginBottom: 20, paddingHorizontal: 10 }}
           placeholder="Password"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
         />
-        <Button title="Login" onPress={handleLogin} />
+        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 20 }}>
+          <Button title="Login" onPress={handleLogin} />
+        </View>
       </View>
     );
   }
