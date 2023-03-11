@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
 
 const AdminScheduleScreen = () => {
-  const [currentTab, setCurrentTab] = useState('ongoing');
+  const [currentTab, setCurrentTab] = useState('today');
   const [filteredData, setFilteredData] = useState([]);
 
-  const loanTable = [    { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-09'  },      
-  { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-10'  },  ];
+  const loanTable = [    { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-09'  },        { name: 'Lenovo Legion Y9000P 2022 RTX 3070ti', user: 'ucabj38', state: 'Loan', startDate: '2023-03-09'  },  ];
 
   const now = new Date();
 
@@ -38,6 +37,17 @@ const AdminScheduleScreen = () => {
     console.log(`Clicked row ${index}`);
   };
 
+  const renderItem = ({ item, index }) => (
+    <TouchableOpacity
+      style={styles.dataRow}
+      key={index}
+      onPress={() => handleRowPress(index)}>
+      <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
+      <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
+      <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
+    </TouchableOpacity>
+  );
+
   return (
     <View style={styles.container}>      
       <View style={styles.tabBar}>
@@ -45,6 +55,7 @@ const AdminScheduleScreen = () => {
         <TouchableOpacity
           style={[
             styles.tabButton,
+            styles.activeTabButton,
             currentTab === 'today' && styles.activeTabButton,
             { marginLeft: -7 }
           ]}
@@ -69,18 +80,28 @@ const AdminScheduleScreen = () => {
 
         <View style={styles.separator} />
 
-        <View style={styles.dataContainer}>
-          {filteredData.map((item, index) => (
+        <FlatList
+          style={styles.dataContainer}
+          data={filteredData}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index, 
+            separators = {
+              highlight: () => {},
+              unhighlight: () => {},
+              marginLeft: -25,
+              marginRight: -25,
+            },
+          }) => (
             <TouchableOpacity
-            style={styles.dataRow}
-            key={index}
-            onPress={() => handleRowPress(index)}>
+              style={[styles.dataRow, { marginLeft: 0, marginRight: 0 }]}
+              onPress={() => handleRowPress(index)}>
               <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
               <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
               <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
-      </TouchableOpacity>
-      ))}
-    </View>
+
+            </TouchableOpacity>
+      )}
+    />
   </View>
 
 
