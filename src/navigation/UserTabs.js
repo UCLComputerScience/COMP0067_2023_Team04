@@ -46,7 +46,7 @@ const Tabs = () =>{
                                 }}
                             />
                             <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
-                                Schedule
+                                Devices
                             </Text>
                         </View>
                     )
@@ -69,7 +69,7 @@ const Tabs = () =>{
                                 }}
                             />
                             <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
-                                Loans
+                                Schedule
                             </Text>
                         </View>
                     )
@@ -93,7 +93,7 @@ const Tabs = () =>{
                             }}
                         />
                         <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
-                            Devices
+                            Loans
                         </Text>
                     </View>
                 )
