@@ -1,10 +1,15 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import AdminScanScreen from './AdminScanScreen';
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 const CollapsibleList = () => {
   const [expandedDays, setExpandedDays] = useState([]);
+  const navigation = useNavigation();
+  const route = useRoute();
 
   const handleExpand = day => {
     if (expandedDays.includes(day)) {
@@ -37,7 +42,7 @@ const CollapsibleList = () => {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-09'
+      startDate: '2023-03-10'
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
@@ -49,7 +54,13 @@ const CollapsibleList = () => {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-11'
+      startDate: '2023-03-10'
+    },
+    {
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      user: 'ucabj38',
+      state: 'Loan',
+      startDate: '2023-03-10'
     },
   ];
 
@@ -66,8 +77,17 @@ const CollapsibleList = () => {
     return acc;
   }, {});
 
+
+const handleRowPress = (item) => {
+    navigation.navigate('AdminScanScreen', {
+      user: item.user,
+      state: item.state,
+      startDate: item.startDate
+    });
+  };
+  
   return (
-    <View style={styles.container}>
+    <ScrollView style={ styles.container }  contentInset={{ top: 0, bottom: 90 }}>
       <View style={styles.tabBar}>
         {DAYS.map(day => (
           <View key={day}>
@@ -78,29 +98,30 @@ const CollapsibleList = () => {
               ]}
               onPress={() => handleExpand(day)}
             >
-              <Text style={styles.tabButtonText}>{day}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={[styles.tabButtonText, {flex:1}]}>{day}</Text>
+                <Ionicons style = {{marginLeft: 'auto' }}  name={expandedDays.includes(day) ? 'chevron-up' : 'chevron-down'} size={25} color={'#AC145A'} />
+              </View>
             </TouchableOpacity>
             {expandedDays.includes(day) && groupedLoans[day] && (
-              <FlatList
-                style={styles.dataContainer}
-                data={groupedLoans[day]}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={styles.dataRow}
-                    onPress={() => handleRowPress(index)}
-                  >
-                    <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
-                    <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
-                    <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
-                  </TouchableOpacity>
-                )}
-              />
+              <View style={styles.dataContainer}>
+              {groupedLoans[day] && groupedLoans[day].map((item, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.dataRow}
+                  onPress={() => handleRowPress(index)}
+                >
+                  <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
+                  <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
+                  <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
+                </TouchableOpacity>
+              ))}
+            </View>            
             )}
           </View>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
   };
   
@@ -109,7 +130,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    paddingHorizontal: 20,
   },
   tabBar: {
     flexDirection: 'column',
@@ -118,12 +139,13 @@ const styles = StyleSheet.create({
     marginTop: -5,
   },
   tabButton: {
-    paddingHorizontal: 60,
-    paddingVertical: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
   activeTabButton: {},
   tabButtonText: {
-    fontSize: 17,
+    fontSize: 22,
+    fontWeight: '700'
   },
   separator: {
     height: 1,
