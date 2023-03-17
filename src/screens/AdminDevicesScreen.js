@@ -2,7 +2,15 @@ import React, { useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+<<<<<<< Updated upstream
 import AdminScanScreen from './AdminScanScreen';
+=======
+import { createStackNavigator } from '@react-navigation/stack';
+import DetailDeviceAdmin from './DetailDeviceAdmin';
+
+const Stack = createStackNavigator();
+
+>>>>>>> Stashed changes
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
