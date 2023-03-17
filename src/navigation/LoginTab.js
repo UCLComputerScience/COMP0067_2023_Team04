@@ -12,7 +12,7 @@ function LoginTab() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown:false}}>
+      <Stack.Navigator screenOptions={{headerShown:false}} initialRouteName = 'Login'>
         {userRole === 'admin' ? (
           <Stack.Screen
             name="AdminTab"
@@ -38,15 +38,22 @@ function LoginTab() {
 
   function LoginScreen({ navigation }) {
     const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
 
     function handleLogin() {
-      // Login logic
-      const role = username === 'admin' && password === '123' ? 'admin' : username === 'user' && password === '123' ? 'user' : null;
-      if (role) {
-        setUserRole(role);
-      }
+      // SSO login logic
+      const role = 'user'; // Assume successful login
+      setUserRole(role);
+    }
 
+    // For frontend development only
+    function handleAdminLogin() {
+      const role = 'admin';
+      setUserRole(role);
+    }
+
+    function handleUserLogin() {
+      const role = 'user';
+      setUserRole(role);
     }
 
     return (
@@ -60,21 +67,12 @@ function LoginTab() {
             }}
         />
         <Text style={{ fontWeight: 'bold', fontSize: 24, marginBottom: 10, textAlign: 'left' }}>Sign in</Text>
-        <TextInput
-          style = {{width:'95%' ,height:40, borderColor: 'gray', borderBottomWidth: 1, marginBottom: 10, paddingHorizontal: 10}}
-          placeholder="Login with your userID@ucl.ac.uk"
-          value={username}
-          onChangeText={setUsername}
-        />
-        <TextInput
-          style={{width:'95%', height: 40, borderColor: 'gray', borderBottomWidth: 1, marginBottom: 20, paddingHorizontal: 10 }}
-          placeholder="Password"
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-        <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginRight: 20 }}>
-          <Button title="Login" onPress={handleLogin} />
+        <View style={{ flexDirection: 'row', justifyContent: 'center', marginRight: 20 }}>
+          <Button title="SSO Login" onPress={handleLogin} />
+        </View >
+        <View style={{ flex:0.6 ,flexDirection: 'row', justifyContent: 'center', alignItems:'center' }}>
+          <Button title="Admin Login" onPress={handleAdminLogin} />
+          <Button title="User Login" onPress={handleUserLogin} />
         </View>
       </View>
     );
