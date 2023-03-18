@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { ScrollView, View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import DetailDeviceAdmin from './DetailDeviceAdmin';
 
-const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 const AdminScheduleScreen = () => {
   const [currentTab, setCurrentTab] = useState('today');
@@ -15,49 +19,49 @@ const AdminScheduleScreen = () => {
       setExpandedDays([...expandedDays, day]);
     }
   };
-
+/*please notice. We only load this week data*/
   const loanTable = [
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-06'
+      startDate: '2023-03-13'
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-07'
+      startDate: '2023-03-14'
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-08'
+      startDate: '2023-03-15'
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-09'
+      startDate: '2023-03-16'
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-10'
+      startDate: '2023-03-17'
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-11'
+      startDate: '2023-03-18'
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-12'
+      startDate: '2023-03-19'
     },
   ];
 
@@ -66,21 +70,26 @@ const AdminScheduleScreen = () => {
   const filterData = (tab) => {
     const filtered = loanTable.filter((item) => {
       const startDate = new Date(item.startDate);
-      const endDate = new Date(new Date().getTime() + (7 - new Date().getDay()) * 24 * 60 * 60 * 1000);
+      const weekStart = new Date(now.getTime() - ((now.getDay() || 7) - 1) * 24 * 60 * 60 * 1000);
+      const endDate = new Date(
+        now.getTime() + (7 - now.getDay()) * 24 * 60 * 60 * 1000
+      );
       if (tab === 'today') {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
         return startDate.getTime() === today.getTime();
       } else {
-        return startDate > now && startDate <= endDate;
+        return startDate >= weekStart && startDate <= endDate;
       }
     });
     setFilteredData(filtered);
   };
+  
+  
 
-  useState(() => {
+  useEffect(() => {
     filterData(currentTab);
-  }, []);
+  }, [currentTab]);
 
   const handleTabPress = (tab) => {
     setCurrentTab(tab);
@@ -103,6 +112,12 @@ const AdminScheduleScreen = () => {
 
     return acc;
   }, {});
+
+  const today = new Date();
+  const currentDayIndex = today.getUTCDay() - 1;
+
+  const remainingDays = DAYS.slice(currentDayIndex + 1);
+
 
   return (
     <View style={styles.container}>      
@@ -149,41 +164,41 @@ const AdminScheduleScreen = () => {
           )}
         />
       ) : currentTab === 'thisWeek' ? (
-        
-        <View style={styles.container}>
-          <View style={styles.dayBar}>
-            {DAYS.map(day => (
-              <View key={day}>
-                <TouchableOpacity
-                  style={[
-                    styles.tabButton,
-                    expandedDays.includes(day) && styles.activeTabButton
-                  ]}
-                  onPress={() => handleExpand(day)}
-                >
-                  <Text style={styles.tabButtonText}>{day}</Text>
-                </TouchableOpacity>
-                {expandedDays.includes(day) && groupedLoans[day] && (
-                  <FlatList
-                    style={styles.dataContainer}
-                    data={groupedLoans[day]}
-                    keyExtractor={(item, index) => index.toString()}
-                    renderItem={({ item }) => (
-                      <TouchableOpacity
-                        style={styles.dataRow}
-                        onPress={() => handleRowPress(index)}
-                    >
-                      <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
-                      <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
-                      <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
-                    </TouchableOpacity>
-                  )}
-                />
+        <ScrollView style={ styles.containerC }  contentInset={{ top: 0, bottom: 90 }}>
+        <View style={styles.tabBarC}>
+          {remainingDays.map(day => (
+            <View key={day}>
+              <TouchableOpacity
+                style={[
+                  styles.tabButtonC,
+                  expandedDays.includes(day) && styles.activeTabButton
+                ]}
+                onPress={() => handleExpand(day)}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Text style={[styles.tabButtonTextC, {flex:1}]}>{day}</Text>
+                  <Ionicons style = {{marginLeft: 'auto' }}  name={expandedDays.includes(day) ? 'chevron-up' : 'chevron-down'} size={25} color={'#AC145A'} />
+                </View>
+              </TouchableOpacity>
+              {expandedDays.includes(day) && groupedLoans[day] && (
+                <View style={styles.dataContainer}>
+                {groupedLoans[day] && groupedLoans[day].map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.dataRow}
+                    onPress={() => handleRowPress(index)}
+                  >
+                    <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
+                    <Text style={[styles.userText, { flex: 1, textAlign: 'center' }]}>{item.user}</Text>
+                    <Text style={[styles.stateText, { flex: 0.7, textAlign: 'center' }]}>{item.state}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>            
               )}
             </View>
           ))}
         </View>
-      </View>
+      </ScrollView>
     ):null}
     </View>
 )
@@ -281,6 +296,27 @@ const styles = StyleSheet.create({
     color: '#000',
     flex: 1,
     textAlign: 'right',
+  },
+
+  containerC: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+  },
+
+  tabBarC: {
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+    marginTop: -5,
+  },
+  tabButtonC: {
+    paddingHorizontal: 10,
+    paddingVertical: 10,
+  },
+  tabButtonTextC: {
+    fontSize: 22,
+    fontWeight: '500'
   },
 });
 
