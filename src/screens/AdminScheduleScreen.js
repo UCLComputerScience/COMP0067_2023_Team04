@@ -9,6 +9,7 @@ const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 const AdminScheduleScreen = () => {
   const [currentTab, setCurrentTab] = useState('today');
+  const navigation = useNavigation();
   const [filteredData, setFilteredData] = useState([]);
   const [expandedDays, setExpandedDays] = useState([]);
 
@@ -96,8 +97,12 @@ const AdminScheduleScreen = () => {
     filterData(tab);
   };
 
-  const handleRowPress = (index) => {
-    console.log(`Clicked row ${index}`);
+  const handleRowPress = (item) => {
+    navigation.navigate('Detail', {
+      user: item.user,
+      state: item.state,
+      startDate: item.startDate
+    });
   };
 
   const groupedLoans = loanTable.reduce((acc, loan) => {
@@ -116,7 +121,9 @@ const AdminScheduleScreen = () => {
   const today = new Date();
   const currentDayIndex = today.getUTCDay() - 1;
 
-  const remainingDays = DAYS.slice(currentDayIndex + 1);
+  const remainingDays = now.getUTCDay() === 0
+  ? DAYS
+  : DAYS.slice(currentDayIndex + 1);
 
 
   return (
