@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import DetailDeviceAdmin from './DetailDeviceAdmin';
+//import CollapsibleList from './AdminScanScreen';
+
+const Stack = createStackNavigator();
+
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
@@ -194,4 +200,14 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CollapsibleList;
+const AdminScanScreen = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown:false}}>
+      <Stack.Screen name="Home" component={CollapsibleList} />
+      <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
+    </Stack.Navigator>
+  )
+}
+
+
+export default AdminScanScreen

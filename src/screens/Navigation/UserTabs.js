@@ -2,35 +2,13 @@ import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import AdminDevicesScreen from '../screens/AdminDevicesScreen';
-import AdminLoansScreen from '../screens/AdminLoansScreen';
-import AdminScanScreen from '../screens/AdminScanScreen';
-import AdminScheduleScreen from '../screens/AdminScheduleScreen';
-import AdminSettingsScreen from '../screens/AdminSettingsScreen';
+import UserAppointmentScreen from '../User/UserAppointmentScreen';
+import UserDevicesScreen from '../User/UserDevicesScreen';
+import UserLoansScreen from '../User/UserLoansScreen';
+import UserSettingsScreen from '../User/UserSettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
-const ScanButton = ({children, onPress}) => (
-    <TouchableOpacity
-        style={{
-            top: 5,
-            justifyContent: 'center',
-            alignContent: 'center',
-            //...styles.shadow
-        }}
-        onPress = {onPress}    
-    >
-        <View style={{
-            width: 50,
-            height: 50,
-            borderRadius: 35,
-            backgroundColor: '#D6D6D6'
-        }}>
-            {children}
-        </View>
-
-    </TouchableOpacity>
-);
 
 const Tabs = () =>{
     return(
@@ -53,13 +31,36 @@ const Tabs = () =>{
         >
 
             <Tab.Screen 
-                name = "Schedule"  
-                component={AdminScheduleScreen} 
+                name = "Devices"  
+                component={UserDevicesScreen} 
                 options={{
                     tabBarIcon: ({focused}) =>(
                         <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                             <Image 
-                                source={require('../components/icons/Schedule.png')}
+                                source={require('../../components/icons/Devices.png')}
+                                resizeMode = 'contain'
+                                style={{
+                                    width: 25,
+                                    height: 25,
+                                    tintColor: focused ? '#AC145A' : '#A6AAB2'
+                                }}
+                            />
+                            <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
+                                Devices
+                            </Text>
+                        </View>
+                    )
+    
+                }}  />
+
+            <Tab.Screen 
+                name = "Appointment"     
+                component={UserAppointmentScreen}    
+                options={{
+                    tabBarIcon: ({focused}) =>(
+                        <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
+                            <Image 
+                                source={require('../../components/icons/Schedule.png')}
                                 resizeMode = 'contain'
                                 style={{
                                     width: 25,
@@ -73,63 +74,17 @@ const Tabs = () =>{
                         </View>
                     )
     
-                }}  />
-
-            <Tab.Screen 
-                name = "Loans"     
-                component={AdminLoansScreen}    
-                options={{
-                    tabBarIcon: ({focused}) =>(
-                        <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
-                            <Image 
-                                source={require('../components/icons/Loans.png')}
-                                resizeMode = 'contain'
-                                style={{
-                                    width: 25,
-                                    height: 25,
-                                    tintColor: focused ? '#AC145A' : '#A6AAB2'
-                                }}
-                            />
-                            <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
-                                Loans
-                            </Text>
-                        </View>
-                    )
-    
                 }} />
-
-
-            <Tab.Screen 
-                name = "Scan"  
-                component={AdminScanScreen}
-                options = {{
-                    tabBarIcon: ({focused}) => (
-                        <Image 
-                            source={ require('../components/icons/Scan.png')}
-                            resizeMode = 'contain'
-                            style={{
-                                width: 25,
-                                height: 25,
-                                tintColor: '#000'
-                            }}
-                        />
-                    ),
-                    tabBarButton: (props) =>(
-                        <ScanButton {...props} />
-                    )
-                }}
-                
-                
-            />                 
+             
 
             <Tab.Screen 
-                name = "Devices"   
-                component={AdminDevicesScreen}  
+                name = "Loans"   
+                component={UserLoansScreen}  
                 options={{
                 tabBarIcon: ({focused}) =>(
                     <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                         <Image 
-                            source={require('../components/icons/Devices.png')}
+                            source={require('../../components/icons/Loans.png')}
                             resizeMode = 'contain'
                             style={{
                                 width: 25,
@@ -138,7 +93,7 @@ const Tabs = () =>{
                             }}
                         />
                         <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
-                            Devices
+                            Loans
                         </Text>
                     </View>
                 )
@@ -147,12 +102,12 @@ const Tabs = () =>{
                 
             <Tab.Screen 
             name = "Settings"  
-            component={AdminSettingsScreen} 
+            component={UserSettingsScreen} 
             options={{
                 tabBarIcon: ({focused}) =>(
                     <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                         <Image 
-                            source={require('../components/icons/Settings.png')}
+                            source={require('../../components/icons/Settings.png')}
                             resizeMode = 'contain'
                             style={{
                                 width: 25,

@@ -59,7 +59,7 @@ function LoginTab() {
     return (
       <View style={{ flex: 1, padding: 20, backgroundColor: '#fff' }}>
         <Image 
-            source={require('../components/icons/UCL.png')}
+            source={require('../../components/icons/UCL.png')}
             resizeMode = 'contain'
             style={{
                 width: 100,

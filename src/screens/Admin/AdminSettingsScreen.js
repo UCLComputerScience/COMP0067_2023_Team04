@@ -9,7 +9,9 @@ const AdminSettingsScreen = () => {
     // logout logic here
     // for example, remove the user token or reset the user state
     parentNavigation = navigation.getParent();
-    parentNavigation.goBack('Login');; // navigate back to the login screen after logout
+    parentNavigation.goBack('Login'); // navigate back to the login screen after logout
+    const state = navigation.getState();
+    console.log(state);
   };
 
   //const parentNavigation = navigation.getParent();
