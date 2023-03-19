@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import LoginTab from './src/screens/navigation/LoginTab';
+import LoginTab from './src/screens/Navigation/LoginTab';
 
 
 const App = () =>{
