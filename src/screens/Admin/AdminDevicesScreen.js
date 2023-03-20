@@ -12,64 +12,64 @@ const AllDevices = () => {
   const route = useRoute();
   const devices = [
     {
-    name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
-    Loaned: '10',
-    Availabe: '5',
+      name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
+      loaned: '10',
+      availabe: '5',
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070',
-      Loaned: '6',
-      Availabe: '9',
+      loaned: '6',
+      availabe: '9',
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3060',
-      Loaned: '3',
-      Availabe: '8',
+      loaned: '3',
+      availabe: '8',
     },
     {
       name: 'Dell XPS 13 2022',
-      Loaned: '2',
-      Availabe: '3',
+      loaned: '2',
+      availabe: '3',
     },
     {
       name: 'MacBook Pro M1 2021',
-      Loaned: '5',
-      Availabe: '7',
+      loaned: '5',
+      availabe: '7',
     },
     {
       name: 'ASUS ROG Zephyrus S GX701',
-      Loaned: '4',
-      Availabe: '2',
+      loaned: '4',
+      availabe: '2',
     },
     {
       name: 'Lenovo Legion Y740',
-      Loaned: '6',
-      Availabe: '4',
+      loaned: '6',
+      availabe: '4',
     },
     {
       name: 'Acer Predator Helios 300',
-      Loaned: '7',
-      Availabe: '3',
+      loaned: '7',
+      availabe: '3',
     },
     {
       name: 'MSI GE76 Raider',
-      Loaned: '2',
-      Availabe: '8',
+      loaned: '2',
+      availabe: '8',
     },
     {
       name: 'Razer Blade Pro 17',
-      Loaned: '1',
-      Availabe: '9',
+      loaned: '1',
+      availabe: '9',
     },
     {
       name: 'Alienware m15 R4',
-      Loaned: '4',
-      Availabe: '6',
+      loaned: '4',
+      availabe: '6',
     },
     {
       name: 'HP Spectre x360',
-      Loaned: '0',
-      Availabe: '10',
+      loaned: '0',
+      availabe: '10',
     },        
   ];
 
@@ -101,11 +101,11 @@ const AllDevices = () => {
         <FlatList data={devices} renderItem={({item} ) => {
             if(input === ""){
               return (
-                <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceAdmin', { deviceId: item.id })}>
+                <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceAdmin', { deviceName: item.name })}>
                   <View style={styles.line}>
                     <Text style={[styles.devices, {flex:3, textAlign: 'left'}]}>{item.name}</Text>
-                    <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.Loaned}</Text>
-                    <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.Availabe}</Text>
+                    <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.loaned}</Text>
+                    <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.availabe}</Text>
                   </View>
                 </TouchableOpacity>
               )
@@ -114,8 +114,8 @@ const AllDevices = () => {
               return (
                 <View style={styles.line}>
                   <Text style={[styles.devices, {flex:3, textAlign: 'left'}]}>{item.name}</Text>
-                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.Loaned}</Text>
-                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.Availabe}</Text>
+                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.loaned}</Text>
+                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.availabe}</Text>
                 </View>
               )
             }

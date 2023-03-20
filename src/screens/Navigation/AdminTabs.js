@@ -40,14 +40,14 @@ const Tabs = () =>{
                 tabBarShowLabel: false,
                 tabBarStyle:{
                     position: 'absolute',
-                    bottom: 25,
+                    /*bottom: 25,
                     left: 20,
                     right: 20,
                     elevation: 0,
-                    backgroundColor: '#ffffff',
                     borderRadius: 15,
-                    height: 80,
-                    ...styles.shadow
+                    ...styles.shadow*/
+                    height: 90,
+                    backgroundColor: '#F5F6F7',
                 }
             }}        
         >
