@@ -141,7 +141,7 @@ const AdminScheduleScreen = () => {
         </TouchableOpacity>
         
         <TouchableOpacity
-          style={[            styles.tabButton,            currentTab === 'thisWeek' && styles.activeTabButton,            { marginRight: 13 }          ]}
+          style={[styles.tabButton, currentTab === 'thisWeek' && styles.activeTabButton, { marginRight: 13 }]}
           onPress={() => handleTabPress('thisWeek')}>
           <Text style={[styles.tabButtonText, { color: currentTab === 'thisWeek' ? '#000' : '#ccc' }]}>This week</Text>
         </TouchableOpacity>
@@ -209,7 +209,7 @@ const AdminScheduleScreen = () => {
     ):null}
     </View>
 )
-                    };
+};
 
 
 const styles = StyleSheet.create({
