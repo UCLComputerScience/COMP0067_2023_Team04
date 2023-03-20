@@ -1,11 +1,15 @@
-import { View, Text, TextInput, StyleSheet, FlatList, SafeAreaView } from 'react-native'
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'react-native'
 import React, {useState} from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import GeneralDeviceAdmin from './GeneralDeviceAdmin';
 
 const AllDevices = () => {
 
+  const navigation = useNavigation();
+  const route = useRoute();
   const devices = [
     {
     name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
@@ -97,11 +101,13 @@ const AllDevices = () => {
         <FlatList data={devices} renderItem={({item} ) => {
             if(input === ""){
               return (
-                <View style={styles.line}>
-                  <Text style={[styles.devices, {flex:3, textAlign: 'left'}]}>{item.name}</Text>
-                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.Loaned}</Text>
-                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.Availabe}</Text>
-                </View>
+                <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceAdmin', { deviceId: item.id })}>
+                  <View style={styles.line}>
+                    <Text style={[styles.devices, {flex:3, textAlign: 'left'}]}>{item.name}</Text>
+                    <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.Loaned}</Text>
+                    <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.Availabe}</Text>
+                  </View>
+                </TouchableOpacity>
               )
             }
             if(item.name.toLowerCase().includes(input.toLowerCase())){
@@ -171,6 +177,7 @@ const AdminDevicesScreen = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name="AllDevices" component={AllDevices} />
+      <Stack.Screen name="GeneralDeviceAdmin" component={GeneralDeviceAdmin} />
     </Stack.Navigator>
   )
 }
