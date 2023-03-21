@@ -112,12 +112,6 @@ const AllDevices = () => {
     setDevices(sortedDevices);
   };
 
-  const handleSort = () => {
-    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
-    setSortOrder(newSortOrder);
-    sortDevices(newSortOrder);
-  };
-
   const handleLoanedSort = () => {
     const newSortOrder = loanedSortOrder === 'asc' ? 'desc' : 'asc';
     setLoanedSortOrder(newSortOrder);
@@ -149,33 +143,26 @@ const AllDevices = () => {
       </View>
       <View style={styles.list} >
       <View style={{ marginVertical: 5, paddingHorizontal: 30, flexDirection: 'row' }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 3 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', flex: 3 }}>
             <Text style={[styles.header, { textAlign: 'left' }]}>
               Devices
             </Text>
-            <TouchableOpacity onPress={handleSort} style={{ marginHorizontal: 20 }}>
-              <Ionicons name={`chevron-${sortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" />
-            </TouchableOpacity>
           </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-            <Text style={[styles.header, { textAlign: 'center' }]}>Loaned</Text>
-            <TouchableOpacity onPress={handleLoanedSort} style={{ marginHorizontal: 5 }}>
-              <Ionicons name={`chevron-${loanedSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" />
-            </TouchableOpacity>
-          </View>
-          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-            <Text style={[styles.header, { textAlign: 'center' }]}>Available</Text>
-            <TouchableOpacity onPress={handleAvailableSort} style={{ marginHorizontal: 5 }}>
-              <Ionicons name={`chevron-${availableSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" />
-            </TouchableOpacity>
-          </View>
-        </View>
+        <TouchableOpacity onPress={handleLoanedSort} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+          <Text style={[styles.header, { textAlign: 'center' }]}>Loaned</Text>
+          <Ionicons name={`chevron-${loanedSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" style={{ marginHorizontal: 0 }} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleAvailableSort} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+          <Text style={[styles.header, { textAlign: 'center' }]}>Available</Text>
+          <Ionicons name={`chevron-${availableSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" style={{ marginHorizontal: 0 }} />
+        </TouchableOpacity>
+      </View>
         <FlatList data={devices} renderItem={({item} ) => {
             if(input === ""){
               return (
                 <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceAdmin', { deviceName: item.name })}>
                   <View style={styles.line}>
-                    <Text style={[styles.devices, {flex:3, textAlign: 'left'}]}>{item.name}</Text>
+                    <Text style={[styles.devices, {flex:2.4, textAlign: 'left'}]}>{item.name}</Text>
                     <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.loaned}</Text>
                     <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.availabe}</Text>
                   </View>
