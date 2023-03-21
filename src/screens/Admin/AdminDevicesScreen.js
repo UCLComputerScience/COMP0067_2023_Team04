@@ -150,11 +150,11 @@ const AllDevices = () => {
           </View>
         <TouchableOpacity onPress={handleLoanedSort} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
           <Text style={[styles.header, { textAlign: 'center' }]}>Loaned</Text>
-          <Ionicons name={`chevron-${loanedSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" style={{ marginHorizontal: 0 }} />
+          <Ionicons name={`chevron-${loanedSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={15} color="#AC145A" style={{ marginHorizontal: 0 }} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleAvailableSort} style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
           <Text style={[styles.header, { textAlign: 'center' }]}>Available</Text>
-          <Ionicons name={`chevron-${availableSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" style={{ marginHorizontal: 0 }} />
+          <Ionicons name={`chevron-${availableSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={15} color="#AC145A" style={{ marginHorizontal: 0 }} />
         </TouchableOpacity>
       </View>
         <FlatList data={devices} renderItem={({item} ) => {
