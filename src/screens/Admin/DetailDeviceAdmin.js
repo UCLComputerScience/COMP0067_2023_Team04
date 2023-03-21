@@ -1,8 +1,13 @@
 import React, { useLayoutEffect } from 'react'
 import { ScrollView, View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const DetailDeviceAdmin = () => {
+
+  const route = useRoute();
+  const { deviceID } = route.params; 
+  //console.log(deviceID);
+
   const deviceInfo = 
   {
     deviceName: 'Lenovo Legion Y9000P 2022 RTX 3070Ti',

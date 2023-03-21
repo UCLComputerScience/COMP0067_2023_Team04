@@ -1,12 +1,15 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import React, {useState} from 'react'
-import { useRoute } from '@react-navigation/native'
+import { useRoute, useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import DetailDeviceAdmin from './DetailDeviceAdmin';
+import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceAdmin = () => {
 
+  const navigation = useNavigation();
   const route = useRoute();
-  const { deviceName } = route.params;
+  const deviceName = route.params;
 
   const device = [{
     standardLoanDuration: 14,
@@ -78,7 +81,7 @@ const GeneralDeviceAdmin = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentInset={{ bottom: 85 }}>
+    <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
 
       <View style={styles.titleView}>
         <Text style={styles.title}>{deviceName}</Text>
@@ -145,13 +148,20 @@ const GeneralDeviceAdmin = () => {
                 </Text>
               </View>
               <View style={styles.detailRowLayout}>
-                <Text style={styles.deviceID}>
-                  {devices.map(device => `${device.id}`).join('\n')}
-                </Text>
-                <Text style={styles.deviceState}>
-                  {devices.map(device => `${device.state}`).join('\n')}
-                </Text>
+                <View style={{ flex: 2 }}>
+                  {devices.map(device => (
+                    <TouchableOpacity key={device.id} onPress={() => navigation.navigate('Detail', {deviceID: device.id})}>
+                      <Text style={styles.deviceID}>{device.id}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+                <View style={{ flex: 1 }}>
+                  {devices.map(device => (
+                    <Text key={device.id} style={styles.deviceState}>{device.state}</Text>
+                  ))}
+                </View>
               </View>
+
           </View>
         )}
       </View>
@@ -281,4 +291,15 @@ const styles =StyleSheet.create({
   },
 })
 
-export default GeneralDeviceAdmin
+const Stack = createStackNavigator();
+
+const GeneralDeviceAdminScreen = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown:false}}>
+      <Stack.Screen name="General" component={GeneralDeviceAdmin} />
+      <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
+    </Stack.Navigator>
+  )
+}
+
+export default GeneralDeviceAdminScreen
