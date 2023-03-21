@@ -26,7 +26,7 @@ const AdminScheduleScreen = () => {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       user: 'ucabj38',
       state: 'Loan',
-      startDate: '2023-03-13'
+      startDate: '2023-03-21'
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
