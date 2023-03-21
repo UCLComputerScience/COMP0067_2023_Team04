@@ -10,7 +10,7 @@ const AllDevices = () => {
 
   const navigation = useNavigation();
   const route = useRoute();
-  const devices = [
+  const initialDevices = [
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       loaned: '10',
@@ -74,6 +74,61 @@ const AllDevices = () => {
   ];
 
   const [input, setInput] = useState('');
+  const [devices, setDevices] = useState(initialDevices);
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [loanedSortOrder, setLoanedSortOrder] = useState('asc');
+  const [availableSortOrder, setAvailableSortOrder] = useState('asc');
+
+  const sortDevices = (order) => {
+    const sortedDevices = [...devices].sort((a, b) => {
+      if (order === 'asc') {
+        return a.name.localeCompare(b.name);
+      } else {
+        return b.name.localeCompare(a.name);
+      }
+    });
+    setDevices(sortedDevices);
+  };
+
+  const sortDevicesByLoaned = (order) => {
+    const sortedDevices = [...devices].sort((a, b) => {
+      if (order === 'asc') {
+        return a.loaned - b.loaned;
+      } else {
+        return b.loaned - a.loaned;
+      }
+    });
+    setDevices(sortedDevices);
+  };
+
+  const sortDevicesByAvailable = (order) => {
+    const sortedDevices = [...devices].sort((a, b) => {
+      if (order === 'asc') {
+        return a.availabe - b.availabe;
+      } else {
+        return b.availabe - a.availabe;
+      }
+    });
+    setDevices(sortedDevices);
+  };
+
+  const handleSort = () => {
+    const newSortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+    setSortOrder(newSortOrder);
+    sortDevices(newSortOrder);
+  };
+
+  const handleLoanedSort = () => {
+    const newSortOrder = loanedSortOrder === 'asc' ? 'desc' : 'asc';
+    setLoanedSortOrder(newSortOrder);
+    sortDevicesByLoaned(newSortOrder);
+  };
+
+  const handleAvailableSort = () => {
+    const newSortOrder = availableSortOrder === 'asc' ? 'desc' : 'asc';
+    setAvailableSortOrder(newSortOrder);
+    sortDevicesByAvailable(newSortOrder);
+  };
 
   return(
     <View style={ styles.container}>
@@ -93,10 +148,27 @@ const AllDevices = () => {
         </View>
       </View>
       <View style={styles.list} >
-        <View style={{marginVertical:5, paddingHorizontal: 30, flexDirection: 'row'}}>
-          <Text style={[styles.header, {flex:3, textAlign: 'left'}]}>Devices</Text>
-          <Text style={[styles.header, {flex:1, textAlign: 'center'}]}>Loaned</Text>
-          <Text style={[styles.header, {flex:1, textAlign: 'center'}]}>Available</Text>
+      <View style={{ marginVertical: 5, paddingHorizontal: 30, flexDirection: 'row' }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 3 }}>
+            <Text style={[styles.header, { textAlign: 'left' }]}>
+              Devices
+            </Text>
+            <TouchableOpacity onPress={handleSort} style={{ marginHorizontal: 20 }}>
+              <Ionicons name={`chevron-${sortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" />
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+            <Text style={[styles.header, { textAlign: 'center' }]}>Loaned</Text>
+            <TouchableOpacity onPress={handleLoanedSort} style={{ marginHorizontal: 5 }}>
+              <Ionicons name={`chevron-${loanedSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" />
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+            <Text style={[styles.header, { textAlign: 'center' }]}>Available</Text>
+            <TouchableOpacity onPress={handleAvailableSort} style={{ marginHorizontal: 5 }}>
+              <Ionicons name={`chevron-${availableSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={20} color="#AC145A" />
+            </TouchableOpacity>
+          </View>
         </View>
         <FlatList data={devices} renderItem={({item} ) => {
             if(input === ""){
