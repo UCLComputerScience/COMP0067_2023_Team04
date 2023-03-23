@@ -23,49 +23,15 @@ const GeneralDeviceUser = () => {
                       "WIFI": "AX211"}',
   }]
 
-  const devices = [
-    { id: 20220901001, state: 'Loaned'      },
-    { id: 20220901002, state: 'Available'   },
-    { id: 20220901003, state: 'Maintained'  },
-    { id: 20220901004, state: 'Loaned'      },
-    { id: 20220901005, state: 'Loaned'      },
-    { id: 20220901006, state: 'Available'   },
-    { id: 20220901007, state: 'Loaned'      },
-    { id: 20220901008, state: 'Available'   },
-    { id: 20220901009, state: 'Available'   },
-    { id: 20220901010, state: 'Loaned'      },
-    { id: 20220901011, state: 'Available'   },
-    { id: 20220901012, state: 'Available'   },
-  ];
+  
   const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
 
-  const history =[
-    {
-      deviceID: 20220901001,
-      userID: 'ucabcda',
-      date: '2023-03-21'
-    },
-    {
-      deviceID: 20220901001,
-      userID: 'ucabccb',
-      date: '2023-03-20'
-    },
-    {
-      deviceID: 20220901002,
-      userID: 'ucabcdb',
-      date: '2023-03-20'
-    },
-    {
-      deviceID: 20220901003,
-      userID: 'ucabcdc',
-      date: '2023-03-19'
-    }
-  ]
+  
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
   const [devicesIDExpanded, setDevicesIDExpanded] = useState(false);
-  const [loanHistoryExpanded, setLoanHistoryExpanded] = useState(false);
+  
 
   const toggleLoanRule = () => {
     setLoanRuleExpanded(!loanRuleExpanded);
@@ -76,9 +42,7 @@ const GeneralDeviceUser = () => {
   const toggleDevicesID = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
-  const toggleLoanHistory = () => {
-    setLoanHistoryExpanded(!loanHistoryExpanded);
-  };
+  
 
   return (
     <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
@@ -97,11 +61,11 @@ const GeneralDeviceUser = () => {
         {loanRuleExpanded && (
           <View style={styles.detailRow}>            
               <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: '500', flex: 3 }}>Standard Loan Duration:</Text>
+                <Text style={{ fontWeight: '500', flex: 2 }}>Standard Loan Duration:</Text>
                 <Text style={{ fontWeight:'300', flex: 1 }}>{device[0].standardLoanDuration} Days</Text>
               </View>
               <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: '500', flex: 3 }}>Extension Allowance:</Text>
+                <Text style={{ fontWeight: '500', flex: 2 }}>Extension Allowance:</Text>
                 <Text style={{ fontWeight:'300', flex: 1 }}>
                   {parseInt(device[0].extensionAllowance) > 1 ? device[0].extensionAllowance + ' Times' : device[0].extensionAllowance + ' Time'}
                 </Text>
@@ -138,69 +102,18 @@ const GeneralDeviceUser = () => {
           </View>
         </TouchableOpacity>
         {devicesIDExpanded && (
-          <View style={styles.detailRow}>
-              <View style={styles.detailRowLayout}>
-                <Text style={[styles.deviceKey, {flex:2, paddingLeft:10}]}>
-                  Device
-                </Text>
-                <Text style={[styles.deviceKey, {flex:1, paddingLeft:-10, textAlign:'center'}]}>
-                  State
-                </Text>
-              </View>
-              <View style={styles.detailRowLayout}>
-                <View style={{ flex: 2 }}>
-                  {devices.map(device => (
-                    <TouchableOpacity key={device.id} onPress={() => navigation.navigate('Detail', {deviceID: device.id})}>
-                      <Text style={styles.deviceID}>{device.id}</Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-                <View style={{ flex: 1 }}>
-                  {devices.map(device => (
-                    <Text key={device.id} style={styles.deviceState}>{device.state}</Text>
-                  ))}
-                </View>
-              </View>
-
-          </View>
-        )}
-      </View>
-
-
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabButton} onPress={toggleLoanHistory}>
-          <View style={styles.detailLayout}>
-            <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan History</Text>
-            <Ionicons style={{ marginLeft: 'auto' }} name={loanHistoryExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
-          </View>
-        </TouchableOpacity>
-        {loanHistoryExpanded && (
-          <View style={styles.detailRow}>
+          <View style={styles.detailRow}>            
           <View style={styles.detailRowLayout}>
-            <Text style={[styles.deviceKey, {flex:1, paddingLeft:10}]}>
-              Device ID
-            </Text>
-            <Text style={[styles.deviceKey, {flex:1, textAlign:'center'}]}>
-              User ID
-            </Text>
-            <Text style={[styles.deviceKey, {flex:1, textAlign:'center'}]}>
-              Date
-            </Text>
+            <Text style={{ fontWeight: '500', flex: 2 }}>Status:</Text>
+            <Text style={{ fontWeight:'300', flex: 1 }}>Available</Text>
           </View>
-          <View style={styles.detailRowLayout}>
-            <Text style={styles.historyDeviceID}>
-              {history.map(history => `${history.deviceID}`).join('\n')}
-            </Text>
-            <Text style={styles.historyUserID}>
-              {history.map(history => `${history.userID}`).join('\n')}
-            </Text>
-            <Text style={[styles.historyState, {flex:1}]}>
-              {history.map(history => `${history.date}`).join('\n')}
-            </Text>
-          </View>
+          
       </View>
-        )}
-      </View>
+    )}
+  </View>
+
+      
+      
 
 
 
