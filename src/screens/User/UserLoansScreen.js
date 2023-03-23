@@ -8,9 +8,9 @@ const UserLoansScreen = () => {
   const [filteredData, setFilteredData] = useState([]);
 
   const data = [
-    { device: 'Lenovo Legion Y9000P 2022 RTX 3070ti', dueDate: '2023-03-01' },
-    { device: 'iPad Pro', dueDate: '2023-04-05' },
-    { device: 'MacBook Air', dueDate: '2023-06-01' },
+    { device: 'Lenovo Legion Y9000P 2022 RTX 3070ti', dueDate: '2023-03-01', borrowDate: '2023-02-15' },
+    { device: 'iPad Pro', dueDate: '2023-04-05', borrowDate: '2023-03-20' },
+    { device: 'MacBook Air', dueDate: '2023-06-01', borrowDate: '2023-05-20' },
   ];
 
   const now = new Date();
@@ -77,29 +77,33 @@ const UserLoansScreen = () => {
       
       </View>
 
-      <View style={[styles.separator]} />
+      <View style={[styles.header]}>
 
-        <View style={[styles.header]}>
-          <Text style={[styles.headerText, { flex: 1 }]}>Device</Text>
-          <Text style={[styles.headerText, { flex: 1, textAlign: 'right' }]}>Due date</Text>
+        <Text style={[styles.headerText, { flex: 1 }]}>Device</Text>
+
+        {currentTab === 'past' && <Text style={[styles.headerText, { flex: 1, textAlign: 'right', marginRight:-10 }]}>Borrow date</Text>}
+        {currentTab !== 'past' && <Text style={[styles.headerText, { flex: 1, textAlign: 'right' }]}>Due date</Text>}
+
         </View>
 
-        <View style={styles.separator} />
 
         <View style={styles.dataContainer}>
+
           {filteredData.map((item, index) => (
-            
+
             <TouchableOpacity
-            style={styles.dataRow}
-            key={index}
-            onPress={() => handleRowPress(index)}>
-            <Text style={[styles.deviceText, { flex: 1 }]}>{item.device}</Text>
-            <Text style={[styles.dueDateText, { marginRight: 15, flex: 1, textAlign: 'right' }]}>{item.dueDate}</Text>
-          
-          </TouchableOpacity>
+              style={styles.dataRow}
+              key={index}
+              onPress={() => handleRowPress(index)}>
+
+                <Text style={[styles.deviceText, { flex: 1 }]}>{item.device}</Text>
+                {currentTab === 'past' && <Text style={[styles.dueDateText, { marginRight: 15, flex: 1, textAlign: 'right' }]}>{item.borrowDate}</Text>}
+                {currentTab !== 'past' && <Text style={[styles.dueDateText, { marginRight: 15, flex: 1, textAlign: 'right' }]}>{item.dueDate}</Text>}
+            </TouchableOpacity>
           ))}
         </View>
-        </View>
+
+      </View>
   );
 };
 
