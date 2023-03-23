@@ -7,7 +7,9 @@ import DetailDeviceAdmin from './DetailDeviceAdmin';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
-const AdminScheduleScreen = () => {
+const Stack = createStackNavigator();
+
+const CollapsibleList = () => {
   const [currentTab, setCurrentTab] = useState('today');
   const navigation = useNavigation();
   const [filteredData, setFilteredData] = useState([]);
@@ -326,5 +328,14 @@ const styles = StyleSheet.create({
     fontWeight: '500'
   },
 });
+
+const AdminScheduleScreen = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown:false}}>
+      <Stack.Screen name="Home" component={CollapsibleList} />
+      <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
+    </Stack.Navigator>
+  )
+}
 
 export default AdminScheduleScreen;
