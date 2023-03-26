@@ -81,7 +81,7 @@ const GeneralDeviceAdmin = () => {
   };
 
   return (
-    <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
+    <ScrollView style={styles.container} >
 
       <View style={styles.titleView}>
         <Text style={styles.title}>{deviceName}</Text>
@@ -214,6 +214,7 @@ const styles =StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 20,
+    marginBottom: 100,
   },
   titleView:{
     alignItems:'center',
