@@ -23,7 +23,8 @@
     "react-native-screens": "~3.20.0",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "~0.18.10",
-    "react-router-native": "^6.9.0"
+    "react-router-native": "^6.9.0",
+    "expo-barcode-scanner": "~12.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

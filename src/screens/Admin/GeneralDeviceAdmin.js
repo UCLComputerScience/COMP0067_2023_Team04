@@ -81,135 +81,138 @@ const GeneralDeviceAdmin = () => {
   };
 
   return (
-    <ScrollView style={styles.container} >
+    <View style={styles.screen}>
+      <ScrollView style={styles.container} >
 
-      <View style={styles.titleView}>
-        <Text style={styles.title}>{deviceName}</Text>
-      </View>
+        <View style={styles.titleView}>
+          <Text style={styles.title}>{deviceName}</Text>
+        </View>
 
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabButton} onPress={toggleLoanRule}>
-          <View style={styles.detailLayout}>
-            <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan Rules</Text>
-            <Ionicons style={{ marginLeft: 'auto' }} name={loanRuleExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
-          </View>
-        </TouchableOpacity>
-        {loanRuleExpanded && (
-          <View style={styles.detailRow}>            
-              <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: '500', flex: 3 }}>Standard Loan Duration:</Text>
-                <Text style={{ fontWeight:'300', flex: 1 }}>{device[0].standardLoanDuration} Days</Text>
-              </View>
-              <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: '500', flex: 3 }}>Extension Allowance:</Text>
-                <Text style={{ fontWeight:'300', flex: 1 }}>
-                  {parseInt(device[0].extensionAllowance) > 1 ? device[0].extensionAllowance + ' Times' : device[0].extensionAllowance + ' Time'}
-                </Text>
-              </View>
-          </View>
-        )}
-      </View>
-      
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabButton} onPress={toggleSummaryDetails}>
-          <View style={styles.detailLayout}>
-            <Text style={[styles.tabButtonText, { flex: 1 }]}>Summary Details</Text>
-            <Ionicons style={{ marginLeft: 'auto' }} name={summaryDetailsExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
-          </View>
-        </TouchableOpacity>
-        {summaryDetailsExpanded && (
-          <View style={styles.detailRow}>
-            {Object.entries(summaryDetailsUnpacked).map(([key, value]) => (
-              <View key={key} style={styles.detailRowLayout}>
-                <Text style={{ fontWeight:'500', flex: 1 }}>{key}:</Text>
-                <Text style={{ fontWeight:'300', flex: 2 }}>{value}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-      </View>
-
-
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabButton} onPress={toggleDevicesID}>
-          <View style={styles.detailLayout}>
-            <Text style={[styles.tabButtonText, { flex: 1 }]}>Devices</Text>
-            <Ionicons style={{ marginLeft: 'auto' }} name={devicesIDExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
-          </View>
-        </TouchableOpacity>
-        {devicesIDExpanded && (
-          <View style={styles.detailRow}>
-              <View style={styles.detailRowLayout}>
-                <Text style={[styles.deviceKey, {flex:2, paddingLeft:10}]}>
-                  Device
-                </Text>
-                <Text style={[styles.deviceKey, {flex:1, paddingLeft:-10, textAlign:'center'}]}>
-                  State
-                </Text>
-              </View>
-              <View style={styles.detailRowLayout}>
-                <View style={{ flex: 2 }}>
-                  {devices.map(device => (
-                    <TouchableOpacity key={device.id} onPress={() => navigation.navigate('Detail', {deviceID: device.id})}>
-                      <Text style={styles.deviceID}>{device.id}</Text>
-                    </TouchableOpacity>
-                  ))}
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabButton} onPress={toggleLoanRule}>
+            <View style={styles.detailLayout}>
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan Rules</Text>
+              <Ionicons style={{ marginLeft: 'auto' }} name={loanRuleExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+            </View>
+          </TouchableOpacity>
+          {loanRuleExpanded && (
+            <View style={styles.detailRow}>            
+                <View style={styles.detailRowLayout}>
+                  <Text style={{ fontWeight: '500', flex: 3 }}>Standard Loan Duration:</Text>
+                  <Text style={{ fontWeight:'300', flex: 1 }}>{device[0].standardLoanDuration} Days</Text>
                 </View>
-                <View style={{ flex: 1 }}>
-                  {devices.map(device => (
-                    <Text key={device.id} style={styles.deviceState}>{device.state}</Text>
-                  ))}
+                <View style={styles.detailRowLayout}>
+                  <Text style={{ fontWeight: '500', flex: 3 }}>Extension Allowance:</Text>
+                  <Text style={{ fontWeight:'300', flex: 1 }}>
+                    {parseInt(device[0].extensionAllowance) > 1 ? device[0].extensionAllowance + ' Times' : device[0].extensionAllowance + ' Time'}
+                  </Text>
                 </View>
-              </View>
-
-          </View>
-        )}
-      </View>
-
-
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabButton} onPress={toggleLoanHistory}>
-          <View style={styles.detailLayout}>
-            <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan History</Text>
-            <Ionicons style={{ marginLeft: 'auto' }} name={loanHistoryExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
-          </View>
-        </TouchableOpacity>
-        {loanHistoryExpanded && (
-          <View style={styles.detailRow}>
-          <View style={styles.detailRowLayout}>
-            <Text style={[styles.deviceKey, {flex:1, paddingLeft:10}]}>
-              Device ID
-            </Text>
-            <Text style={[styles.deviceKey, {flex:1, textAlign:'center'}]}>
-              User ID
-            </Text>
-            <Text style={[styles.deviceKey, {flex:1, textAlign:'center'}]}>
-              Date
-            </Text>
-          </View>
-          <View style={styles.detailRowLayout}>
-            <Text style={styles.historyDeviceID}>
-              {history.map(history => `${history.deviceID}`).join('\n')}
-            </Text>
-            <Text style={styles.historyUserID}>
-              {history.map(history => `${history.userID}`).join('\n')}
-            </Text>
-            <Text style={[styles.historyState, {flex:1}]}>
-              {history.map(history => `${history.date}`).join('\n')}
-            </Text>
-          </View>
-      </View>
-        )}
-      </View>
+            </View>
+          )}
+        </View>
+        
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabButton} onPress={toggleSummaryDetails}>
+            <View style={styles.detailLayout}>
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>Summary Details</Text>
+              <Ionicons style={{ marginLeft: 'auto' }} name={summaryDetailsExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+            </View>
+          </TouchableOpacity>
+          {summaryDetailsExpanded && (
+            <View style={styles.detailRow}>
+              {Object.entries(summaryDetailsUnpacked).map(([key, value]) => (
+                <View key={key} style={styles.detailRowLayout}>
+                  <Text style={{ fontWeight:'500', flex: 1 }}>{key}:</Text>
+                  <Text style={{ fontWeight:'300', flex: 2 }}>{value}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
 
 
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabButton} onPress={toggleDevicesID}>
+            <View style={styles.detailLayout}>
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>Devices</Text>
+              <Ionicons style={{ marginLeft: 'auto' }} name={devicesIDExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+            </View>
+          </TouchableOpacity>
+          {devicesIDExpanded && (
+            <View style={styles.detailRow}>
+                <View style={styles.detailRowLayout}>
+                  <Text style={[styles.deviceKey, {flex:2, paddingLeft:10}]}>
+                    Device
+                  </Text>
+                  <Text style={[styles.deviceKey, {flex:1, paddingLeft:-10, textAlign:'center'}]}>
+                    State
+                  </Text>
+                </View>
+                <View style={styles.detailRowLayout}>
+                  <View style={{ flex: 2 }}>
+                    {devices.map(device => (
+                      <TouchableOpacity key={device.id} onPress={() => navigation.navigate('Detail', {deviceID: device.id})}>
+                        <Text style={styles.deviceID}>{device.id}</Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    {devices.map(device => (
+                      <Text key={device.id} style={styles.deviceState}>{device.state}</Text>
+                    ))}
+                  </View>
+                </View>
 
-    </ScrollView>
+            </View>
+          )}
+        </View>
+
+
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabButton} onPress={toggleLoanHistory}>
+            <View style={styles.detailLayout}>
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan History</Text>
+              <Ionicons style={{ marginLeft: 'auto' }} name={loanHistoryExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+            </View>
+          </TouchableOpacity>
+          {loanHistoryExpanded && (
+            <View style={styles.detailRow}>
+            <View style={styles.detailRowLayout}>
+              <Text style={[styles.deviceKey, {flex:1, paddingLeft:10}]}>
+                Device ID
+              </Text>
+              <Text style={[styles.deviceKey, {flex:1, textAlign:'center'}]}>
+                User ID
+              </Text>
+              <Text style={[styles.deviceKey, {flex:1, textAlign:'center'}]}>
+                Date
+              </Text>
+            </View>
+            <View style={styles.detailRowLayout}>
+              <Text style={styles.historyDeviceID}>
+                {history.map(history => `${history.deviceID}`).join('\n')}
+              </Text>
+              <Text style={styles.historyUserID}>
+                {history.map(history => `${history.userID}`).join('\n')}
+              </Text>
+              <Text style={[styles.historyState, {flex:1}]}>
+                {history.map(history => `${history.date}`).join('\n')}
+              </Text>
+            </View>
+        </View>
+          )}
+        </View>
+      </ScrollView>
+    </View>
   );
   
 }
 
 const styles =StyleSheet.create({
+  screen:{
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
