@@ -308,14 +308,15 @@ const styles = StyleSheet.create({
 
 });
   
-  const Stack = createStackNavigator();
-  const AdminDevicesScreen = () => {
-  return (
+const Stack = createStackNavigator();
+
+const AdminDevicesScreen = () => {
+return (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-  <Stack.Screen name="AllDevices" component={AllDevices} />
-  <Stack.Screen name="GeneralDeviceAdmin" component={GeneralDeviceAdmin} />
+    <Stack.Screen name="AllDevices" component={AllDevices} />
+    <Stack.Screen name="GeneralDeviceAdmin" component={GeneralDeviceAdmin} />
   </Stack.Navigator>
-  );
-  };
+);
+};
     
-    export default AdminDevicesScreen;
+export default AdminDevicesScreen;

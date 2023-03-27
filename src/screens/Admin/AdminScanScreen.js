@@ -15,16 +15,24 @@ const QRCodeScanner = ({ navigation }) => {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = ({ data }) => {
     setScanned(true);
     navigation.navigate('Detail', { deviceID: data });
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return (
+      <View style={styles.permissionview}>
+        <Text>Requesting for camera permission</Text>
+      </View>
+    )
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return(
+      <View style={styles.permissionview}>
+        <Text style={styles.permissiontext}>No access to camera</Text>
+      </View>
+    )
   }
 
   return (
@@ -53,6 +61,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: 'blue',
   },
+  permissionview:{
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  permissiontext: {
+    fontSize: 16,
+    fontWeight: '400',
+    textAlign: 'center'
+  }
 });
 
 
