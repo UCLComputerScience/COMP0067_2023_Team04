@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
 
 
 
@@ -87,21 +87,45 @@ const UserLoansScreen = () => {
         </View>
 
 
-        <View style={styles.dataContainer}>
+        <FlatList
 
-          {filteredData.map((item, index) => (
+        data={filteredData}
+        renderItem={({ item, index }) => (
 
-            <TouchableOpacity
-              style={styles.dataRow}
-              key={index}
-              onPress={() => handleRowPress(index)}>
+          <TouchableOpacity
 
-                <Text style={[styles.deviceText, { flex: 1 }]}>{item.device}</Text>
-                {currentTab === 'past' && <Text style={[styles.dueDateText, { marginRight: 15, flex: 1, textAlign: 'right' }]}>{item.borrowDate}</Text>}
-                {currentTab !== 'past' && <Text style={[styles.dueDateText, { marginRight: 15, flex: 1, textAlign: 'right' }]}>{item.dueDate}</Text>}
-            </TouchableOpacity>
-          ))}
-        </View>
+            style={styles.dataRow}
+            key={index}
+            onPress={() => handleRowPress(index)}
+          >
+
+            <Text style={[styles.deviceText, { flex: 1 }]}>{item.device}</Text>
+
+            {currentTab === 'past' && (
+              
+              <Text
+                style={[
+                  styles.dueDateText,
+                  { marginRight: 15, flex: 1, textAlign: 'right' },
+                ]}
+              >
+                {item.borrowDate}
+              </Text>
+            )}
+            {currentTab !== 'past' && (
+              <Text
+                style={[
+                  styles.dueDateText,
+                  { marginRight: 15, flex: 1, textAlign: 'right' },
+                ]}
+              >
+                {item.dueDate}
+              </Text>
+            )}
+          </TouchableOpacity>
+        )}
+        keyExtractor={(item, index) => index.toString()}
+      />
 
       </View>
   );
