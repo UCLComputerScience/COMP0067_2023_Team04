@@ -13,62 +13,62 @@ const AllDevices = () => {
   const initialDevices = [
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
-      launchedyear: '2021',
+      status: '2021',
       availabe: '5',
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070',
-      launchedyear: '2022',
+      status: '2022',
       availabe: '9',
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3060',
-      launchedyear: '2023',
+      status: '2023',
       availabe: '8',
     },
     {
       name: 'Dell XPS 13 2022',
-      launchedyear: '2022',
+      status: '2022',
       availabe: '3',
     },
     {
       name: 'MacBook Pro M1 2021',
-      launchedyear: '2021',
+      status: '2021',
       availabe: '7',
     },
     {
       name: 'ASUS ROG Zephyrus S GX701',
-      launchedyear: '2022',
+      status: '2022',
       availabe: '2',
     },
     {
       name: 'Lenovo Legion Y740',
-      launchedyear: '2023',
+      status: '2023',
       availabe: '4',
     },
     {
       name: 'Acer Predator Helios 300',
-      launchedyear: '2021',
+      status: '2021',
       availabe: '3',
     },
     {
       name: 'MSI GE76 Raider',
-      launchedyear: '2021',
+      status: '2021',
       availabe: '8',
     },
     {
       name: 'Razer Blade Pro 17',
-      launchedyear: '2022',
+      status: '2022',
       availabe: '9',
     },
     {
       name: 'Alienware m15 R4',
-      launchedyear: '2020',
+      status: '2020',
       availabe: '6',
     },
     {
       name: 'HP Spectre x360',
-      launchedyear: '2018',
+      status: '2018',
       availabe: '10',
     },        
   ];
@@ -111,9 +111,9 @@ const AllDevices = () => {
   const sortDevicesByLoaned = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
       if (order === 'asc') {
-        return a.launchedyear - b.launchedyear;
+        return a.status - b.status;
       } else {
-        return b.launchedyear - a.launchedyear;
+        return b.status - a.status;
       }
     });
     setDevices(sortedDevices);
@@ -185,7 +185,7 @@ const AllDevices = () => {
                 <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceUser', { deviceName: item.name })}>
                   <View style={styles.line}>
                     <Text style={[styles.devices, {flex:2.4, textAlign: 'left'}]}>{item.name}</Text>
-                    <Text style={[styles.devices, {marginLeft:-20, flex:1, textAlign: 'center'}]}>{item.launchedyear}</Text>
+                    <Text style={[styles.devices, {marginLeft:-20, flex:1, textAlign: 'center'}]}>{item.status}</Text>
                     <Text style={[styles.devices, {marginRight:-5, flex:0.9, textAlign: 'center'}]}>{item.availabe}</Text>
                   </View>
                 </TouchableOpacity>
@@ -195,7 +195,7 @@ const AllDevices = () => {
               return (
                 <View style={styles.line}>
                   <Text style={[styles.devices, {flex:3, textAlign: 'left'}]}>{item.name}</Text>
-                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.launchedyear}</Text>
+                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.status}</Text>
                   <Text style={[styles.devices, {MARflex:1, textAlign: 'center'}]}>{item.availabe}</Text>
                 </View>
               )
