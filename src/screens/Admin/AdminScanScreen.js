@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import { BarCodeScanner } from 'expo-barcode-scanner';
+import DetailDeviceAdmin from './DetailDeviceAdmin';
+import { createStackNavigator } from '@react-navigation/stack';
 
-export default function QRCodeScanner() {
+const QRCodeScanner = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
-  const [qrData, setQrData] = useState(null);
 
   useEffect(() => {
     (async () => {
@@ -16,7 +17,7 @@ export default function QRCodeScanner() {
 
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    setQrData(data);
+    navigation.navigate('Detail', { deviceID: data });
   };
 
   if (hasPermission === null) {
@@ -33,12 +34,9 @@ export default function QRCodeScanner() {
         style={StyleSheet.absoluteFillObject}
       />
       {scanned && (
-        <>
-          <Text style={styles.qrData}>QR Code Data: {qrData}</Text>
-          <Text onPress={() => setScanned(false)} style={styles.button}>
-            Tap to Scan Again
-          </Text>
-        </>
+        <Text onPress={() => setScanned(false)} style={styles.button}>
+          Tap to Scan Again
+        </Text>
       )}
     </View>
   );
@@ -50,14 +48,23 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
   },
-  qrData: {
-    fontSize: 18,
-    textAlign: 'center',
-    marginBottom: 10,
-  },
   button: {
     fontSize: 16,
     textAlign: 'center',
     color: 'blue',
   },
 });
+
+
+const Stack = createStackNavigator();
+
+const AdminScanScreen = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown:false}}>
+      <Stack.Screen name="QRCodeScanner" component={QRCodeScanner} />
+      <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
+    </Stack.Navigator>
+  )
+}
+
+export default AdminScanScreen

@@ -18,6 +18,14 @@ const DetailDeviceAdmin = () => {
     QRCode: '010 001 110 001 001 010 111 010 110 100 001 011 111 001 101',
   };
 
+  const loanDetails = 
+  {
+    loanDate: '2022-03-21',
+    userID: 'ucabcda',
+    deviceStatues: 'Loaned',
+    //how to achieve the status change? fetch from DB (require refresh) : change from frontend once clicked
+  };
+
   const navigation = useNavigation();
 
   useLayoutEffect(() => {
@@ -26,6 +34,7 @@ const DetailDeviceAdmin = () => {
 
   return (
     <ScrollView style={styles.container}>
+      <Text style={styles.deviceName}>{deviceID}</Text>
       <Text style={styles.deviceName}>{deviceInfo.deviceName}</Text>
       <View style={styles.separator} />
       <View style={[styles.row, {marginTop: 10}]} >
