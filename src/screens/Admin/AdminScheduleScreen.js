@@ -331,8 +331,8 @@ const styles = StyleSheet.create({
 
 const AdminScheduleScreen = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown:false}}>
-      <Stack.Screen name="Home" component={CollapsibleList} />
+    <Stack.Navigator>
+      <Stack.Screen name="Schedule" component={CollapsibleList} />
       <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
     </Stack.Navigator>
   )

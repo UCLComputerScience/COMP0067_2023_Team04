@@ -10,7 +10,7 @@ import AdminSettingsScreen from '../Admin/AdminSettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
-const ScanButton = ({children, onPress}) => (
+const ScanButton = ({children, onPress, focused}) => (
     <TouchableOpacity
         style={{
             top: 5,
@@ -53,9 +53,10 @@ const Tabs = () =>{
         >
 
             <Tab.Screen 
-                name = "Schedule"  
+                name = "AdminSchedule"  
                 component={AdminScheduleScreen} 
                 options={{
+                    headerShown: false,
                     tabBarIcon: ({focused}) =>(
                         <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                             <Image 
@@ -123,24 +124,25 @@ const Tabs = () =>{
             />                 
 
             <Tab.Screen 
-                name = "Devices"   
+                name = "AdminDevices"   
                 component={AdminDevicesScreen}  
                 options={{
-                tabBarIcon: ({focused}) =>(
-                    <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
-                        <Image 
-                            source={require('../../components/icons/Devices.png')}
-                            resizeMode = 'contain'
-                            style={{
-                                width: 25,
-                                height: 25,
-                                tintColor: focused ? '#AC145A' : '#A6AAB2'
-                            }}
-                        />
-                        <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
-                            Devices
-                        </Text>
-                    </View>
+                    headerShown: false,
+                    tabBarIcon: ({focused}) =>(
+                        <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
+                            <Image 
+                                source={require('../../components/icons/Devices.png')}
+                                resizeMode = 'contain'
+                                style={{
+                                    width: 25,
+                                    height: 25,
+                                    tintColor: focused ? '#AC145A' : '#A6AAB2'
+                                }}
+                            />
+                            <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
+                                Devices
+                            </Text>
+                        </View>
                 )
 
             }} />
