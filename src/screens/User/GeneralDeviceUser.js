@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal } from 'react-native'
 import React, {useState} from 'react'
 import { useRoute, useNavigation } from '@react-navigation/native'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -10,6 +10,7 @@ const GeneralDeviceUser = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params;
+  const [modalVisible, setModalVisible] = useState(false);
 
   const device = [{
     standardLoanDuration: 14,
@@ -43,81 +44,125 @@ const GeneralDeviceUser = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
   
+  
+
 
   return (
-    <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
+    <>
+    
+      <Modal
 
-      <View style={styles.titleView}>
-        <Text style={styles.title}>{deviceName}</Text>
+      animationType="slide"
+      transparent={true}
+      visible={modalVisible}
+      onRequestClose={() => {
+        setModalVisible(false);
+      }}
+    >
+      <View style={styles.centeredView}>
+        <View style={styles.modalView}>
+          <Text style={styles.modalTitle}>select the collect time</Text>
+          {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.modalButton}
+              onPress={() => {
+                
+              }}
+            >
+              <Text style={styles.modalButtonText}>{day}</Text>
+            </TouchableOpacity>
+          ))}
+          <TouchableOpacity
+            style={styles.modalButton}
+            onPress={() => {
+              setModalVisible(false);
+            }}
+          >
+            <Text style={styles.modalButtonText}>cancel</Text>
+          </TouchableOpacity>
+        </View>
       </View>
+      </Modal>,
 
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabButton} onPress={toggleLoanRule}>
-          <View style={styles.detailLayout}>
-            <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan Rules</Text>
-            <Ionicons style={{ marginLeft: 'auto' }} name={loanRuleExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
-          </View>
-        </TouchableOpacity>
-        {loanRuleExpanded && (
-          <View style={styles.detailRow}>            
-              <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: '500', flex: 2 }}>Standard Loan Duration:</Text>
-                <Text style={{ fontWeight:'300', flex: 1 }}>{device[0].standardLoanDuration} Days</Text>
-              </View>
-              <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: '500', flex: 2 }}>Extension Allowance:</Text>
-                <Text style={{ fontWeight:'300', flex: 1 }}>
-                  {parseInt(device[0].extensionAllowance) > 1 ? device[0].extensionAllowance + ' Times' : device[0].extensionAllowance + ' Time'}
-                </Text>
-              </View>
-          </View>
-        )}
-      </View>
+      <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
+
+        <View style={styles.titleView}>
+          <Text style={styles.title}>{deviceName}</Text>
+        </View>
+
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabButton} onPress={toggleLoanRule}>
+            <View style={styles.detailLayout}>
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan Rules</Text>
+              <Ionicons style={{ marginLeft: 'auto' }} name={loanRuleExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+            </View>
+          </TouchableOpacity>
+          {loanRuleExpanded && (
+            <View style={styles.detailRow}>            
+                <View style={styles.detailRowLayout}>
+                  <Text style={{ fontWeight: '500', flex: 2 }}>Standard Loan Duration:</Text>
+                  <Text style={{ fontWeight:'300', flex: 1 }}>{device[0].standardLoanDuration} Days</Text>
+                </View>
+                <View style={styles.detailRowLayout}>
+                  <Text style={{ fontWeight: '500', flex: 2 }}>Extension Allowance:</Text>
+                  <Text style={{ fontWeight:'300', flex: 1 }}>
+                    {parseInt(device[0].extensionAllowance) > 1 ? device[0].extensionAllowance + ' Times' : device[0].extensionAllowance + ' Time'}
+                  </Text>
+                </View>
+            </View>
+          )}
+        </View>
+        
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabButton} onPress={toggleSummaryDetails}>
+            <View style={styles.detailLayout}>
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>Summary Details</Text>
+              <Ionicons style={{ marginLeft: 'auto' }} name={summaryDetailsExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+            </View>
+          </TouchableOpacity>
+          {summaryDetailsExpanded && (
+            <View style={styles.detailRow}>
+              {Object.entries(summaryDetailsUnpacked).map(([key, value]) => (
+                <View key={key} style={styles.detailRowLayout}>
+                  <Text style={{ fontWeight:'500', flex: 1 }}>{key}:</Text>
+                  <Text style={{ fontWeight:'300', flex: 2 }}>{value}</Text>
+                </View>
+              ))}
+            </View>
+          )}
+        </View>
+
+
+        <View style={styles.tabBar}>
+          <TouchableOpacity style={styles.tabButton} onPress={toggleDevicesID}>
+            <View style={styles.detailLayout}>
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan options</Text>
+              <Ionicons style={{ marginLeft: 'auto' }} name={devicesIDExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+            </View>
+          </TouchableOpacity>
+          {devicesIDExpanded && (
+            <View style={styles.detailRow}>            
+            <View style={styles.detailRowLayout}>
+              <Text style={{ fontWeight: '500', flex: 2 }}>Status:</Text>
+              <Text style={{ fontWeight:'300', flex: 1 }}>Available</Text>
+            </View>
+            
+        </View>
+      )}
+    </View>
+    
+    <View style={styles.buttonContainer}>
       
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabButton} onPress={toggleSummaryDetails}>
-          <View style={styles.detailLayout}>
-            <Text style={[styles.tabButtonText, { flex: 1 }]}>Summary Details</Text>
-            <Ionicons style={{ marginLeft: 'auto' }} name={summaryDetailsExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
-          </View>
-        </TouchableOpacity>
-        {summaryDetailsExpanded && (
-          <View style={styles.detailRow}>
-            {Object.entries(summaryDetailsUnpacked).map(([key, value]) => (
-              <View key={key} style={styles.detailRowLayout}>
-                <Text style={{ fontWeight:'500', flex: 1 }}>{key}:</Text>
-                <Text style={{ fontWeight:'300', flex: 2 }}>{value}</Text>
-              </View>
-            ))}
-          </View>
-        )}
-      </View>
 
-
-      <View style={styles.tabBar}>
-        <TouchableOpacity style={styles.tabButton} onPress={toggleDevicesID}>
-          <View style={styles.detailLayout}>
-            <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan options</Text>
-            <Ionicons style={{ marginLeft: 'auto' }} name={devicesIDExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
-          </View>
-        </TouchableOpacity>
-        {devicesIDExpanded && (
-          <View style={styles.detailRow}>            
-          <View style={styles.detailRowLayout}>
-            <Text style={{ fontWeight: '500', flex: 2 }}>Status:</Text>
-            <Text style={{ fontWeight:'300', flex: 1 }}>Available</Text>
-          </View>
-          
-      </View>
-    )}
-  </View>
-
+        
+      <Button title="Reserve" color="#AC145A" onPress={() => setModalVisible(true)} />
       
-      
+    </View>
 
 
-
-    </ScrollView>
+      </ScrollView>
+    </>
   );
   
 }
@@ -201,6 +246,47 @@ const styles =StyleSheet.create({
     flex: 1, 
     lineHeight: 20,
     textAlign:'right'
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EBEDEF',
+    paddingVertical: 10,
+    width: Dimensions.get('window').width * 0.6,
+    borderRadius: 10,
+    marginLeft:60,
+    marginBottom: 20,
+    marginTop: 250,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalView: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalButton: {
+    backgroundColor: '#D3D3D3',
+    borderRadius: 5,
+    padding: 10,
+    width: '80%',
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  modalButtonText: {
+    color: '#AC145A',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 })
 
