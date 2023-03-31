@@ -10,7 +10,7 @@ const GeneralDeviceUser = () => {
   const route = useRoute();
   const deviceName = route.params;
   const [modalVisible, setModalVisible] = useState(false);
-
+  const [status, setStatus] = useState("Available");
   const device = [
     {
       standardLoanDuration: 14,
@@ -55,7 +55,8 @@ const GeneralDeviceUser = () => {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalTitle}>select the collect time</Text>
-            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day, index) => (
+            {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday : 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
+
               <TouchableOpacity
                 key={index}
                 style={styles.modalButton}
@@ -68,13 +69,14 @@ const GeneralDeviceUser = () => {
               </TouchableOpacity>
             ))}
             <TouchableOpacity
-              style={styles.modalButton}
+              style={[styles.modalButtonNoBorder, { marginTop: 20 }]} 
               onPress={() => {
                 setModalVisible(false);
               }}
             >
               <Text style={styles.modalButtonText}>cancel</Text>
             </TouchableOpacity>
+
           </View>
         </View>
       </Modal>
@@ -136,23 +138,23 @@ const GeneralDeviceUser = () => {
             </View>
           </TouchableOpacity>
           {devicesIDExpanded && (
-            <View style={styles.detailRow}>            
+            <View style={styles.detailRow}>
             <View style={styles.detailRowLayout}>
-              <Text style={{ fontWeight: '500', flex: 2 }}>Status:</Text>
-              <Text style={{ fontWeight:'300', flex: 1 }}>Available</Text>
+              <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
             </View>
-            
-        </View>
+          </View>
       )}
     </View>
     
     <View style={styles.buttonContainer}>
-      
-
-        
-      <Button title="Reserve" color="#AC145A" onPress={() => setModalVisible(true)} />
-      
-    </View>
+          <Button
+            title="Reserve"
+            color="#AC145A"
+            onPress={() => setModalVisible(true)}
+            disabled={status !== "Available"}
+          />
+        </View>
 
 
       </ScrollView>
@@ -261,26 +263,37 @@ const styles =StyleSheet.create({
   modalView: {
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 20,
+    padding: 30,
     alignItems: 'center',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
+    color: 'gray', 
   },
   modalButton: {
-    backgroundColor: '#D3D3D3',
+    backgroundColor: 'white', 
     borderRadius: 5,
     padding: 10,
     width: '80%',
     alignItems: 'center',
     marginTop: 10,
+    borderBottomWidth: 1, 
+    borderBottomColor: '#D6D6D6', 
   },
   modalButtonText: {
-    color: '#AC145A',
+    color: '#AC145A', 
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  modalButtonNoBorder: {
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 10,
+    width: '80%',
+    alignItems: 'center',
+    marginTop: 10,
   },
 })
 
