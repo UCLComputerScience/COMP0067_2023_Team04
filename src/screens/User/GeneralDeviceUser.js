@@ -1,38 +1,36 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal } from 'react-native'
-import React, {useState} from 'react'
-import { useRoute, useNavigation } from '@react-navigation/native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal } from 'react-native';
+import React, { useState } from 'react';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceUser = () => {
-
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params;
   const [modalVisible, setModalVisible] = useState(false);
 
-  const device = [{
-    standardLoanDuration: 14,
-    extensionAllowance: 1,
-    summaryDetails: '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
+  const device = [
+    {
+      standardLoanDuration: 14,
+      extensionAllowance: 1,
+      summaryDetails:
+        '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
                       "GPU": "RTX 3070ti 8G 150W", \
                       "Memory": "DDR5 16GB 4800Hz Dual", \
                       "SSD": "SAMSUNG PM9A1 512GB", \
                       "Screen": "2.5K (2560*1600) 16:10 165Hz", \
                       "Power": "300W", \
                       "WIFI": "AX211"}',
-  }]
+    },
+  ];
 
-  
   const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
-
-  
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
   const [devicesIDExpanded, setDevicesIDExpanded] = useState(false);
-  
 
   const toggleLoanRule = () => {
     setLoanRuleExpanded(!loanRuleExpanded);
@@ -43,47 +41,43 @@ const GeneralDeviceUser = () => {
   const toggleDevicesID = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
-  
-  
-
 
   return (
-    <>
-    
+    <View style={{ flex: 1 }}>
       <Modal
-
-      animationType="slide"
-      transparent={true}
-      visible={modalVisible}
-      onRequestClose={() => {
-        setModalVisible(false);
-      }}
-    >
-      <View style={styles.centeredView}>
-        <View style={styles.modalView}>
-          <Text style={styles.modalTitle}>select the collect time</Text>
-          {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day, index) => (
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>select the collect time</Text>
+            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'].map((day, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.modalButton}
+                onPress={() => {
+                  console.log('Selected day:', day);
+                  setModalVisible(false);
+                }}
+              >
+                <Text style={styles.modalButtonText}>{day}</Text>
+              </TouchableOpacity>
+            ))}
             <TouchableOpacity
-              key={index}
               style={styles.modalButton}
               onPress={() => {
-                
+                setModalVisible(false);
               }}
             >
-              <Text style={styles.modalButtonText}>{day}</Text>
+              <Text style={styles.modalButtonText}>cancel</Text>
             </TouchableOpacity>
-          ))}
-          <TouchableOpacity
-            style={styles.modalButton}
-            onPress={() => {
-              setModalVisible(false);
-            }}
-          >
-            <Text style={styles.modalButtonText}>cancel</Text>
-          </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      </Modal>,
+      </Modal>
 
       <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
 
@@ -162,7 +156,7 @@ const GeneralDeviceUser = () => {
 
 
       </ScrollView>
-    </>
+    </View>  
   );
   
 }
