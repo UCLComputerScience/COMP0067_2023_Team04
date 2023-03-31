@@ -1,8 +1,8 @@
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal } from 'react-native';
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-
+import UserTermScreen from './UserTermScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceUser = () => {
@@ -58,14 +58,15 @@ const GeneralDeviceUser = () => {
             {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday : 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
 
               <TouchableOpacity
-                key={index}
-                style={styles.modalButton}
-                onPress={() => {
-                  console.log('Selected day:', day);
-                  setModalVisible(false);
-                }}
+              key={index}
+              style={styles.modalButton}
+              onPress={() => {
+                console.log('Selected day:', day);
+                setModalVisible(false);
+                navigation.navigate('UserTerm'); // Add this line
+              }}
               >
-                <Text style={styles.modalButtonText}>{day}</Text>
+              <Text style={styles.modalButtonText}>{day}</Text>
               </TouchableOpacity>
             ))}
             <TouchableOpacity
@@ -303,9 +304,14 @@ const GeneralDeviceUserScreen = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name="General" component={GeneralDeviceUser} />
-      
+      <Stack.Screen
+        name="UserTerm"
+        component={UserTermScreen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
-  )
-}
+  );
+};
+
 
 export default GeneralDeviceUserScreen
