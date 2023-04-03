@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-const UserTermScreen = ({ navigation }) => {
+import GeneralDeviceUser2Screen from './GeneralDeviceUser2';
+
+const AgreementScreen = ({ navigation }) => {
   const handleAgreePress = () => {
     console.log('I agree button pressed');
     navigation.navigate('GeneralDeviceUser2');
@@ -35,5 +39,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
+
+const Stack = createStackNavigator();
+
+const UserTermScreen = () => {
+  return (
+    
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="Agreement" component={AgreementScreen} />
+      <Stack.Screen
+        name="GeneralDeviceUser2"
+        component={GeneralDeviceUser2Screen}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+
+  );
+};
 
 export default UserTermScreen;
