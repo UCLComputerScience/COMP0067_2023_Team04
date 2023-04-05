@@ -6,6 +6,7 @@ import UserTermScreen from './UserTermScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceUser = () => {
+  const [selectedCollectTime, setSelectedCollectTime] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params;
@@ -62,8 +63,9 @@ const GeneralDeviceUser = () => {
               style={styles.modalButton}
               onPress={() => {
                 console.log('Selected day:', day);
+                setSelectedCollectTime(day);
                 setModalVisible(false);
-                navigation.navigate('UserTerm'); // Add this line
+                navigation.navigate('UserTerm', { collectTime: selectedCollectTime }); 
               }}
               >
               <Text style={styles.modalButtonText}>{day}</Text>

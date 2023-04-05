@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { NavigationContainer } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
 import GeneralDeviceUser2Screen from './GeneralDeviceUser2';
 
 const AgreementScreen = ({ navigation }) => {
+  const route = useRoute();
+  const collectTime = route.params?.collectTime;
   const handleAgreePress = () => {
     console.log('I agree button pressed');
     navigation.navigate('GeneralDeviceUser2');

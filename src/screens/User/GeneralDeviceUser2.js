@@ -2,10 +2,10 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimension
 import React, { useState, useLayoutEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import UserTermScreen from './UserTermScreen';
-import { createStackNavigator } from '@react-navigation/stack';
+
 
 const GeneralDeviceUser2Screen = () => {
+  const [selectedCollectTime, setSelectedCollectTime] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params;
@@ -143,6 +143,14 @@ const GeneralDeviceUser2Screen = () => {
             <View style={styles.detailRowLayout}>
               <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
               <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
+            </View>
+            <View style={styles.detailRowLayout}>
+              <Text style={{ fontWeight: "500", flex: 2 }}>Collect date:</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>1234</Text>
+            </View>
+            <View style={styles.detailRowLayout}>
+              <Text style={{ fontWeight: "500", flex: 2 }}>Lacation:</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>MPEB 4.20</Text>
             </View>
           </View>
       )}
