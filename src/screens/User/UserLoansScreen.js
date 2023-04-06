@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
+import GeneralDeviceExtendScreen from './GeneralDeviceExtendScreen';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 
-
-const UserLoansScreen = () => {
+const UserLoans = () => {
   const [currentTab, setCurrentTab] = useState('ongoing');
   const [filteredData, setFilteredData] = useState([]);
+  const navigation = useNavigation();
 
+  const route = useRoute();
   const data = [
     { device: 'Lenovo Legion Y9000P 2022 RTX 3070ti', dueDate: '2023-03-01', borrowDate: '2023-02-15' },
     { device: 'iPad Pro', dueDate: '2023-04-05', borrowDate: '2023-03-20' },
@@ -37,6 +41,7 @@ const UserLoansScreen = () => {
   };
 
   const handleRowPress = (index) => {
+    navigation.navigate('GeneralDeviceExtendScreen', { itemIndex: index });
     console.log(`Clicked row ${index}`);
   };
 
@@ -208,5 +213,16 @@ const styles = StyleSheet.create({
     textAlign: 'right',
   },
 });
+
+
+const Stack = createStackNavigator();
+const UserLoansScreen = () => {
+  return (
+    <Stack.Navigator screenOptions={{headerShown:false}}>
+      <Stack.Screen name="loandata" component={UserLoans} />
+      <Stack.Screen name="GeneralDeviceExtendScreen" component={GeneralDeviceExtendScreen} />
+    </Stack.Navigator>
+  )
+}
 
 export default UserLoansScreen;
