@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal, Alert } from 'react-native';
 import React, { useState, useLayoutEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -6,6 +6,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceExtendScreen = () => {
+  const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
+  const [dueDate, setDueDate] = useState('2023-01-01');
   const [selectedCollectTime, setSelectedCollectTime] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
@@ -26,6 +28,29 @@ const GeneralDeviceExtendScreen = () => {
                       "WIFI": "AX211"}',
     },
   ];
+
+  const extendDevice = () => {
+    if (device[0].extensionAllowance === 1) {
+      setIsExtendButtonDisabled(true); 
+      Alert.alert(
+        'Extension successful',
+        'You have successfully extened your loan.',
+        [
+          {
+            text: 'YES',
+            onPress: () => {
+              const currentDate = new Date(dueDate);
+              const newDueDate = new Date(currentDate.setDate(currentDate.getDate() + 7)).toISOString().slice(0, 10);
+              setDueDate(newDueDate);
+              device[0].extensionAllowance = 0;
+              setIsExtendButtonDisabled(false); 
+            }
+          }
+        ],
+        { cancelable: false }
+      );
+    }
+  };
 
   const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
 
@@ -148,7 +173,7 @@ const GeneralDeviceExtendScreen = () => {
             </View>
             <View style={styles.detailRowLayout}>
               <Text style={{ fontWeight: "500", flex: 2 }}>Due date:</Text>
-              <Text style={{ fontWeight: "300", flex: 1 }}>1234</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>{dueDate}</Text>
             </View>
             <View style={styles.detailRowLayout}>
               <Text style={{ fontWeight: "500", flex: 2 }}>Location:</Text>
@@ -171,8 +196,8 @@ const GeneralDeviceExtendScreen = () => {
         <Button
           title="Extend"
           color="#AC145A"
-          onPress={() => setModalVisible(true)}
-          disabled={status !== "Available"}
+          onPress={extendDevice}
+          disabled={isExtendButtonDisabled}
         />
       </View>
     </View>
