@@ -68,6 +68,42 @@ const GeneralDeviceExtendScreen = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
 
+  const showAlert = (time) => {
+    Alert.alert(
+      "Return confirmation", 
+      `Are you sure you want to return the device on ${time}?`, 
+      [
+        {
+          text: "NO",
+          onPress: () => console.log("NO Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "YES",
+          onPress: () => {
+            console.log("YES Pressed");
+            showSecondAlert(); 
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  
+  const showSecondAlert = () => {
+    Alert.alert(
+      "Return Time selected", 
+      "You have successfully selected a time slot. Please return the device during the selected time slot.", 
+      [
+        {
+          text: "YES",
+          onPress: () => console.log("YES Pressed"),
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <Modal
@@ -90,7 +126,7 @@ const GeneralDeviceExtendScreen = () => {
                 console.log('Selected day:', day);
                 setSelectedCollectTime(day);
                 setModalVisible(false);
-                navigation.navigate('UserTerm', { collectTime: selectedCollectTime }); 
+                showAlert(day); 
               }}
               >
               <Text style={styles.modalButtonText}>{day}</Text>
