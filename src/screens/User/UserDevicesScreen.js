@@ -179,30 +179,23 @@ const AllDevices = () => {
           <Ionicons name={`chevron-${availableSortOrder === 'asc' ? 'up' : 'down'}-outline`} size={15} color="#AC145A" style={{ marginHorizontal: 0 }} />
         </TouchableOpacity>
       </View>
-        <FlatList data={devices} renderItem={({item} ) => {
-            if(input === ""){
-              return (
-                <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceUser', { deviceName: item.name })}>
-                  <View style={styles.line}>
-                    <Text style={[styles.devices, {flex:2.4, textAlign: 'left'}]}>{item.name}</Text>
-                    <Text style={[styles.devices, {marginLeft:-20, flex:1, textAlign: 'center'}]}>{item.launchedyear}</Text>
-                    <Text style={[styles.devices, {marginRight:-5, flex:0.9, textAlign: 'center'}]}>{item.availabe}</Text>
-                  </View>
-                </TouchableOpacity>
-              )
-            }
-            if(item.name.toLowerCase().includes(input.toLowerCase())){
-              return (
+      <FlatList
+        data={devices}
+        renderItem={({ item }) => {
+          if (input === "" || item.name.toLowerCase().includes(input.toLowerCase())) {
+            return (
+              <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceUser', { deviceName: item.name })}>
                 <View style={styles.line}>
-                  <Text style={[styles.devices, {flex:3, textAlign: 'left'}]}>{item.name}</Text>
-                  <Text style={[styles.devices, {flex:1, textAlign: 'center'}]}>{item.launchedyear}</Text>
-                  <Text style={[styles.devices, {MARflex:1, textAlign: 'center'}]}>{item.availabe}</Text>
+                  <Text style={[styles.devices, { flex: 2.4, textAlign: 'left' }]}>{item.name}</Text>
+                  <Text style={[styles.devices, { marginLeft: -20, flex: 1, textAlign: 'center' }]}>{item.launchedyear}</Text>
+                  <Text style={[styles.devices, { marginRight: -5, flex: 0.9, textAlign: 'center' }]}>{item.availabe}</Text>
                 </View>
-              )
-            }
+              </TouchableOpacity>
+            );
+          }
         }}
-        contentContainerStyle={{ paddingBottom: 170 }} 
-        />
+        contentContainerStyle={{ paddingBottom: 170 }}
+      />
       </View>
     </View>
   );
