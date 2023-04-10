@@ -2,18 +2,23 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimension
 import React, { useState, useLayoutEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { addDays, format } from 'date-fns';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceExtendScreen = () => {
   const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
+  const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
+
+ 
   const [dueDate, setDueDate] = useState('2023-01-01');
   const [selectedCollectTime, setSelectedCollectTime] = useState('');
+  const [deviceList, setDeviceList] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params.deviceName;
   const [modalVisible, setModalVisible] = useState(false);
-  const [status, setStatus] = useState("Available");
+  const [status, setStatus] = useState("Loaned");
   const device = [
     {
       standardLoanDuration: 14,
@@ -29,9 +34,21 @@ const GeneralDeviceExtendScreen = () => {
     },
   ];
 
+  const parseDateStringToTimestamp = (dateString) => {
+    const [day, time] = dateString.split(': ');
+    const [start, end] = time.split(' - ');
+    const date = new Date();
+    const [startHour, startMinute] = start.split(':');
+    date.setHours(parseInt(startHour, 10), parseInt(startMinute, 10), 0, 0);
+    return date.getTime();
+  };
+
   const extendDevice = () => {
     if (device[0].extensionAllowance === 1) {
-      setIsExtendButtonDisabled(true); 
+      const newDueDate = addDays(new Date(dueDate), 7);
+      const formattedNewDueDate = format(newDueDate, 'yyyy-MM-dd');
+  
+      setIsExtendButtonDisabled(true);
       Alert.alert(
         'Extension successful',
         'You have successfully extened your loan.',
@@ -39,13 +56,17 @@ const GeneralDeviceExtendScreen = () => {
           {
             text: 'YES',
             onPress: () => {
-              const currentDate = new Date(dueDate);
-              const newDueDate = new Date(currentDate.setDate(currentDate.getDate() + 7)).toISOString().slice(0, 10);
-              setDueDate(newDueDate);
+              setDueDate(formattedNewDueDate);
               device[0].extensionAllowance = 0;
-              setIsExtendButtonDisabled(false); 
-            }
-          }
+              setIsExtendButtonDisabled(false);
+              setDeviceList((prevState) => [ 
+                {
+                  ...prevState[0],
+                  extensionAllowance: 0,
+                },
+              ]);
+            },
+          },
         ],
         { cancelable: false }
       );
@@ -68,10 +89,11 @@ const GeneralDeviceExtendScreen = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
 
-  const showAlert = (time) => {
+  const showAlert = (timeString) => {
+    const timestamp = parseDateStringToTimestamp(timeString);
     Alert.alert(
       "Return confirmation", 
-      `Are you sure you want to return the device on ${time}?`, 
+      `Are you sure you want to return the device on ${timeString}?`, 
       [
         {
           text: "NO",
@@ -82,7 +104,11 @@ const GeneralDeviceExtendScreen = () => {
           text: "YES",
           onPress: () => {
             console.log("YES Pressed");
-            showSecondAlert(); 
+            showSecondAlert(timestamp);
+            
+            setDueDate(timeString);
+            setIsReturnButtonDisabled(true);
+            setIsExtendButtonDisabled(true);
           },
         },
       ],
@@ -97,7 +123,10 @@ const GeneralDeviceExtendScreen = () => {
       [
         {
           text: "YES",
-          onPress: () => console.log("YES Pressed"),
+          onPress: () => {
+            console.log("YES Pressed");
+            
+          },
         },
       ],
       { cancelable: false }
@@ -225,7 +254,7 @@ const GeneralDeviceExtendScreen = () => {
           title="Return"
           color="#AC145A"
           onPress={() => setModalVisible(true)}
-          disabled={status !== "Available"}
+          disabled={status !== "Loaned" || isReturnButtonDisabled}
         />
       </View>
       <View style={styles.extendButtonWrapper}>
