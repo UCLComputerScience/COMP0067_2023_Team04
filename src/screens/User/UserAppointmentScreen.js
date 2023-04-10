@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'r
 import React, {useState} from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import GeneralDeviceUser from './GeneralDeviceUser';
+import GeneralDeviceUser2Screen from './GeneralDeviceUser2';
 
 const AllDevices = () => {
 
@@ -37,7 +37,10 @@ const AllDevices = () => {
            
   ];
 
-  
+  const handleAgreePress = () => {
+    console.log('I agree button pressed');
+    navigation.navigate('GeneralDeviceUser2');
+  };
 
   const [input, setInput] = useState('');
   const [devices, setDevices] = useState(initialDevices);
@@ -69,7 +72,7 @@ const AllDevices = () => {
         <FlatList data={devices} renderItem={({item} ) => {
             if(input === ""){
               return (
-                <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceUser', { deviceName: item.name })}>
+                <TouchableOpacity onPress={handleAgreePress}>
                   <View style={styles.line}>
                     <Text style={[styles.devices, {flex:2.4, textAlign: 'left'}]}>{item.name}</Text>
                     <Text style={[styles.devices, {marginLeft:10, flex:1, textAlign: 'center'}]}>{item.status}</Text>
@@ -146,7 +149,11 @@ const UserAppointmentScreen = () => {
   return (
     <Stack.Navigator screenOptions={{headerShown:false}}>
       <Stack.Screen name="AllDevices" component={AllDevices} />
-      <Stack.Screen name="GeneralDeviceUser" component={GeneralDeviceUser} />
+      <Stack.Screen
+        name="GeneralDeviceUser2"
+        component={GeneralDeviceUser2Screen}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   )
 }

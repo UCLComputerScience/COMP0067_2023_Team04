@@ -146,7 +146,7 @@ const GeneralDeviceUser2Screen = () => {
             </View>
             <View style={styles.detailRowLayout}>
               <Text style={{ fontWeight: "500", flex: 2 }}>Collect date:</Text>
-              <Text style={{ fontWeight: "300", flex: 1 }}>1234</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>2023-01-01</Text>
             </View>
             <View style={styles.detailRowLayout}>
               <Text style={{ fontWeight: "500", flex: 2 }}>Lacation:</Text>

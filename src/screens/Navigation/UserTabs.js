@@ -69,7 +69,7 @@ const Tabs = () =>{
                                 }}
                             />
                             <Text style = {{color: focused ? '#AC145A' : '#A6AAB2', fontSize:12}}>
-                                Schedule
+                                Appointment
                             </Text>
                         </View>
                     )
