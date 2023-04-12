@@ -2,7 +2,7 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimension
 import React, { useState, useLayoutEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import UserTermScreen from './UserTermScreen';
+import AgreementScreen from './UserTermScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceUser = () => {
@@ -65,7 +65,7 @@ const GeneralDeviceUser = () => {
                 console.log('Selected day:', day);
                 setSelectedCollectTime(day);
                 setModalVisible(false);
-                navigation.navigate('UserTerm', { collectTime: selectedCollectTime }); 
+                navigation.navigate('Userterm', { collectTime: selectedCollectTime }); 
               }}
               >
               <Text style={styles.modalButtonText}>{day}</Text>
@@ -304,13 +304,9 @@ const Stack = createStackNavigator();
 
 const GeneralDeviceUserScreen = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown:false}}>
-      <Stack.Screen name="General" component={GeneralDeviceUser} />
-      <Stack.Screen
-        name="UserTerm"
-        component={UserTermScreen}
-        options={{ headerShown: false }}
-      />
+    <Stack.Navigator>
+      <Stack.Screen name="General" component={GeneralDeviceUser} options={{ headerShown: true }}/>
+      <Stack.Screen name="Userterm" component={AgreementScreen} options={{ headerShown: false }}/>
     </Stack.Navigator>
   );
 };

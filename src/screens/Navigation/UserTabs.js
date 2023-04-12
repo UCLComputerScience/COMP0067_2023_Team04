@@ -31,9 +31,11 @@ const Tabs = () =>{
         >
 
             <Tab.Screen 
-                name = "Devices"  
+                name = "Device"  
                 component={UserDevicesScreen} 
+                
                 options={{
+                    headerShown: false,
                     tabBarIcon: ({focused}) =>(
                         <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                             <Image 

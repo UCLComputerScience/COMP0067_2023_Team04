@@ -286,7 +286,7 @@ const AllDevices = () => {
         renderItem={({ item }) => {
           if (input === "" || item.name.toLowerCase().includes(input.toLowerCase())) {
             return (
-              <TouchableOpacity onPress={() => navigation.navigate('GeneralDeviceUser', { deviceName: item.name })}>
+              <TouchableOpacity onPress={() => navigation.navigate('General Details', { deviceName: item.name })}>
                 <View style={styles.line}>
                   <Text style={[styles.devices, { flex: 2.4, textAlign: 'left' }]}>{item.name}</Text>
                   <Text style={[styles.devices, { marginLeft: -20, flex: 1, textAlign: 'center' }]}>{item.launchedyear}</Text>
@@ -370,9 +370,9 @@ const styles =StyleSheet.create({
 const Stack = createStackNavigator();
 const UserDevicesScreen = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown:false}}>
-      <Stack.Screen name="AllDevices" component={AllDevices} />
-      <Stack.Screen name="GeneralDeviceUser" component={GeneralDeviceUser} />
+    <Stack.Navigator>
+      <Stack.Screen name="Devices" component={AllDevices} options={{ headerShown: true }}/>
+      <Stack.Screen name="General Details" component={GeneralDeviceUser} options={{ headerShown: false }}/>
     </Stack.Navigator>
   )
 }

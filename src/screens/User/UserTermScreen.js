@@ -10,7 +10,7 @@ const AgreementScreen = ({ navigation }) => {
   const collectTime = route.params?.collectTime;
   const handleAgreePress = () => {
     console.log('I agree button pressed');
-    navigation.navigate('GeneralDeviceUser2');
+    navigation.navigate('General Details(Reserved)');
   };
 
   return (
@@ -47,12 +47,12 @@ const Stack = createStackNavigator();
 const UserTermScreen = () => {
   return (
     
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Agreement" component={AgreementScreen} />
+    <Stack.Navigator>
+      <Stack.Screen name="Term of Use" component={AgreementScreen} options={{ headerShown: true }}/>
       <Stack.Screen
-        name="GeneralDeviceUser2"
+        name="General Details(Reserved)"
         component={GeneralDeviceUser2Screen}
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
     </Stack.Navigator>
 
