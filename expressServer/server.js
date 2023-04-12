@@ -20,6 +20,15 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Allows CORS in server side
+app.use(function(req, res, next){
+  console.log('request', req.url, req.body, req.method);
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-token");
+  next();
+})
+
 // Listen on pc port
 // const PORT = process.env.PORT || 3000;
 app.listen(3000, () => console.log(`Server running on PORT 3000`)); //${PORT}
