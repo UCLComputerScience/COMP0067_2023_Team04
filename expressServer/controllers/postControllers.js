@@ -45,6 +45,24 @@ exports.getLoanById = async (req, res, next) => {
   }
 };
 
+exports.getLoansByUserId = async (req, res) => {
+  try {
+    const loans = await loanModel.getLoansByUserId(req.params.userId);
+    res.status(200).json(loans);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getLoansByDeviceId = async (req, res) => {
+  try {
+    const loans = await loanModel.getLoansByDeviceId(req.params.deviceId);
+    res.status(200).json(loans);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.getDeviceSummary = async (req, res) => {
   try {
     const deviceSummary = await deviceModel.getDeviceSummary();
@@ -71,7 +89,118 @@ exports.getSchedule = async (req, res) => {
   }
 };
 
+exports.createLoan = async (req, res) => {
+  try {
+    const { userId, startDate, dueDate, deviceId, exten, scheduledCollectionDate, scheduledReturnDate } = req.body;
+    const newLoan = await loanModel.createLoan(userId, startDate, dueDate, deviceId, exten, scheduledCollectionDate, scheduledReturnDate);
+    res.status(201).json(newLoan);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
+exports.updateLoan = async (req, res) => {
+  try {
+    const updated = await loanModel.updateLoan(req.params.loanId, req.body);
+    if (updated) {
+      res.status(200).json({ message: 'Loan updated successfully' });
+    } else {
+      res.status(404).json({ message: 'Loan not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.deleteLoan = async (req, res) => {
+  try {
+    const deleted = await loanModel.deleteLoan(req.params.loanId);
+    if (deleted) {
+      res.status(200).json({ message: 'Loan deleted successfully' });
+    } else {
+      res.status(404).json({ message: 'Loan not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getLoansWithDeviceNamesForCurrentWeek = async (req, res) => {
+  try {
+    const loans = await loanModel.getLoansWithDeviceNamesForCurrentWeek();
+    res.status(200).json(loans);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getLoanHistory = async (req, res) => {
+  try {
+    const history = await loanModel.getLoanHistory();
+    res.status(200).json(history);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.extendLoanDueDate = async (req, res) => {
+  try {
+    const { loanId, newDueDate } = req.body;
+    const extended = await loanModel.extendLoanDueDate(loanId, newDueDate);
+    if (extended) {
+      res.status(200).json({ message: 'Loan due date extended successfully' });
+    } else {
+      res.status(404).json({ message: 'Loan not found' });
+    }
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.createReservation = async (req, res) => {
+  try {
+  const { userId, deviceId, scheduledCollectionDate } = req.body;
+  const reservation = await loanModel.createReservation(userId, deviceId, scheduledCollectionDate);
+  res.status(201).json(reservation);
+  } catch (err) {
+  res.status(500).json({ error: err.message });
+  }
+  };
+
+exports.getLoansByStatus = async (req, res) => {
+  try {
+  const { userId, status } = req.body;
+  const loans = await loanModel.getLoansByStatus(userId, status);
+  res.status(200).json(loans);
+  } catch (err) {
+  res.status(500).json({ error: err.message });
+  }
+  };
+
+exports.updateDeviceState = async (req, res) => {
+  try {
+    const deviceId = parseInt(req.params.deviceId);
+    const newState = req.body.newState;
+
+    const success = await deviceModel.updateDeviceState(deviceId, newState);
+    if (success) {
+      res.status(200).json({ message: 'Device state updated' });
+    } else {
+      res.status(400).json({ message: 'Failed to update device state' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating device state', error });
+  }
+};
+// TODO
+exports.getAllDevicesUser = async (req, res) => {
+  try {
+    const devices = await deviceModel.getAllDevicesUser();
+    res.status(200).json(devices);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get all devices for user', error });
+  }
+};
 
 // More controllers
 /*
