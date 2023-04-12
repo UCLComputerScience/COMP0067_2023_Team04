@@ -1,5 +1,5 @@
 {
-  "name": "device_loan_nodejs",
+  "name": "expressServer",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
