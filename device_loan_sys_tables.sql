@@ -48,11 +48,18 @@ CREATE TABLE IF NOT EXISTS `device` (
 --
 
 INSERT INTO `device` (`deviceId`, `status`, `details`, `category`, `name`, `ruleExt`, `ruleDur`, `qrCode`, `storage`, `launchYr`, `cost`) VALUES
-(1, 'Available', 'abababa', 'Laptop', 'Laptop1', 1, 14, 123, 'A1', 2022, 1000.00),
-(2, 'Available', 'cdefg', 'Tablet', 'Tablet1', 0, 7, 456, 'B2', 2021, 750.00),
-(3, 'Reserved', 'xyzxyz', 'Smartphone', 'Phone1', 1, 14, 789, 'C3', 2020, 500.00),
-(4, 'Available', 'hijklm', 'Laptop', 'Laptop2', 0, 7, 234, 'A1', 2023, 1200.00),
-(5, 'Unavailable', 'nopqrs', 'Printer', 'Printer1', 1, 14, 567, 'D4', 2019, 800.00);
+(1, 'Available', '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", "GPU": "RTX 3070ti 8G 150W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070ti', 1, 14, 123, 'A1', 2022, 1000.00),
+(2, 'Available', '{"CPU": "Intel Core i7-12700H Octo-core 16 threads", "GPU": "RTX 3070 8G 140W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070', 0, 7, 1234, 'A2', 2022, 900.00),
+(3, 'Unavailable', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "13.3-inch Retina Display", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Air 2022', 1, 14, 1235, 'A3', 2022, 1300.00),
+(4, 'Available', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "14-inch Retina Display", "Ports": "3 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Pro 2022 14-inch', 1, 14, 1236, 'A4', 2022, 1500.00),
+(5, 'Available', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "16-inch Retina Display", "Ports": "3 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Pro 2022 16-inch', 1, 14, 1237, 'A5', 2022, 1700.00),
+(6, 'Unavailable', '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", "GPU": "NVIDIA GeForce RTX 3070 8GB", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 1TB", "Screen": "17.3-inch 4K OLED", "Ports": "4 x Thunderbolt 4"}', 'Laptop', 'Dell XPS 17 2022', 1, 14, 1239, 'A7', 2022, 1800.00),
+(7, 'Available', '{"CPU": "Intel Core i7-1165G7", "Memory": "16GB LPDDR4x", "SSD": "512GB", "Screen": "13-inch PixelSense Display", "Ports": "1 x USB-C"}', 'Tablet', 'Microsoft Surface Pro 8', 1, 14, 1240, 'A8', 2021, 1400.00),
+(8, 'Unavailable', '{"CPU": "Intel Core i7-1195G7", "GPU": "NVIDIA GeForce RTX 3050 Ti", "Memory": "16GB LPDDR4x", "SSD": "512GB", "Screen": "14.4-inch PixelSense Display", "Ports": "2 x USB-C"}', 'Laptop', 'Microsoft Surface Laptop Studio', 1, 14, 1241, 'A9', 2021, 2000.00),
+(9, 'Unavailable', '{"CPU": "Intel Core i7-1185G7", "Memory": "16GB LPDDR4x", "SSD": "1TB", "Screen": "14-inch FHD", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Lenovo ThinkPad X1 Carbon Gen 9', 1, 14, 1242, 'A10', 2021, 1600.00),
+(10, 'Available', '{"CPU": "Intel Core i7-1165G7", "Memory": "16GB LPDDR4x", "SSD": "1TB", "Screen": "14-inch FHD", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Lenovo ThinkPad X1 Yoga Gen 6', 1, 14, 1243, 'A11', 2021, 1700.00);
+
+
 
 -- --------------------------------------------------------
 
@@ -83,4 +90,14 @@ INSERT INTO `loan` (`loanId`, `userId`, `startDate`, `dueDate`, `deviceId`, `ext
 VALUES
 (1, 1, '2022-01-01', '2024-01-15', 1001, 0, NULL, NULL),
 (2, 1, '2022-02-05', '2024-02-20', 1002, 1, NULL, NULL),
-(3, 2, '2022-03-10', '2024-03-25', 1003, 0, NULL, NULL);
+(3, 2, '2022-03-10', '2024-03-25', 1003, 0, NULL, NULL),
+(4, 2, '2022-04-01', '2024-04-16', 1004, 0, NULL, NULL),
+(5, 2, '2022-05-01', '2024-05-16', 1005, 1, NULL, NULL),
+(6, 1, '2022-06-01', '2024-06-16', 1006, 0, NULL, NULL),
+(7, 3, '2022-07-01', '2024-07-16', 1007, 0, NULL, NULL),
+(8, 2, '2022-08-01', '2024-08-16', 1008, 1, NULL, NULL),
+(9, 3, '2022-09-01', '2024-09-16', 1009, 0, NULL, NULL),
+(10, 3, '2022-10-01', '2024-10-16', 1010, 0, NULL, NULL),
+(11, 1, '2022-11-01', '2024-11-16', 1011, 1, NULL, NULL),
+(12, 1, '2022-12-01', '2024-12-16', 1012, 0, NULL, NULL),
+(13, 3, '2023-01-01', '2025-01-16', 1013, 0, NULL, NULL);
