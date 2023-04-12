@@ -13,20 +13,20 @@ router.route('/loans/:id').get(postControllers.getLoanById);
 router.get('/summary', postControllers.getDeviceSummary);
 router.get('/schedule', postControllers.getSchedule);
 
-router.get('/loans/user/:userId', postControllers.getLoansByUserId);
-router.get('/loans/device/:deviceId', postControllers.getLoansByDeviceId);
-router.post('/loans', postControllers.createLoan);
-router.put('/loans/:loanId', postControllers.updateLoan);
-router.delete('/loans/:loanId', postControllers.deleteLoan);
-router.get('/schedule', postControllers.getSchedule);
-router.get('/currentWeekLoans', postControllers.getLoansWithDeviceNamesForCurrentWeek);
-router.get('/loanHistory', postControllers.getLoanHistory);
-router.put('/extendLoanDueDate', postControllers.extendLoanDueDate);
-router.post('/createReservation', postControllers.createReservation);
-router.get('/loansByStatus', postControllers.getLoansByStatus);
+router.get('/loans/user/:userId', postControllers.getLoansByUserId); //checked
+router.get('/loans/devices/:deviceId', postControllers.getLoansByDeviceId); //checked
+router.post('/loans', postControllers.createLoan); //TODO
+router.put('/loans/:loanId', postControllers.updateLoan); //TODO
+router.delete('/loans/:loanId', postControllers.deleteLoan); //checked
+router.get('/schedule', postControllers.getSchedule); //NEED SUITABLE DATA TO TEST
+router.get('/currentWeekLoans', postControllers.getLoansWithDeviceNamesForCurrentWeek); //NEED SUITABLE DATA TO TEST
+router.get('/loanHistory', postControllers.getLoanHistory); //checked
+router.put('/extendLoanDueDate', postControllers.extendLoanDueDate); //TODO
+router.post('/createReservation', postControllers.createReservation); //TODO
+router.get('/loansByStatus', postControllers.getLoansByStatus); //TODO
 
-router.put('/devices/:deviceId/state', postControllers.updateDeviceState);
-router.get('/user/devices', postControllers.getAllDevicesUser);
+router.put('/devices/:deviceId/state', postControllers.updateDeviceState); //TOTEST
+router.get('/user/devices', postControllers.getAllDevicesUser); //TOTEST
 
 module.exports = router;
 
