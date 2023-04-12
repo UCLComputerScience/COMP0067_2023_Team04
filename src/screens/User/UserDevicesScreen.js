@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Alert } from 'react-native'
+import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity, Alert, ScrollView } from 'react-native'
 import React, {useState} from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -9,68 +9,123 @@ import GeneralDeviceUser from './GeneralDeviceUser';
 const AllDevices = () => {
 
   const navigation = useNavigation();
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const route = useRoute();
   const initialDevices = [
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070ti',
       launchedyear: '2021',
-      availabe: '5',
+      available: '5',
+      category: "Laptop",
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3070',
       launchedyear: '2022',
-      availabe: '9',
+      available: '9',
+      category: "Laptop",
     },
     {
       name: 'Lenovo Legion Y9000P 2022 RTX 3060',
       launchedyear: '2023',
-      availabe: '8',
+      available: '8',
+      category: "Laptop",
     },
     {
       name: 'Dell XPS 13 2022',
       launchedyear: '2022',
-      availabe: '3',
+      available: '3',
+      category: "Laptop",
     },
     {
       name: 'MacBook Pro M1 2021',
       launchedyear: '2021',
-      availabe: '7',
+      available: '7',
+      category: "MacBook",
     },
     {
       name: 'ASUS ROG Zephyrus S GX701',
       launchedyear: '2022',
-      availabe: '2',
+      available: '2',
+      category: "Laptop",
     },
     {
       name: 'Lenovo Legion Y740',
       launchedyear: '2023',
-      availabe: '4',
+      available: '4',
+      category: "Laptop",
     },
     {
       name: 'Acer Predator Helios 300',
       launchedyear: '2021',
-      availabe: '3',
+      available: '3',
+      category: "Laptop",
     },
     {
       name: 'MSI GE76 Raider',
       launchedyear: '2021',
-      availabe: '8',
+      available: '8',
+      category: "Laptop",
     },
     {
       name: 'Razer Blade Pro 17',
       launchedyear: '2022',
-      availabe: '9',
+      available: '9',
+      category: "Laptop",
     },
     {
       name: 'Alienware m15 R4',
       launchedyear: '2020',
-      availabe: '6',
+      available: '6',
+      category: "Laptop",
     },
     {
       name: 'HP Spectre x360',
       launchedyear: '2018',
-      availabe: '10',
-    },        
+      available: '10',
+      category: "Laptop",
+    }, 
+    {
+      name: "iPhone 14 Pro Max",
+      launchedyear: '2018',
+      available: "10",
+      category: "iPhone",
+    },
+    {
+      name: "AMD Ryzen 9 5950X CPU",
+      launchedyear: '2018',
+      available: "8",
+      category: "CPU",
+    },
+    {
+      name: "NVIDIA GeForce RTX 3080 GPU",
+      launchedyear: '2023',
+      available: "3",
+      category: "GPU",
+    },
+    {
+      name: "Samsung Galaxy S21 Ultra",
+      launchedyear: '2022',
+      available: "9",
+      category: "Android",
+    },
+    {
+      name: "Intel Core i9-11900K CPU",
+      launchedyear: '2021',
+      available: "7",
+      category: "CPU",
+    },
+    {
+      name: "ASUS ROG Strix RTX 3070 GPU",
+      launchedyear: '2020',
+      available: "4",
+      category: "GPU",
+    },
+    {
+      name: "Google Pixel 6 Pro",
+      launchedyear: '2019',
+      available: "8",
+      category: "Android",
+    },       
   ];
 
   const handleicon = () => {
@@ -124,9 +179,9 @@ const AllDevices = () => {
   const sortDevicesByAvailable = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
       if (order === 'asc') {
-        return a.availabe - b.availabe;
+        return a.available - b.available;
       } else {
-        return b.availabe - a.availabe;
+        return b.available - a.available;
       }
     });
     setDevices(sortedDevices);
@@ -142,6 +197,22 @@ const AllDevices = () => {
     const newSortOrder = availableSortOrder === 'asc' ? 'desc' : 'asc';
     setAvailableSortOrder(newSortOrder);
     sortDevicesByAvailable(newSortOrder);
+  };
+
+  const filterDevicesByCategory = (category) => {
+    if (category === "All") {
+      setDevices(initialDevices);
+    } else {
+      const filteredDevices = initialDevices.filter(
+        (device) => device.category === category
+      );
+      setDevices(filteredDevices);
+    }
+  };
+
+  const handleCategoryTabPress = (category) => {
+    setSelectedCategory(category);
+    filterDevicesByCategory(category);
   };
 
   return(
@@ -163,6 +234,37 @@ const AllDevices = () => {
           </TouchableOpacity>
         </View>
       </View>
+
+      <View style={styles.categoryTabs}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {["All", "Laptop", "MacBook", "Android", "iPhone", "CPU", "GPU"].map(
+            (category, index) => (
+              <TouchableOpacity
+                key={category}
+                onPress={() => handleCategoryTabPress(category)}
+                style={[
+                  styles.categoryTab,
+                  selectedCategory === category
+                    ? styles.selectedCategoryTab
+                    : null,
+                ]}
+              >
+                <Text
+                  style={[
+                    styles.categoryTabText,
+                    selectedCategory === category
+                      ? styles.selectedCategoryTabText
+                      : null,
+                  ]}
+                >
+                  {category}
+                </Text>
+              </TouchableOpacity>
+            )
+          )}
+        </ScrollView>
+      </View>
+
       <View style={styles.list} >
       <View style={{ marginVertical: 5, paddingHorizontal: 30, flexDirection: 'row' }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', flex: 3 }}>
@@ -188,7 +290,7 @@ const AllDevices = () => {
                 <View style={styles.line}>
                   <Text style={[styles.devices, { flex: 2.4, textAlign: 'left' }]}>{item.name}</Text>
                   <Text style={[styles.devices, { marginLeft: -20, flex: 1, textAlign: 'center' }]}>{item.launchedyear}</Text>
-                  <Text style={[styles.devices, { marginRight: -5, flex: 0.9, textAlign: 'center' }]}>{item.availabe}</Text>
+                  <Text style={[styles.devices, { marginRight: -5, flex: 0.9, textAlign: 'center' }]}>{item.available}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -244,7 +346,25 @@ const styles =StyleSheet.create({
   devices:{
     fontSize: 16,
     fontWeight: 'bold',    
-  }
+  },
+  categoryTabs: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginTop: 10,
+  },
+  categoryTab: {
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+  },
+  selectedCategoryTab: {},
+  categoryTabText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#A6AAB2",
+  },
+  selectedCategoryTabText: {
+    color: "#000",
+  },
 })
 
 const Stack = createStackNavigator();
