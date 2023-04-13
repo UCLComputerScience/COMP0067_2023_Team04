@@ -54,7 +54,7 @@ const DetailDeviceAdmin = () => {
   };
 
   const buttonInfo = getButtonInfo();
-
+  /*
   const updateDeviceState = async () => {
     try {
       // Backend
@@ -79,17 +79,52 @@ const DetailDeviceAdmin = () => {
     } catch (error) {
       console.error("Error updating device state:", error);
     }
-  };
+  };*/
 
   //modal
   const [modalVisible, setModalVisible] = useState(false);
-  const toggleModal = () => {
-    setModalVisible(!modalVisible);
+
+  const reportIssue = () => {
+    if (inputText === "") {
+      Alert.alert("Error", "Please enter the error information.");
+      return;
+    }
+    if (!selectedState) {
+      Alert.alert("Error", "Please select a state before reporting.");
+      return;
+    }
+    Alert.alert(
+      "Report confirmation",
+      "Are you sure you want to report an issue and change the device state into \u0020" +
+        selectedState +
+        "?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            if (modalVisible) {
+              console.log("Input Text:", inputText);
+              console.log("New State:", selectedState);
+
+              setInputText("");
+              setSelectedState(null);
+            }
+            setModalVisible(!modalVisible);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
+
   const clossModal = () => {
     Alert.alert(
       "Stop the report?",
-      "Do you wish to stop reporting the issue?",
+      "Are you sure you want to stop reporting the issue?",
       [
         {
           text: "Cancel",
@@ -105,10 +140,15 @@ const DetailDeviceAdmin = () => {
       { cancelable: false }
     );
   };
-  const reportIssue = () => {};
+
+  const [inputText, setInputText] = useState("");
 
   //Device new state
-  const [newDeviceState, setNewDeviceState] = useState("");
+  // Inside DetailDeviceAdmin component
+  const [selectedState, setSelectedState] = useState(null);
+  const selectState = (state) => {
+    setSelectedState(state);
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -217,6 +257,8 @@ const DetailDeviceAdmin = () => {
                 <TextInput
                   style={styles.modalTextInput}
                   multiline={true}
+                  onChangeText={(text) => setInputText(text)}
+                  value={inputText}
                 ></TextInput>
                 <View style={[styles.modalTextView, { marginTop: 10 }]}>
                   <Text style={styles.modalStateTitle}>Select a new state</Text>
@@ -227,13 +269,35 @@ const DetailDeviceAdmin = () => {
                 <View style={styles.modalStateView}>
                   <Text style={styles.modalStateText}>Maintenance</Text>
                   <View style={{ flex: 0.2, paddingTop: 5 }}>
-                    <View style={styles.modalButtonCircle} />
+                    <TouchableOpacity
+                      onPress={() => selectState("Maintenance")}
+                      style={[
+                        styles.modalButtonCircle,
+                        {
+                          backgroundColor:
+                            selectedState === "Maintenance"
+                              ? "#AC145A"
+                              : "#CCCCCC",
+                        },
+                      ]}
+                    />
                   </View>
                 </View>
                 <View style={[styles.modalStateView]}>
                   <Text style={styles.modalStateText}>Scrapped</Text>
                   <View style={{ flex: 0.2, paddingTop: 5 }}>
-                    <View style={styles.modalButtonCircle} />
+                    <TouchableOpacity
+                      onPress={() => selectState("Scrapped")}
+                      style={[
+                        styles.modalButtonCircle,
+                        {
+                          backgroundColor:
+                            selectedState === "Scrapped"
+                              ? "#AC145A"
+                              : "#CCCCCC",
+                        },
+                      ]}
+                    />
                   </View>
                 </View>
                 <View
@@ -246,7 +310,7 @@ const DetailDeviceAdmin = () => {
                     alignItems: "center",
                     justifyContent: "center",
                   }}
-                  onPress={toggleModal}
+                  onPress={reportIssue}
                 >
                   <Text style={styles.modalReportTexe}>Report</Text>
                 </TouchableOpacity>
