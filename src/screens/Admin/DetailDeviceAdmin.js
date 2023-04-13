@@ -83,6 +83,7 @@ const DetailDeviceAdmin = () => {
 
   //modal
   const [modalVisible, setModalVisible] = useState(false);
+
   const reportIssue = () => {
     if (inputText === "") {
       Alert.alert("Error", "Please enter the error information.");
@@ -92,19 +93,38 @@ const DetailDeviceAdmin = () => {
       Alert.alert("Error", "Please select a state before reporting.");
       return;
     }
-    if (modalVisible) {
-      console.log("Input Text:", inputText);
-      console.log("New State:", selectedState);
+    Alert.alert(
+      "Report confirmation",
+      "Are you sure you want to report an issue and change the device state into \u0020" +
+        selectedState +
+        "?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            if (modalVisible) {
+              console.log("Input Text:", inputText);
+              console.log("New State:", selectedState);
 
-      setInputText("");
-      setSelectedState(null);
-    }
-    setModalVisible(!modalVisible);
+              setInputText("");
+              setSelectedState(null);
+            }
+            setModalVisible(!modalVisible);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
+
   const clossModal = () => {
     Alert.alert(
       "Stop the report?",
-      "Do you wish to stop reporting the issue?",
+      "Are you sure you want to stop reporting the issue?",
       [
         {
           text: "Cancel",
