@@ -86,6 +86,26 @@ const DetailDeviceAdmin = () => {
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
+  const clossModal = () => {
+    Alert.alert(
+      "Stop the report?",
+      "Do you wish to stop reporting the issue?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => {
+            setModalVisible(!modalVisible);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  const reportIssue = () => {};
 
   //Device new state
   const [newDeviceState, setNewDeviceState] = useState("");
@@ -135,7 +155,12 @@ const DetailDeviceAdmin = () => {
         <View style={styles.buttonRow}>
           <View style={{ flex: 0.8 }}></View>
           <View style={{ flex: 1 }}>
-            <Button title="Report issue" onPress={toggleModal} />
+            <Button
+              title="Report issue"
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}
+            />
           </View>
         </View>
         <View style={{ paddingTop: 50 }}>
@@ -163,23 +188,23 @@ const DetailDeviceAdmin = () => {
             <TouchableWithoutFeedback onPress={() => {}}>
               <View style={styles.modalView}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <View style={{ flex: 1 }} />
-                  <View style={{ flex: 1 }}>
+                  <View style={{ width: 70 }} />
+                  <View style={{}}>
                     <Text style={styles.modalTitle}>Report Issue</Text>
                   </View>
                   <View
                     style={{
-                      flex: 1,
                       justifyContent: "center",
-                      alignItems: "center",
+                      alignItems: "flex-end",
+                      paddingLeft: 50,
+                      paddingTop: 30,
                     }}
                   >
-                    <TouchableOpacity onPress={toggleModal}>
+                    <TouchableOpacity onPress={clossModal}>
                       <Ionicons
                         name="trash-outline"
                         size={20}
                         color="#AC145A"
-                        style={{ paddingLeft: 30, paddingTop: 30 }}
                       />
                     </TouchableOpacity>
                   </View>
@@ -201,13 +226,13 @@ const DetailDeviceAdmin = () => {
                 ></View>
                 <View style={styles.modalStateView}>
                   <Text style={styles.modalStateText}>Maintenance</Text>
-                  <View style={{ flex: 0.2 }}>
+                  <View style={{ flex: 0.2, paddingTop: 5 }}>
                     <View style={styles.modalButtonCircle} />
                   </View>
                 </View>
                 <View style={[styles.modalStateView]}>
                   <Text style={styles.modalStateText}>Scrapped</Text>
-                  <View style={{ flex: 0.2 }}>
+                  <View style={{ flex: 0.2, paddingTop: 5 }}>
                     <View style={styles.modalButtonCircle} />
                   </View>
                 </View>
