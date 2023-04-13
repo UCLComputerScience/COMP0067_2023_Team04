@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   ScrollView,
   View,
@@ -8,8 +8,13 @@ import {
   FlatList,
   Button,
   Alert,
+  Modal,
+  TouchableWithoutFeedback,
+  TextInput,
+  Keyboard,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const DetailDeviceAdmin = () => {
   const route = useRoute();
@@ -76,8 +81,17 @@ const DetailDeviceAdmin = () => {
     }
   };
 
+  //modal
+  const [modalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  //Device new state
+  const [newDeviceState, setNewDeviceState] = useState("");
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.textContainer}>
         <Text style={styles.deviceName}>{deviceID}</Text>
         <Text style={styles.deviceName}>{deviceInfo.deviceName}</Text>
@@ -121,21 +135,102 @@ const DetailDeviceAdmin = () => {
         <View style={styles.buttonRow}>
           <View style={{ flex: 0.8 }}></View>
           <View style={{ flex: 1 }}>
-            <Button title="Report issue" />
+            <Button title="Report issue" onPress={toggleModal} />
           </View>
         </View>
+        <View style={{ paddingTop: 50 }}>
+          <Button
+            title={`${buttonInfo.title}`}
+            onPress={() => Alert.alert("Success")}
+            //onPress={updateDeviceState}
+            // disable when null
+            disabled={!buttonInfo.newState}
+          />
+        </View>
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity></TouchableOpacity>
-        <Button
-          title={`${buttonInfo.title}`}
-          onPress={() => Alert.alert("Success")}
-          //onPress={updateDeviceState}
-          // disable when null
-          disabled={!buttonInfo.newState}
-        />
-      </View>
-    </View>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          Alert.alert("Modal has been closed.");
+          setModalVisible(!modalVisible);
+        }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.overlay}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modalView}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <View style={{ flex: 1 }} />
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.modalTitle}>Report Issue</Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <TouchableOpacity onPress={toggleModal}>
+                      <Ionicons
+                        name="trash-outline"
+                        size={20}
+                        color="#AC145A"
+                        style={{ paddingLeft: 30, paddingTop: 30 }}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+                <View style={styles.modalTextView}>
+                  <Text style={styles.modalText}>
+                    Please fill in the form to report the issue.
+                  </Text>
+                </View>
+                <TextInput
+                  style={styles.modalTextInput}
+                  multiline={true}
+                ></TextInput>
+                <View style={[styles.modalTextView, { marginTop: 10 }]}>
+                  <Text style={styles.modalStateTitle}>Select a new state</Text>
+                </View>
+                <View
+                  style={[styles.modalStateSeperator, { paddingBottom: 5 }]}
+                ></View>
+                <View style={styles.modalStateView}>
+                  <Text style={styles.modalStateText}>Maintenance</Text>
+                  <View style={{ flex: 0.2 }}>
+                    <View style={styles.modalButtonCircle} />
+                  </View>
+                </View>
+                <View style={[styles.modalStateView]}>
+                  <Text style={styles.modalStateText}>Scrapped</Text>
+                  <View style={{ flex: 0.2 }}>
+                    <View style={styles.modalButtonCircle} />
+                  </View>
+                </View>
+                <View
+                  style={[styles.modalStateSeperator, { paddingTop: 15 }]}
+                ></View>
+
+                <TouchableOpacity
+                  style={{
+                    flex: 1,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onPress={toggleModal}
+                >
+                  <Text style={styles.modalReportTexe}>Report</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+    </ScrollView>
   );
 };
 
@@ -144,6 +239,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     paddingHorizontal: 20,
+    paddingBottom: 80,
   },
   textContainer: {
     flex: 2,
@@ -163,7 +259,6 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: "#ECECEC",
     borderBottomWidth: 1,
     borderBottomColor: "#ECECEC",
   },
@@ -181,12 +276,95 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "thin",
   },
-  buttonContainer: {
-    flex: 1,
-  },
   buttonRow: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  overlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalView: {
+    width: "80%",
+    height: "60%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalTitle: {
+    //alignItems: "center",
+    paddingTop: 35,
+    fontSize: 18,
+    fontWeight: 500,
+  },
+  modalTextView: {
+    alignItems: "flex-start",
+    width: "100%",
+    paddingLeft: "8%",
+    paddingVertical: 10,
+  },
+  modalText: {
+    fontSize: 12,
+    fontWeight: 300,
+    alignItems: "flex-start",
+    alignContent: "flex-start",
+    textAlign: "left",
+  },
+
+  modalTextInput: {
+    paddingTop: 10,
+    borderRadius: 15,
+    backgroundColor: "#EEEEEF",
+    height: "50%",
+    width: "80%",
+    textAlignVertical: "top",
+  },
+  modalStateSeperator: {
+    borderBottomWidth: 1,
+    borderColor: "#ECECEC",
+    width: "100%",
+    marginTop: -5,
+  },
+  modalStateTitle: {
+    fontSize: 14,
+    fontWeight: 300,
+    alignItems: "flex-start",
+    alignContent: "flex-start",
+    textAlign: "left",
+  },
+
+  modalStateView: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    width: "100%",
+    paddingLeft: "8%",
+  },
+  modalStateText: {
+    paddingVertical: 5,
+    color: "#AC145A",
+    flex: 1,
+  },
+  modalButtonCircle: {
+    alignItems: "flex-end",
+    width: 16,
+    height: 16,
+    borderRadius: 16,
+    backgroundColor: "#AC145A",
+  },
+  modalReportTexe: {
+    color: "#AC145A",
+    fontSize: 16,
+    fontWeight: 500,
   },
 });
 
