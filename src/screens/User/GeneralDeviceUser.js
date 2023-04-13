@@ -9,6 +9,7 @@ const GeneralDeviceUser = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
+  const [agreed, setAgreed] = useState(false);
   const deviceName = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Available");
@@ -63,7 +64,10 @@ const GeneralDeviceUser = () => {
               style={styles.modalButton}
               onPress={() => {
                 console.log('Selected day:', day);
-                setSelectedDate(day); 
+                setSelectedDate(day);
+                if (agreed) { 
+                  setStatus("On hold");
+                }
                 setModalVisible(false);
                 navigation.navigate('Userterm', { selectedDate });
               }}
@@ -142,12 +146,24 @@ const GeneralDeviceUser = () => {
           </TouchableOpacity>
           {devicesIDExpanded && (
             <View style={styles.detailRow}>
-            <View style={styles.detailRowLayout}>
-              <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
-              <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
+              <View style={styles.detailRowLayout}>
+                <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
+              </View>
+              {status === "On hold" && (
+                <>
+                  <View style={styles.detailRowLayout}>
+                    <Text style={{ fontWeight: "500", flex: 2 }}>Collect Date:</Text>
+                    <Text style={{ fontWeight: "300", flex: 1 }}>Insert Collect Date</Text>
+                  </View>
+                  <View style={styles.detailRowLayout}>
+                    <Text style={{ fontWeight: "500", flex: 2 }}>Location:</Text>
+                    <Text style={{ fontWeight: "300", flex: 1 }}>MLEB 4.20</Text>
+                  </View>
+                </>
+              )}
             </View>
-          </View>
-      )}
+          )}
     </View>
     
     <View style={styles.buttonContainer}>
@@ -303,10 +319,12 @@ const styles =StyleSheet.create({
 const Stack = createStackNavigator();
 
 const GeneralDeviceUserScreen = () => {
+  const [agreed, setAgreed] = useState(false);
+
   return (
     <Stack.Navigator>
       <Stack.Screen name="General" component={GeneralDeviceUser} options={{ headerShown: true }}/>
-      <Stack.Screen name="Userterm" component={AgreementScreen} options={{ headerShown: false }}/>
+      <Stack.Screen name="Userterm" component={AgreementScreen} options={{ headerShown: false }} initialParams={{ setAgreed: setAgreed }} />
     </Stack.Navigator>
   );
 };
