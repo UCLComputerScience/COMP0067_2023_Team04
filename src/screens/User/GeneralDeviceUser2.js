@@ -8,11 +8,9 @@ const GeneralDeviceUser2Screen = () => {
   const [selectedCollectTime, setSelectedCollectTime] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
-  const deviceName = route.params.deviceName;
-  const selectedDate = route.params?.selectedDate || "2023-01-01";
+  const deviceName = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("On hold");
-  
   const device = [
     {
       standardLoanDuration: 14,
@@ -65,7 +63,7 @@ const GeneralDeviceUser2Screen = () => {
               onPress={() => {
                 console.log('Selected day:', day);
                 setModalVisible(false);
-                navigation.navigate('UserTerm'); 
+                navigation.navigate('UserTerm'); // Add this line
               }}
               >
               <Text style={styles.modalButtonText}>{day}</Text>
@@ -148,7 +146,7 @@ const GeneralDeviceUser2Screen = () => {
             </View>
             <View style={styles.detailRowLayout}>
               <Text style={{ fontWeight: "500", flex: 2 }}>Collect date:</Text>
-              <Text style={{ fontWeight: "300", flex: 1 }}>{selectedDate}</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>2023-01-01</Text>
             </View>
             <View style={styles.detailRowLayout}>
               <Text style={{ fontWeight: "500", flex: 2 }}>Lacation:</Text>

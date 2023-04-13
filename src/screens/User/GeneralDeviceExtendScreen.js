@@ -10,7 +10,7 @@ const GeneralDeviceExtendScreen = () => {
   const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
 
- 
+  const [returnDateLabel, setReturnDateLabel] = useState('Due date');
   const [dueDate, setDueDate] = useState('2023-01-01');
   const [selectedCollectTime, setSelectedCollectTime] = useState('');
   const [deviceList, setDeviceList] = useState('');
@@ -105,7 +105,7 @@ const GeneralDeviceExtendScreen = () => {
           onPress: () => {
             console.log("YES Pressed");
             showSecondAlert(timestamp);
-            
+            setReturnDateLabel('Return date');
             setDueDate(timeString);
             setIsReturnButtonDisabled(true);
             setIsExtendButtonDisabled(true);
@@ -237,7 +237,7 @@ const GeneralDeviceExtendScreen = () => {
               <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
             </View>
             <View style={styles.detailRowLayout}>
-              <Text style={{ fontWeight: "500", flex: 2 }}>Due date:</Text>
+              <Text style={{ fontWeight: "500", flex: 2 }}>{returnDateLabel}:</Text>
               <Text style={{ fontWeight: "300", flex: 1 }}>{dueDate}</Text>
             </View>
             <View style={styles.detailRowLayout}>
