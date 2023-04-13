@@ -1,22 +1,28 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal, Alert } from 'react-native';
 import React, { useState, useLayoutEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { addDays, format } from 'date-fns';
 
+import { createStackNavigator } from '@react-navigation/stack';
 
-const GeneralDeviceUser2Screen = () => {
+const GeneralDeviceExtendScreen2 = () => {
+  const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
+  const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
+
+ 
+  const [dueDate, setDueDate] = useState('2023-01-01');
   const [selectedCollectTime, setSelectedCollectTime] = useState('');
+  const [deviceList, setDeviceList] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params.deviceName;
-  const selectedDate = route.params?.selectedDate || "2023-01-01";
   const [modalVisible, setModalVisible] = useState(false);
-  const [status, setStatus] = useState("On hold");
-  
+  const [status, setStatus] = useState("Returned");
   const device = [
     {
       standardLoanDuration: 14,
-      extensionAllowance: 1,
+      extensionAllowance: 0,
       summaryDetails:
         '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
                       "GPU": "RTX 3070ti 8G 150W", \
@@ -27,6 +33,45 @@ const GeneralDeviceUser2Screen = () => {
                       "WIFI": "AX211"}',
     },
   ];
+
+  const parseDateStringToTimestamp = (dateString) => {
+    const [day, time] = dateString.split(': ');
+    const [start, end] = time.split(' - ');
+    const date = new Date();
+    const [startHour, startMinute] = start.split(':');
+    date.setHours(parseInt(startHour, 10), parseInt(startMinute, 10), 0, 0);
+    return date.getTime();
+  };
+
+  const extendDevice = () => {
+    if (device[0].extensionAllowance === 1) {
+      const newDueDate = addDays(new Date(dueDate), 7);
+      const formattedNewDueDate = format(newDueDate, 'yyyy-MM-dd');
+  
+      setIsExtendButtonDisabled(device[0].extensionAllowance === 0);
+      Alert.alert(
+        'Extension successful',
+        'You have successfully extened your loan.',
+        [
+          {
+            text: 'YES',
+            onPress: () => {
+              setDueDate(formattedNewDueDate);
+              device[0].extensionAllowance = 0;
+              setIsExtendButtonDisabled(false);
+              setDeviceList((prevState) => [
+                {
+                  ...prevState[0],
+                  extensionAllowance: 0,
+                },
+              ]);
+            },
+          },
+        ],
+        { cancelable: false }
+      );
+    }
+  };
 
   const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
 
@@ -44,6 +89,50 @@ const GeneralDeviceUser2Screen = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
 
+  const showAlert = (timeString) => {
+    const timestamp = parseDateStringToTimestamp(timeString);
+    Alert.alert(
+      "Return confirmation", 
+      `Are you sure you want to return the device on ${timeString}?`, 
+      [
+        {
+          text: "NO",
+          onPress: () => console.log("NO Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "YES",
+          onPress: () => {
+            console.log("YES Pressed");
+            showSecondAlert(timestamp);
+            
+            setDueDate(timeString);
+            setIsReturnButtonDisabled(true);
+            setIsExtendButtonDisabled(true);
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+  
+  const showSecondAlert = () => {
+    Alert.alert(
+      "Return Time selected", 
+      "You have successfully selected a time slot. Please return the device during the selected time slot.", 
+      [
+        {
+          text: "YES",
+          onPress: () => {
+            console.log("YES Pressed");
+            
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <Modal
@@ -56,7 +145,7 @@ const GeneralDeviceUser2Screen = () => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>select the collect time</Text>
+            <Text style={styles.modalTitle}>select the return time</Text>
             {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday : 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
 
               <TouchableOpacity
@@ -64,8 +153,9 @@ const GeneralDeviceUser2Screen = () => {
               style={styles.modalButton}
               onPress={() => {
                 console.log('Selected day:', day);
+                setSelectedCollectTime(day);
                 setModalVisible(false);
-                navigation.navigate('UserTerm'); 
+                showAlert(day); 
               }}
               >
               <Text style={styles.modalButtonText}>{day}</Text>
@@ -87,7 +177,7 @@ const GeneralDeviceUser2Screen = () => {
       <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
 
         <View style={styles.titleView}>
-          <Text style={styles.title}>{deviceName}</Text>
+        <Text style={styles.title}>{JSON.stringify(deviceName)}</Text>
         </View>
 
         <View style={styles.tabBar}>
@@ -147,11 +237,11 @@ const GeneralDeviceUser2Screen = () => {
               <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
             </View>
             <View style={styles.detailRowLayout}>
-              <Text style={{ fontWeight: "500", flex: 2 }}>Collect date:</Text>
-              <Text style={{ fontWeight: "300", flex: 1 }}>{selectedDate}</Text>
+              <Text style={{ fontWeight: "500", flex: 2 }}>Return date:</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>{dueDate}</Text>
             </View>
             <View style={styles.detailRowLayout}>
-              <Text style={{ fontWeight: "500", flex: 2 }}>Lacation:</Text>
+              <Text style={{ fontWeight: "500", flex: 2 }}>Location:</Text>
               <Text style={{ fontWeight: "300", flex: 1 }}>MPEB 4.20</Text>
             </View>
           </View>
@@ -159,13 +249,23 @@ const GeneralDeviceUser2Screen = () => {
     </View>
     
     <View style={styles.buttonContainer}>
-          <Button
-            title="Reserve"
-            color="#AC145A"
-            onPress={() => setModalVisible(true)}
-            disabled={status !== "Available"}
-          />
-        </View>
+      <View style={styles.returnButtonWrapper}>
+        <Button
+          title="Return"
+          color="#AC145A"
+          onPress={() => setModalVisible(true)}
+          disabled={status !== "Loaned" || isReturnButtonDisabled}
+        />
+      </View>
+      <View style={styles.extendButtonWrapper}>
+        <Button
+          title="Extend"
+          color="#AC145A"
+          onPress={extendDevice}
+          disabled={device[0].extensionAllowance === 0 || isExtendButtonDisabled}
+        />
+      </View>
+    </View>
 
 
       </ScrollView>
@@ -255,15 +355,24 @@ const styles =StyleSheet.create({
     textAlign:'right'
   },
   buttonContainer: {
-    alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
-    backgroundColor: '#EBEDEF',
-    paddingVertical: 10,
-    width: Dimensions.get('window').width * 0.6,
-    borderRadius: 10,
-    marginLeft:60,
-    marginBottom: 20,
+    marginBottom: 30,
     marginTop: 250,
+  },
+  returnButtonWrapper: {
+    marginRight: 30,
+    backgroundColor: '#EBEDEF',
+    borderRadius: 10,
+    width: Dimensions.get('window').width * 0.35,
+    paddingVertical: 5,
+  },
+  extendButtonWrapper: {
+    marginLeft: 30,
+    backgroundColor: '#EBEDEF',
+    borderRadius: 10,
+    width: Dimensions.get('window').width * 0.35,
+    paddingVertical: 5,
   },
   centeredView: {
     flex: 1,
@@ -310,5 +419,4 @@ const styles =StyleSheet.create({
 
 
 
-
-export default GeneralDeviceUser2Screen
+export default GeneralDeviceExtendScreen2

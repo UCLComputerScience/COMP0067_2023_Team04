@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
 import GeneralDeviceExtendScreen from './GeneralDeviceExtendScreen';
+import GeneralDeviceExtendScreen2 from './GeneralDeviceExtendScreen2';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -41,7 +42,11 @@ const UserLoans = () => {
   };
 
   const handleRowPress = (index) => {
-    navigation.navigate('Return & Extend', { itemIndex: index });
+    if (currentTab === 'past') {
+      navigation.navigate('General Details(Past)', { itemIndex: index });
+    } else {
+      navigation.navigate('Return & Extend', { itemIndex: index });
+    }
     console.log(`Clicked row ${index}`);
   };
 
@@ -221,6 +226,7 @@ const UserLoansScreen = () => {
     <Stack.Navigator>
       <Stack.Screen name="Loans" component={UserLoans} options={{ headerShown: true }}/>
       <Stack.Screen name="Return & Extend" component={GeneralDeviceExtendScreen} options={{ headerShown: true }}/>
+      <Stack.Screen name="General Details(Past)" component={GeneralDeviceExtendScreen2} options={{ headerShown: true }}/>
     </Stack.Navigator>
   )
 }

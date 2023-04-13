@@ -6,7 +6,7 @@ import AgreementScreen from './UserTermScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceUser = () => {
-  const [selectedCollectTime, setSelectedCollectTime] = useState('');
+  const [selectedDate, setSelectedDate] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params;
@@ -63,9 +63,9 @@ const GeneralDeviceUser = () => {
               style={styles.modalButton}
               onPress={() => {
                 console.log('Selected day:', day);
-                setSelectedCollectTime(day);
+                setSelectedDate(day); 
                 setModalVisible(false);
-                navigation.navigate('Userterm', { collectTime: selectedCollectTime }); 
+                navigation.navigate('Userterm', { selectedDate });
               }}
               >
               <Text style={styles.modalButtonText}>{day}</Text>
