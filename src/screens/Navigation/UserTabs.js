@@ -56,9 +56,10 @@ const Tabs = () =>{
                 }}  />
 
             <Tab.Screen 
-                name = "Appointment"     
+                name = "Appointment1"     
                 component={UserAppointmentScreen}    
                 options={{
+                    headerShown: false,
                     tabBarIcon: ({focused}) =>(
                         <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                             <Image 
@@ -80,9 +81,10 @@ const Tabs = () =>{
              
 
             <Tab.Screen 
-                name = "Loans"   
+                name = "Loans1"   
                 component={UserLoansScreen}  
                 options={{
+                    headerShown: false,
                 tabBarIcon: ({focused}) =>(
                     <View style = {{alignItems: 'center', justifyContent: 'center', top: 10}}>
                         <Image 

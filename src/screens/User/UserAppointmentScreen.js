@@ -39,7 +39,7 @@ const AllDevices = () => {
 
   const handleAgreePress = () => {
     console.log('I agree button pressed');
-    navigation.navigate('GeneralDeviceUser2');
+    navigation.navigate('General Details(Reserved)');
   };
 
   const [input, setInput] = useState('');
@@ -147,12 +147,12 @@ const styles =StyleSheet.create({
 const Stack = createStackNavigator();
 const UserAppointmentScreen = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown:false}}>
-      <Stack.Screen name="AllDevices" component={AllDevices} />
+    <Stack.Navigator>
+      <Stack.Screen name="Appointment" component={AllDevices} options={{ headerShown: true }} />
       <Stack.Screen
-        name="GeneralDeviceUser2"
+        name="General Details(Reserved)"
         component={GeneralDeviceUser2Screen}
-        options={{ headerShown: false }}
+        options={{ headerShown: true }}
       />
     </Stack.Navigator>
   )

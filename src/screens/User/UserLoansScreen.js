@@ -41,7 +41,7 @@ const UserLoans = () => {
   };
 
   const handleRowPress = (index) => {
-    navigation.navigate('GeneralDeviceExtendScreen', { itemIndex: index });
+    navigation.navigate('Return & Extend', { itemIndex: index });
     console.log(`Clicked row ${index}`);
   };
 
@@ -218,9 +218,9 @@ const styles = StyleSheet.create({
 const Stack = createStackNavigator();
 const UserLoansScreen = () => {
   return (
-    <Stack.Navigator screenOptions={{headerShown:false}}>
-      <Stack.Screen name="loandata" component={UserLoans} />
-      <Stack.Screen name="GeneralDeviceExtendScreen" component={GeneralDeviceExtendScreen} />
+    <Stack.Navigator>
+      <Stack.Screen name="Loans" component={UserLoans} options={{ headerShown: true }}/>
+      <Stack.Screen name="Return & Extend" component={GeneralDeviceExtendScreen} options={{ headerShown: true }}/>
     </Stack.Navigator>
   )
 }
