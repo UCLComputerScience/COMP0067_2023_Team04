@@ -33,7 +33,7 @@ const DetailDeviceAdmin = () => {
   const loanDetails = {
     loanDate: "2022-03-21",
     userID: "ucabcda",
-    deviceState: "Loaned",
+    deviceState: "Reserved",
     //how to achieve the status change? fetch from DB (require refresh) : change from frontend once clicked
   };
 
@@ -48,6 +48,8 @@ const DetailDeviceAdmin = () => {
       return { title: "Loan", newState: "Loaned" };
     } else if (loanDetails.deviceState === "Loaned") {
       return { title: "Return", newState: "Available" };
+    } else if (loanDetails.deviceState === "Maintenance") {
+      return { title: "Turn Available", newState: "Available" };
     } else {
       return { title: "Not Applicable", newState: null };
     }
@@ -65,7 +67,7 @@ const DetailDeviceAdmin = () => {
         },
         body: JSON.stringify({
           deviceID,
-          newState: "您需要将设备状态更改为的新状态",
+          newState: "",
         }),
       });
 
@@ -153,7 +155,6 @@ const DetailDeviceAdmin = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.deviceName}>{deviceID}</Text>
         <Text style={styles.deviceName}>{deviceInfo.deviceName}</Text>
         <View style={styles.separator} />
         <View style={[styles.row, { marginTop: 10 }]}>

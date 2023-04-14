@@ -295,7 +295,10 @@ const AllDevices = () => {
           <FlatList
             data={devices}
             renderItem={({ item }) => {
-              if (input === "") {
+              if (
+                input === "" ||
+                item.name.toLowerCase().includes(input.toLowerCase())
+              ) {
                 return (
                   <TouchableOpacity
                     onPress={() =>
@@ -331,27 +334,6 @@ const AllDevices = () => {
                       </Text>
                     </View>
                   </TouchableOpacity>
-                );
-              }
-              if (item.name.toLowerCase().includes(input.toLowerCase())) {
-                return (
-                  <View style={styles.line}>
-                    <Text
-                      style={[styles.devices, { flex: 3, textAlign: "left" }]}
-                    >
-                      {item.name}
-                    </Text>
-                    <Text
-                      style={[styles.devices, { flex: 1, textAlign: "center" }]}
-                    >
-                      {item.loaned}
-                    </Text>
-                    <Text
-                      style={[styles.devices, { flex: 1, textAlign: "center" }]}
-                    >
-                      {item.available}
-                    </Text>
-                  </View>
                 );
               }
             }}
@@ -436,6 +418,7 @@ const AdminDevicesScreen = () => {
         name={"GeneralDeviceAdmin"}
         component={GeneralDeviceAdmin}
         options={({ route }) => ({ title: route.params.deviceName })}
+        //options={({ route }) => ({ title: "Device details" })}
       />
     </Stack.Navigator>
   );
