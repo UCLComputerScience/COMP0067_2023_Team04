@@ -31,5 +31,5 @@ app.use(function(req, res, next){
 })
 
 // Listen on pc port
-// const PORT = process.env.PORT || 3000;
-app.listen(3000, () => console.log(`Server running on PORT 3000`)); //${PORT}
+// const PORT = process.env.PORT || 8080;
+app.listen(8080, () => console.log(`Server running on PORT 8080`)); //${PORT}
