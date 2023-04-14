@@ -7,17 +7,18 @@ import GeneralDeviceUserScreen from './GeneralDeviceUser';
 
 const AgreementScreen = ({ navigation }) => {
   const route = useRoute();
-  
-  const selectedDate = route.params?.selectedDate || null;
-  const setAgreed = route.params?.setAgreed || null;
+  const setAgr = route.params?.setAgr || null;
   const handleAgreePress = () => {
     console.log('I agree button pressed');
-    if (setAgreed) {
-      setAgreed(true);
+    if (setAgr) {
+      setAgr(1);
     }
-    
+  
     navigation.goBack();
   };
+  
+   
+  
 
   return (
     <ScrollView contentContainerStyle={styles.container}>

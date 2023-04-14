@@ -9,7 +9,7 @@ const GeneralDeviceUser = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
-  const [agreed, setAgreed] = useState(false);
+  const [agr, setAgr] = useState(0);
   const deviceName = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Available");
@@ -65,11 +65,11 @@ const GeneralDeviceUser = () => {
               onPress={() => {
                 console.log('Selected day:', day);
                 setSelectedDate(day);
-                if (agreed) { 
+                if (setAgr === 1) { 
                   setStatus("On hold");
                 }
                 setModalVisible(false);
-                navigation.navigate('Userterm', { selectedDate });
+                navigation.navigate('Userterm', { selectedDate, setAgr });
               }}
               >
               <Text style={styles.modalButtonText}>{day}</Text>
