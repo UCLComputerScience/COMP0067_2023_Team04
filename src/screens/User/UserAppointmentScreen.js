@@ -2,7 +2,7 @@ import { View, Text, TextInput, StyleSheet, FlatList, TouchableOpacity } from 'r
 import React, {useState} from 'react'
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import GeneralDeviceUser2Screen from './GeneralDeviceUser2';
+import GeneralDeviceUserScreen from './GeneralDeviceUser';
 
 const AllDevices = () => {
 
@@ -151,8 +151,8 @@ const UserAppointmentScreen = () => {
       <Stack.Screen name="Appointment" component={AllDevices} options={{ headerShown: true }} />
       <Stack.Screen
         name="General Details(Reserved)"
-        component={GeneralDeviceUser2Screen}
-        options={{ headerShown: true }}
+        component={GeneralDeviceUserScreen}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   )

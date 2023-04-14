@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View, FlatList } from 'react-native';
 import GeneralDeviceExtendScreen from './GeneralDeviceExtendScreen';
-import GeneralDeviceExtendScreen2 from './GeneralDeviceExtendScreen2';
+import GeneralDeviceExtendScreen2 from './PastDeviceScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
