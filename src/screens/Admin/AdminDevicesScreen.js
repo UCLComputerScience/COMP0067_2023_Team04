@@ -333,6 +333,7 @@ const AllDevices = () => {
                         {item.available}
                       </Text>
                     </View>
+                    <View style={styles.separator} />
                   </TouchableOpacity>
                 );
               }
@@ -372,6 +373,8 @@ const styles = StyleSheet.create({
     marginVertical: 15,
     paddingHorizontal: 30,
     flexDirection: "row",
+    height: 40,
+    alignItems: "center",
   },
   header: {
     fontSize: 12,
@@ -401,9 +404,9 @@ const styles = StyleSheet.create({
     color: "#000",
   },
   separator: {
-    height: "100%",
-    width: 1,
-    backgroundColor: "#A6AAB2",
+    height: 1,
+    width: "90%",
+    backgroundColor: "#EEEEEF",
     alignSelf: "center",
   },
 });

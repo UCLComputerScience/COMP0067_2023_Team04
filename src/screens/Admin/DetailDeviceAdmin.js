@@ -15,6 +15,7 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import QRCode from "react-native-qrcode-svg";
 
 const DetailDeviceAdmin = () => {
   const route = useRoute();
@@ -45,8 +46,8 @@ const DetailDeviceAdmin = () => {
 
   const getButtonInfo = () => {
     if (loanDetails.deviceState === "Reserved") {
-      return { title: "Loan", newState: "Loaned" };
-    } else if (loanDetails.deviceState === "Loaned") {
+      return { title: "Loan", newState: "Loan" };
+    } else if (loanDetails.deviceState === "Loan") {
       return { title: "Return", newState: "Available" };
     } else if (loanDetails.deviceState === "Maintenance") {
       return { title: "Turn Available", newState: "Available" };
@@ -85,6 +86,7 @@ const DetailDeviceAdmin = () => {
 
   //modal
   const [modalVisible, setModalVisible] = useState(false);
+  const [qrCodeModalVisible, setQRCodeModalVisible] = useState(false);
 
   const reportIssue = () => {
     if (inputText === "") {
@@ -179,6 +181,16 @@ const DetailDeviceAdmin = () => {
           <Text style={styles.label}>QR code:</Text>
           <Text style={styles.text}>{deviceInfo.QRCode}</Text>
         </View>
+
+        <View style={{ alignItems: "flex-end", marginRight: 30 }}>
+          <Button
+            title="View QR code"
+            onPress={() => {
+              setQRCodeModalVisible(!qrCodeModalVisible);
+            }}
+          />
+        </View>
+
         <Text style={styles.textLoanDetails}>Loan Details</Text>
         <View style={[styles.separator, { marginTop: 10 }]} />
         <View style={[styles.row, { marginTop: 10 }]}>
@@ -204,16 +216,55 @@ const DetailDeviceAdmin = () => {
             />
           </View>
         </View>
-        <View style={{ paddingTop: 50 }}>
-          <Button
-            title={`${buttonInfo.title}`}
-            onPress={() => Alert.alert("Success")}
-            //onPress={updateDeviceState}
-            // disable when null
-            disabled={!buttonInfo.newState}
-          />
+
+        <View style={{ paddingTop: 80 }}>
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity
+              style={styles.buttonBig}
+              onPress={() => Alert.alert("Success")}
+              disabled={!buttonInfo.newState}
+            >
+              <Text
+                style={{
+                  color: buttonInfo.newState ? "#AC145A" : "#ccc",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
+              >
+                {buttonInfo.title}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={qrCodeModalVisible}
+        onRequestClose={() => {
+          Alert.alert("QR code modal has been closed.");
+          setQRCodeModalVisible(!qrCodeModalVisible);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalViewQR}>
+            <View style={{ paddingTop: 30 }}>
+              <QRCode value={String(route.params.deviceID)} />
+            </View>
+            <View style={{ paddingTop: 30 }}>
+              <TouchableOpacity
+                style={styles.closeModalButton}
+                onPress={() => {
+                  setQRCodeModalVisible(!qrCodeModalVisible);
+                }}
+              >
+                <Text style={styles.closeModalButtonText}>Close</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         animationType="fade"
@@ -370,6 +421,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+
+  buttonBig: {
+    backgroundColor: "#EEEEEF",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    width: "70%",
+    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   overlay: {
     flex: 1,
     justifyContent: "center",
@@ -455,6 +518,40 @@ const styles = StyleSheet.create({
     color: "#AC145A",
     fontSize: 16,
     fontWeight: 500,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalViewQR: {
+    height: "30%",
+    width: "50%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  closeModalButton: {
+    backgroundColor: "#AC145A",
+    borderRadius: 20,
+    padding: 10,
+    paddingHorizontal: 20,
+    marginTop: 15,
+  },
+  closeModalButtonText: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
