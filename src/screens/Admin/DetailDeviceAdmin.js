@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useLayoutEffect, useState, useRef } from "react";
 import {
   ScrollView,
   View,
@@ -16,6 +16,8 @@ import {
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import QRCode from "react-native-qrcode-svg";
+import * as MediaLibrary from "expo-media-library";
+import * as FileSystem from "expo-file-system";
 
 const DetailDeviceAdmin = () => {
   const route = useRoute();
@@ -154,6 +156,52 @@ const DetailDeviceAdmin = () => {
     setSelectedState(state);
   };
 
+  const qrCodeRef = useRef();
+
+  const saveQRCodeToGallery = async () => {
+    try {
+      const { status } = await MediaLibrary.requestPermissionsAsync();
+
+      if (status !== "granted") {
+        console.log("Permission not granted");
+        return;
+      }
+
+      qrCodeRef.current.toDataURL(async (dataURL) => {
+        const base64Image = dataURL.replace("data:image/png;base64,", "");
+        const imageName = `qr-code-${Date.now()}.png`;
+        const fileUri = FileSystem.documentDirectory + imageName;
+
+        await FileSystem.writeAsStringAsync(fileUri, base64Image, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+
+        const asset = await MediaLibrary.createAssetAsync(fileUri);
+
+        // Check if the album exists or create it if it doesn't
+        let album = await MediaLibrary.getAlbumAsync("Camera Roll");
+        if (!album) {
+          album = await MediaLibrary.createAlbumAsync(
+            "Camera Roll",
+            asset,
+            false
+          );
+        } else {
+          await MediaLibrary.addAssetsToAlbumAsync(asset.id, album.id, false);
+        }
+
+        console.log("QR code saved to gallery");
+
+        // delete the temporary file after saving it to the gallery.
+        await FileSystem.deleteAsync(fileUri);
+        Alert.alert("Image saved", "The QR code is successfully saved.");
+      });
+    } catch (error) {
+      console.log("Error saving QR code to gallery:", error);
+      Alert.alert("Error", "The QR code failed to be saved.");
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.textContainer}>
@@ -239,7 +287,7 @@ const DetailDeviceAdmin = () => {
       </View>
 
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={qrCodeModalVisible}
         onRequestClose={() => {
@@ -250,9 +298,13 @@ const DetailDeviceAdmin = () => {
         <View style={styles.centeredView}>
           <View style={styles.modalViewQR}>
             <View style={{ paddingTop: 30 }}>
-              <QRCode value={String(route.params.deviceID)} />
+              <QRCode
+                value={String(route.params.deviceID)}
+                getRef={(c) => (qrCodeRef.current = c)}
+              />
             </View>
-            <View style={{ paddingTop: 30 }}>
+            <Button title="Save QR Code" onPress={saveQRCodeToGallery} />
+            <View style={{ paddingTop: 0 }}>
               <TouchableOpacity
                 style={styles.closeModalButton}
                 onPress={() => {
