@@ -3,6 +3,7 @@ require("dotenv").config(); // ALLOWS ENVIRONMENT VARIABLES TO BE SET ON PROCESS
 const express = require("express");
 const app = express();
 const oauthRouter = require('./oauth/index.js');
+const fs = require('fs');
 // const cors = require("cors");
 
 // Middleware
@@ -12,6 +13,30 @@ app.use(express.json()); // parse json bodies in the request object
 app.use("/posts", require("./routes/postRoutes"));
 // Use the OAuth router
 app.use('/connect/uclapi', oauthRouter);
+
+app.get('/schedule', (req, res) => {
+  fs.readFile('schedule.txt', 'utf8', (err, data) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error reading schedule');
+    } else {
+      res.send(data);
+    }
+  });
+});
+
+app.post('/schedule', (req, res) => {
+  const newSchedule = req.body.schedule;
+
+  fs.writeFile('schedule.txt', newSchedule, 'utf8', (err) => {
+    if (err) {
+      console.error(err);
+      res.status(500).send('Error updating schedule');
+    } else {
+      res.send('Schedule updated')
+    }
+  });
+});
 
 // Global Error Handler. IMPORTANT function params MUST start with err
 app.use((err, req, res, next) => {

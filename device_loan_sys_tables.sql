@@ -30,7 +30,7 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `device`;
 CREATE TABLE IF NOT EXISTS `device` (
   `deviceId` int(11) NOT NULL AUTO_INCREMENT,
-  `status` varchar(255) DEFAULT NULL,
+  `state` varchar(255) DEFAULT NULL,
   `details` varchar(255) DEFAULT NULL,
   `category` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -47,17 +47,17 @@ CREATE TABLE IF NOT EXISTS `device` (
 -- 转存表中的数据 `device`
 --
 
-INSERT INTO `device` (`deviceId`, `status`, `details`, `category`, `name`, `ruleExt`, `ruleDur`, `qrCode`, `storage`, `launchYr`, `cost`) VALUES
+INSERT INTO `device` (`deviceId`, `state`, `details`, `category`, `name`, `ruleExt`, `ruleDur`, `qrCode`, `storage`, `launchYr`, `cost`) VALUES
 (1, 'Available', '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", "GPU": "RTX 3070ti 8G 150W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070ti', 1, 14, 123, 'A1', 2022, 1000.00),
-(2, 'Available', '{"CPU": "Intel Core i7-12700H Octo-core 16 threads", "GPU": "RTX 3070 8G 140W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070', 0, 7, 1234, 'A2', 2022, 900.00),
-(3, 'Unavailable', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "13.3-inch Retina Display", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Air 2022', 1, 14, 1235, 'A3', 2022, 1300.00),
+(2, 'Reserved', '{"CPU": "Intel Core i7-12700H Octo-core 16 threads", "GPU": "RTX 3070 8G 140W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070', 0, 7, 1234, 'A2', 2022, 900.00),
+(3, 'Loaned', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "13.3-inch Retina Display", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Air 2022', 1, 14, 1235, 'A3', 2022, 1300.00),
 (4, 'Available', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "14-inch Retina Display", "Ports": "3 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Pro 2022 14-inch', 1, 14, 1236, 'A4', 2022, 1500.00),
 (5, 'Available', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "16-inch Retina Display", "Ports": "3 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Pro 2022 16-inch', 1, 14, 1237, 'A5', 2022, 1700.00),
-(6, 'Unavailable', '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", "GPU": "NVIDIA GeForce RTX 3070 8GB", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 1TB", "Screen": "17.3-inch 4K OLED", "Ports": "4 x Thunderbolt 4"}', 'Laptop', 'Dell XPS 17 2022', 1, 14, 1239, 'A7', 2022, 1800.00),
+(6, 'Maintenance', '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", "GPU": "NVIDIA GeForce RTX 3070 8GB", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 1TB", "Screen": "17.3-inch 4K OLED", "Ports": "4 x Thunderbolt 4"}', 'Laptop', 'Dell XPS 17 2022', 1, 14, 1239, 'A7', 2022, 1800.00),
 (7, 'Available', '{"CPU": "Intel Core i7-1165G7", "Memory": "16GB LPDDR4x", "SSD": "512GB", "Screen": "13-inch PixelSense Display", "Ports": "1 x USB-C"}', 'Tablet', 'Microsoft Surface Pro 8', 1, 14, 1240, 'A8', 2021, 1400.00),
-(8, 'Unavailable', '{"CPU": "Intel Core i7-1195G7", "GPU": "NVIDIA GeForce RTX 3050 Ti", "Memory": "16GB LPDDR4x", "SSD": "512GB", "Screen": "14.4-inch PixelSense Display", "Ports": "2 x USB-C"}', 'Laptop', 'Microsoft Surface Laptop Studio', 1, 14, 1241, 'A9', 2021, 2000.00),
-(9, 'Unavailable', '{"CPU": "Intel Core i7-1185G7", "Memory": "16GB LPDDR4x", "SSD": "1TB", "Screen": "14-inch FHD", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Lenovo ThinkPad X1 Carbon Gen 9', 1, 14, 1242, 'A10', 2021, 1600.00),
-(10, 'Available', '{"CPU": "Intel Core i7-1165G7", "Memory": "16GB LPDDR4x", "SSD": "1TB", "Screen": "14-inch FHD", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Lenovo ThinkPad X1 Yoga Gen 6', 1, 14, 1243, 'A11', 2021, 1700.00);
+(8, 'Loaned', '{"CPU": "Intel Core i7-1195G7", "GPU": "NVIDIA GeForce RTX 3050 Ti", "Memory": "16GB LPDDR4x", "SSD": "512GB", "Screen": "14.4-inch PixelSense Display", "Ports": "2 x USB-C"}', 'Laptop', 'Microsoft Surface Laptop Studio', 1, 14, 1241, 'A9', 2021, 2000.00),
+(9, 'Maintenance', '{"CPU": "Intel Core i7-1185G7", "Memory": "16GB LPDDR4x", "SSD": "1TB", "Screen": "14-inch FHD", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Lenovo ThinkPad X1 Carbon Gen 9', 1, 14, 1242, 'A10', 2021, 1600.00),
+(10, 'Reserved', '{"CPU": "Intel Core i7-1165G7", "Memory": "16GB LPDDR4x", "SSD": "1TB", "Screen": "14-inch FHD", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Lenovo ThinkPad X1 Yoga Gen 6', 1, 14, 1243, 'A11', 2021, 1700.00);
 
 
 
@@ -101,3 +101,6 @@ VALUES
 (11, 1, '2022-11-01', '2024-11-16', 1011, 1, NULL, NULL),
 (12, 1, '2022-12-01', '2024-12-16', 1012, 0, NULL, NULL),
 (13, 3, '2023-01-01', '2025-01-16', 1013, 0, NULL, NULL);
+
+-- 'admins'
+-- DROP TABLE IF EXISTS `admins` (`adminUPI`,`schedule`)
