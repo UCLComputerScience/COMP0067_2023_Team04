@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     flexDirection: "row",
     alignItems: "center",
+    height: 55,
   },
   devices: {
     fontSize: 16,
