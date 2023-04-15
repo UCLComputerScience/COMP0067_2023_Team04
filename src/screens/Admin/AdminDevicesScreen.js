@@ -417,7 +417,8 @@ const AdminDevicesScreen = () => {
       <Stack.Screen
         name={"GeneralDeviceAdmin"}
         component={GeneralDeviceAdmin}
-        options={({ route }) => ({ title: route.params.deviceName })}
+        options={{ headerTitle: "Device Details" }}
+        //options={({ route }) => ({ title: route.params.deviceName })}
         //options={({ route }) => ({ title: "Device details" })}
       />
     </Stack.Navigator>

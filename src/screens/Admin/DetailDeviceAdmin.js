@@ -39,9 +39,9 @@ const DetailDeviceAdmin = () => {
 
   const navigation = useNavigation();
 
-  useLayoutEffect(() => {
+  /*useLayoutEffect(() => {
     navigation.setOptions({ title: deviceInfo.deviceName });
-  }, [navigation, deviceInfo.deviceName]);
+  }, [navigation, deviceInfo.deviceName]);*/
 
   const getButtonInfo = () => {
     if (loanDetails.deviceState === "Reserved") {

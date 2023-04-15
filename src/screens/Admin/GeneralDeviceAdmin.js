@@ -362,7 +362,11 @@ const Stack = createStackNavigator();
 const GeneralDeviceAdminScreen = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="General" component={GeneralDeviceAdmin} />
+      <Stack.Screen
+        name="General"
+        component={GeneralDeviceAdmin}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
     </Stack.Navigator>
   );
