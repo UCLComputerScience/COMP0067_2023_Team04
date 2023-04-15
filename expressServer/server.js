@@ -2,6 +2,7 @@ require("dotenv").config(); // ALLOWS ENVIRONMENT VARIABLES TO BE SET ON PROCESS
 
 const express = require("express");
 const app = express();
+const oauthRouter = require('./oauth/index.js');
 // const cors = require("cors");
 
 // Middleware
@@ -9,6 +10,8 @@ app.use(express.json()); // parse json bodies in the request object
 // app.use(cors());
 // Redirect requests to endpoint starting with /posts to postRoutes.js
 app.use("/posts", require("./routes/postRoutes"));
+// Use the OAuth router
+app.use('/connect/uclapi', oauthRouter);
 
 // Global Error Handler. IMPORTANT function params MUST start with err
 app.use((err, req, res, next) => {
