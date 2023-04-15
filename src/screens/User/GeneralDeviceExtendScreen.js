@@ -7,22 +7,23 @@ import { addDays, format } from 'date-fns';
 import { createStackNavigator } from '@react-navigation/stack';
 
 const GeneralDeviceExtendScreen = () => {
+  const navigation = useNavigation();
+  const route = useRoute();
   const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
-
+  
   const [returnDateLabel, setReturnDateLabel] = useState('Due date');
   const [dueDate, setDueDate] = useState('2023-01-01');
   const [selectedCollectTime, setSelectedCollectTime] = useState('');
   const [deviceList, setDeviceList] = useState('');
-  const navigation = useNavigation();
-  const route = useRoute();
+  
   const deviceName = route.params.deviceName;
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
-  const device = [
+  const [device, setDevice] = useState([
     {
       standardLoanDuration: 14,
-      extensionAllowance: 1,
+      extensionAllowance: 1, 
       summaryDetails:
         '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
                       "GPU": "RTX 3070ti 8G 150W", \
@@ -32,7 +33,7 @@ const GeneralDeviceExtendScreen = () => {
                       "Power": "300W", \
                       "WIFI": "AX211"}',
     },
-  ];
+  ]);
 
   const parseDateStringToTimestamp = (dateString) => {
     const [day, time] = dateString.split(': ');
@@ -51,15 +52,13 @@ const GeneralDeviceExtendScreen = () => {
       setIsExtendButtonDisabled(true);
       Alert.alert(
         'Extension successful',
-        'You have successfully extened your loan.',
+        'You have successfully extended your loan.',
         [
           {
             text: 'YES',
             onPress: () => {
               setDueDate(formattedNewDueDate);
-              device[0].extensionAllowance = 0;
-              setIsExtendButtonDisabled(false);
-              setDeviceList((prevState) => [ 
+              setDevice((prevState) => [
                 {
                   ...prevState[0],
                   extensionAllowance: 0,
@@ -72,6 +71,7 @@ const GeneralDeviceExtendScreen = () => {
       );
     }
   };
+  
 
   const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
 
@@ -200,9 +200,8 @@ const GeneralDeviceExtendScreen = () => {
                 </View>
                 <View style={styles.detailRowLayout}>
                   <Text style={{ fontWeight: '500', flex: 2 }}>Extension Allowance:</Text>
-                  <Text style={{ fontWeight:'300', flex: 1 }}>
-                    {parseInt(device[0].extensionAllowance) > 1 ? device[0].extensionAllowance + ' Times' : device[0].extensionAllowance + ' Time'}
-                  </Text>
+                  <Text style={{ fontWeight:'300', flex: 1 }}>{device[0].extensionAllowance}</Text>
+                    
                 </View>
             </View>
           )}
