@@ -288,15 +288,18 @@ const AllDevices = () => {
             return (
               <TouchableOpacity onPress={() => navigation.navigate('General Details', { deviceName: item.name })}>
                 <View style={styles.line}>
-                  <Text style={[styles.devices, { flex: 2.4, textAlign: 'left' }]}>{item.name}</Text>
-                  <Text style={[styles.devices, { marginLeft: -20, flex: 1, textAlign: 'center' }]}>{item.launchedyear}</Text>
-                  <Text style={[styles.devices, { marginRight: -5, flex: 0.9, textAlign: 'center' }]}>{item.available}</Text>
+                  
+                    <Text style={[styles.devices, { flex: 2.4, textAlign: 'left' }]}>{item.name}</Text>
+                    <Text style={[styles.devices, { marginLeft: -20, flex: 1, textAlign: 'center' }]}>{item.launchedyear}</Text>
+                    <Text style={[styles.devices, { marginRight: -5, flex: 0.9, textAlign: 'center' }]}>{item.available}</Text>
+                  
                 </View>
               </TouchableOpacity>
             );
           }
         }}
         contentContainerStyle={{ paddingBottom: 170 }}
+        ItemSeparatorComponent={() => <View style={styles.separator} />}
       />
       </View>
     </View>
@@ -365,6 +368,19 @@ const styles =StyleSheet.create({
   selectedCategoryTabText: {
     color: "#000",
   },
+  line: {
+    marginVertical: 15,
+    paddingHorizontal: 30,
+    flexDirection: "row",
+    height: 40,
+    alignItems: "center",
+ },
+  separator: {
+    height: 1,
+    width: "90%",
+    backgroundColor: "#EEEEEF",
+    alignSelf: "center",
+ },
 })
 
 const Stack = createStackNavigator();
