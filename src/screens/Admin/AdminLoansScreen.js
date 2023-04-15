@@ -251,7 +251,11 @@ const Stack = createStackNavigator();
 const AdminLoansScreen = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="AdminLoans" component={AdminLoans} />
+      <Stack.Screen
+        name="AdminLoans"
+        component={AdminLoans}
+        options={{ headerTitle: "Loans" }}
+      />
       <Stack.Screen
         name="Detail"
         component={DetailDeviceAdmin}

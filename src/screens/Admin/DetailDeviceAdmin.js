@@ -194,7 +194,7 @@ const DetailDeviceAdmin = () => {
 
         // delete the temporary file after saving it to the gallery.
         await FileSystem.deleteAsync(fileUri);
-        Alert.alert("Image saved", "The QR code is successfully saved.");
+        Alert.alert("QR code saved", "The QR code is successfully saved.");
       });
     } catch (error) {
       console.log("Error saving QR code to gallery:", error);
@@ -231,12 +231,24 @@ const DetailDeviceAdmin = () => {
         </View>
 
         <View style={{ alignItems: "flex-end", marginRight: 30 }}>
-          <Button
-            title="View QR code"
-            onPress={() => {
-              setQRCodeModalVisible(!qrCodeModalVisible);
-            }}
-          />
+          <View style={{ alignItems: "center", paddingTop: 10 }}>
+            <TouchableOpacity
+              style={styles.buttonSmall}
+              onPress={() => {
+                setQRCodeModalVisible(!qrCodeModalVisible);
+              }}
+            >
+              <Text
+                style={{
+                  color: "#AC145A",
+                  fontSize: 16,
+                  fontWeight: 600,
+                }}
+              >
+                View QR code
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Text style={styles.textLoanDetails}>Loan Details</Text>
@@ -253,15 +265,27 @@ const DetailDeviceAdmin = () => {
           <Text style={styles.label}>Device State:</Text>
           <Text style={styles.text}>{loanDetails.deviceState}</Text>
         </View>
-        <View style={styles.buttonRow}>
-          <View style={{ flex: 0.8 }}></View>
-          <View style={{ flex: 1 }}>
-            <Button
-              title="Report issue"
+
+        <View
+          style={{ alignItems: "flex-end", marginRight: 30, paddingRight: 10 }}
+        >
+          <View style={{ alignItems: "center", paddingTop: 10 }}>
+            <TouchableOpacity
+              style={styles.buttonSmall}
               onPress={() => {
                 setModalVisible(!modalVisible);
               }}
-            />
+            >
+              <Text
+                style={{
+                  color: "#AC145A",
+                  fontSize: 16,
+                  fontWeight: 600,
+                }}
+              >
+                Report issue
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -299,12 +323,42 @@ const DetailDeviceAdmin = () => {
           <View style={styles.modalViewQR}>
             <View style={{ paddingTop: 30 }}>
               <QRCode
+                size={150}
                 value={String(route.params.deviceID)}
                 getRef={(c) => (qrCodeRef.current = c)}
               />
             </View>
-            <Button title="Save QR Code" onPress={saveQRCodeToGallery} />
-            <View style={{ paddingTop: 0 }}>
+
+            <View style={{ paddingTop: 10, flexDirection: "row" }}>
+              <TouchableOpacity
+                onPress={() => {
+                  Alert.alert(
+                    "Save QR Code",
+                    "Are you sure you want to save this QR code to the gallery?",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel",
+                      },
+                      {
+                        text: "Save",
+                        onPress: saveQRCodeToGallery,
+                      },
+                    ],
+                    { cancelable: false }
+                  );
+                }}
+              >
+                <Ionicons
+                  name="cloud-download-outline"
+                  size={20}
+                  color={"#AC145A"}
+                />
+              </TouchableOpacity>
+            </View>
+
+            <View style={{ paddingTop: 10 }}>
               <TouchableOpacity
                 style={styles.closeModalButton}
                 onPress={() => {
@@ -416,7 +470,7 @@ const DetailDeviceAdmin = () => {
                   }}
                   onPress={reportIssue}
                 >
-                  <Text style={styles.modalReportTexe}>Report</Text>
+                  <Text style={styles.modalReportText}>Report</Text>
                 </TouchableOpacity>
               </View>
             </TouchableWithoutFeedback>
@@ -444,6 +498,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     padding: 10,
   },
+  buttonSmall: {
+    backgroundColor: "#EEEEEF",
+    paddingVertical: 0,
+    paddingHorizontal: 10,
+    borderRadius: 25,
+    width: "40%",
+    height: 30,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   textLoanDetails: {
     fontSize: 16,
     fontWeight: "600",
@@ -468,10 +533,6 @@ const styles = StyleSheet.create({
     flex: 0.8,
     fontSize: 15,
     fontWeight: "thin",
-  },
-  buttonRow: {
-    flexDirection: "row",
-    alignItems: "center",
   },
 
   buttonBig: {
@@ -566,7 +627,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: "#AC145A",
   },
-  modalReportTexe: {
+  modalReportText: {
     color: "#AC145A",
     fontSize: 16,
     fontWeight: 500,
@@ -578,11 +639,10 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalViewQR: {
-    height: "30%",
-    width: "50%",
     backgroundColor: "white",
     borderRadius: 20,
-    padding: 20,
+    paddingHorizontal: 50,
+    paddingVertical: 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
