@@ -145,31 +145,36 @@ const GeneralDeviceExtendScreen = () => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>select the return time</Text>
-            {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday : 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
 
-              <TouchableOpacity
-              key={index}
-              style={styles.modalButton}
-              onPress={() => {
+            <Text style={styles.modalTitle}>Select the collect time</Text>
+            <View style={styles.modalSection}>
+              {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday: 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
+                <View key={index}>
+                  {index === 0 && <View style={styles.modalDivider} />}
+                  <TouchableOpacity
+                    style={styles.modalButton}
+                    onPress={() => {
                 console.log('Selected day:', day);
                 setSelectedCollectTime(day);
                 setModalVisible(false);
                 showAlert(day); 
               }}
               >
-              <Text style={styles.modalButtonText}>{day}</Text>
-              </TouchableOpacity>
-            ))}
+                    <Text style={styles.modalButtonText}>{day}</Text>
+                  </TouchableOpacity>
+                  {index === 4 && <View style={styles.modalDivider} />}
+                </View>
+              ))}
+            </View>
+            <View style={styles.modalDivider} />
             <TouchableOpacity
-              style={[styles.modalButtonNoBorder, { marginTop: 20 }]} 
+              style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
               onPress={() => {
                 setModalVisible(false);
               }}
             >
-              <Text style={styles.modalButtonText}>cancel</Text>
+              <Text style={styles.modalCancelButtonText}>Cancel</Text>
             </TouchableOpacity>
-
           </View>
         </View>
       </Modal>
@@ -388,32 +393,51 @@ const styles =StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: 'gray', 
+    marginBottom: 10,
+    marginTop: -10,
+    color: 'black',
+    
+  },
+  modalSection: {
+    width: '100%',
   },
   modalButton: {
-    backgroundColor: 'white', 
+    backgroundColor: 'white',
     borderRadius: 5,
     padding: 10,
-    width: '80%',
+    width: '100%',
     alignItems: 'center',
-    marginTop: 10,
-    borderBottomWidth: 1, 
-    borderBottomColor: '#D6D6D6', 
+    marginTop: 5,
+    marginBottom: 5,
+    borderTopWidth: 0,
   },
   modalButtonText: {
-    color: '#AC145A', 
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#AC145A',
+    fontSize: 17,
+    fontWeight: 'normal',
   },
   modalButtonNoBorder: {
     backgroundColor: 'white',
     borderRadius: 5,
-    padding: 10,
+    padding: 5,
     width: '80%',
     alignItems: 'center',
     marginTop: 10,
+  },
+  modalDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#D6D6D6',
+    width: '127%',
+    alignSelf: 'center',
+    marginVertical: 5,
+    
+  },
+  modalCancelButtonText: {
+    color: '#AC145A',
+    fontSize: 18, 
+    fontWeight: 'normal',
+    marginBottom: -15,
+    marginTop: -10
   },
 })
 

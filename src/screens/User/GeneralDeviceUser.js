@@ -44,6 +44,8 @@ const GeneralDeviceUser = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
 
+  
+
   return (
     <View style={{ flex: 1 }}>
       <Modal
@@ -56,34 +58,39 @@ const GeneralDeviceUser = () => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>select the collect time</Text>
-            {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday : 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
 
-              <TouchableOpacity
-              key={index}
-              style={styles.modalButton}
-              onPress={() => {
-                console.log('Selected day:', day);
-                setSelectedDate(day);
-                if (setAgr === 1) { 
-                  setStatus("On hold");
-                }
-                setModalVisible(false);
-                navigation.navigate('Userterm', { selectedDate, setAgr });
-              }}
-              >
-              <Text style={styles.modalButtonText}>{day}</Text>
-              </TouchableOpacity>
-            ))}
+            <Text style={styles.modalTitle}>Select the collect time</Text>
+            <View style={styles.modalSection}>
+              {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday: 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
+                <View key={index}>
+                  {index === 0 && <View style={styles.modalDivider} />}
+                  <TouchableOpacity
+                    style={styles.modalButton}
+                    onPress={() => {
+                      console.log('Selected day:', day);
+                      setSelectedDate(day);
+                      if (setAgr === 1) {
+                        setStatus("On hold");
+                      }
+                      setModalVisible(false);
+                      navigation.navigate('Userterm', { selectedDate, setAgr });
+                    }}
+                  >
+                    <Text style={styles.modalButtonText}>{day}</Text>
+                  </TouchableOpacity>
+                  {index === 4 && <View style={styles.modalDivider} />}
+                </View>
+              ))}
+            </View>
+            <View style={styles.modalDivider} />
             <TouchableOpacity
-              style={[styles.modalButtonNoBorder, { marginTop: 20 }]} 
+              style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
               onPress={() => {
                 setModalVisible(false);
               }}
             >
-              <Text style={styles.modalButtonText}>cancel</Text>
+              <Text style={styles.modalCancelButtonText}>Cancel</Text>
             </TouchableOpacity>
-
           </View>
         </View>
       </Modal>
@@ -167,13 +174,14 @@ const GeneralDeviceUser = () => {
     </View>
     
     <View style={styles.buttonContainer}>
-          <Button
-            title="Reserve"
-            color="#AC145A"
-            onPress={() => setModalVisible(true)}
-            disabled={status !== "Available"}
-          />
-        </View>
+      <TouchableOpacity
+        style={[styles.reserveButton, status !== "Available" && styles.reserveButtonDisabled]}
+        onPress={() => setModalVisible(true)}
+        disabled={status !== "Available"}
+      >
+        <Text style={[styles.reserveButtonText, status !== "Available" && styles.reserveButtonTextDisabled]}>Reserve</Text>
+      </TouchableOpacity>
+    </View>
 
 
       </ScrollView>
@@ -262,17 +270,7 @@ const styles =StyleSheet.create({
     lineHeight: 20,
     textAlign:'right'
   },
-  buttonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#EBEDEF',
-    paddingVertical: 10,
-    width: Dimensions.get('window').width * 0.6,
-    borderRadius: 10,
-    marginLeft:60,
-    marginBottom: 20,
-    marginTop: 250,
-  },
+  
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -287,32 +285,80 @@ const styles =StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: 'gray', 
+    marginBottom: 10,
+    marginTop: -10,
+    color: 'black',
+    
+  },
+  modalSection: {
+    width: '100%',
   },
   modalButton: {
-    backgroundColor: 'white', 
+    backgroundColor: 'white',
     borderRadius: 5,
     padding: 10,
-    width: '80%',
+    width: '100%',
     alignItems: 'center',
-    marginTop: 10,
-    borderBottomWidth: 1, 
-    borderBottomColor: '#D6D6D6', 
+    marginTop: 5,
+    marginBottom: 5,
+    borderTopWidth: 0,
   },
   modalButtonText: {
-    color: '#AC145A', 
-    fontSize: 16,
-    fontWeight: 'bold',
+    color: '#AC145A',
+    fontSize: 17,
+    fontWeight: 'normal',
   },
   modalButtonNoBorder: {
     backgroundColor: 'white',
     borderRadius: 5,
-    padding: 10,
+    padding: 5,
     width: '80%',
     alignItems: 'center',
     marginTop: 10,
+  },
+  modalDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#D6D6D6',
+    width: '127%',
+    alignSelf: 'center',
+    marginVertical: 5,
+    
+  },
+  modalCancelButtonText: {
+    color: '#AC145A',
+    fontSize: 18, 
+    fontWeight: 'normal',
+    marginBottom: -15,
+    marginTop: -10
+  },
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    width: Dimensions.get('window').width * 0.6,
+    borderRadius: 10,
+    marginLeft: 60,
+    marginTop: 250,
+  },
+  reserveButton: {
+    alignItems: 'center',
+    backgroundColor: '#EBEDEF',
+    borderRadius: 10,
+    padding: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    width: '80%'
+  },
+  reserveButtonDisabled: {
+    backgroundColor: '#D6D6D6',
+  },
+  reserveButtonText: {
+    color: '#AC145A',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  reserveButtonTextDisabled: {
+    color: '#8C8C8C',
   },
 })
 
