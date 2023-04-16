@@ -29,17 +29,3 @@ router.put('/devices/:deviceId/state', postControllers.updateDeviceState); //TOT
 router.get('/user/devices', postControllers.getAllDevicesUser); //TOTEST
 
 module.exports = router;
-
-/*
-router
-    .route("/")
-    .get(postControllers.getAllPosts)
-    .post(postControllers.createNewPost);
-
-router.route("/:id").get(postControllers.getPostById);
-router.route('/loans/userId/:userId').get(postControllers.getLoansByUserId);
-router.route('/loans').post(postControllers.createLoan);
-router.route('/loans/:id').put(postControllers.updateLoan);
-router.route('/loans/:id').delete(postControllers.deleteLoan);
-
-*/

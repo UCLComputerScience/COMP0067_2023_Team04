@@ -1,8 +1,21 @@
-import axios from "axios";
+// src/config.js
+const BASE_URL = "https://20.254.93.210:8080/";
 
-export default axios.create({
-    baseURL: "https://20.254.93.210:8080/",
-    headers: {
-        "Content-type": "application/json"
+const api = {
+  get: async (path) => {
+    try {
+      const response = await fetch(`${BASE_URL}${path}`, {
+        method: "GET",
+        headers: {
+          "Content-type": "application/json",
+        },
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Fetch error:", error);
+      throw error;
     }
-});
+  },
+};
+
+export default api;
