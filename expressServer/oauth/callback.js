@@ -45,12 +45,6 @@ async function getToken(code) {
   return data;
 }
 
-async function getToken(code) {
-  const response = await fetch(`${API_URL}/oauth/token?code=${code}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`);
-  const data = await response.json();
-  return data;
-}
-
 // retrieves user data from API endpoint
 async function getUserData(token) {
   const response = await fetch(`${API_URL}/oauth/user/data?client_secret=${CLIENT_SECRET}&token=${token}`);
