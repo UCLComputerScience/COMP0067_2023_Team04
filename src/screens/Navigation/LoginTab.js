@@ -5,7 +5,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AdminTabScreen from './AdminTabs';
 import UserTabScreen from './UserTabs';
 import jwtDecode from 'jwt-decode';
-import api from '../config';
+import api from '../../config';
 import AuthContext from './AuthContext';
 
 const Stack = createStackNavigator();
@@ -37,7 +37,7 @@ function LoginTab() {
   }, []);
 
   return (
-    <NavigationContainer>
+
       <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Login">
         {userRole === 'admin' ? (
           <Stack.Screen
@@ -59,20 +59,22 @@ function LoginTab() {
           />
         )}
       </Stack.Navigator>
-    </NavigationContainer>
   );
 }
 
 function LoginScreen() {
   const handleLogin = () => {
     api.get('oauth').then((response) => {
+      console.log('API response:', response);
       if (response.data && response.data.url) {
         Linking.openURL(response.data.url);
       } else {
         // Handle error
+        console.error('Unexpected API response format');
       }
     }).catch((error) => {
       // Handle error
+      console.error('API request error:', error);
     });
   };
 
