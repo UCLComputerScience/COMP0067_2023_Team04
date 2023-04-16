@@ -1,14 +1,56 @@
 import React, { useState } from 'react';
-import { Image, View, Text, TextInput, Button } from 'react-native';
+import { Image, View, Text, TextInput, Button, Linking} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import AdminTabScreen from './AdminTabs';
 import UserTabScreen from './UserTabs';
 
 const Stack = createStackNavigator();
+const CLIENT_ID = "0830044936260096.0010110257374561";
+
+function generateRandomString(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
 
 function LoginTab() {
   const [userRole, setUserRole] = useState(null);
+
+  useEffect(() => {
+    const handleDeepLink = async (event) => {
+      const url = new URL(event.url);
+      const code = url.searchParams.get('code');
+      const state = url.searchParams.get('state');
+
+      try {
+        const response = await fetch(`https://your-server.com/oauth/callback?code=${code}&state=${state}`);
+        const data = await response.json();
+
+        if (data.success) {
+          setUserRole(data.role);
+        } else {
+          // Handle error
+        }
+      } catch (error) {
+        // Handle error
+      }
+    };
+
+    Linking.addEventListener('url', handleDeepLink);
+
+    return () => {
+      Linking.removeEventListener('url', handleDeepLink);
+    };
+  }, []);
+
+  const handleLogin = () => {
+    const url = `https://uclapi.com/oauth/authorise?client_id=` + CLIENT_ID + `&state=` + generateRandomString(16);
+    Linking.openURL(url);
+  };
 
   return (
     <NavigationContainer>
@@ -39,12 +81,6 @@ function LoginTab() {
   function LoginScreen({ navigation }) {
     const [username, setUsername] = useState('');
 
-    function handleLogin() {
-      // SSO login logic
-      const role = 'user'; // Assume successful login
-      setUserRole(role);
-    }
-
     // For frontend development only
     function handleAdminLogin() {
       const role = 'admin';
@@ -55,6 +91,7 @@ function LoginTab() {
       const role = 'user';
       setUserRole(role);
     }
+    //
 
     return (
       <View style={{ flex: 1, padding: 20, backgroundColor: '#fff' }}>
