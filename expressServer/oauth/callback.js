@@ -3,6 +3,7 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const querystring = require('querystring');
 
 const API_URL = process.env.API_URL;
 const CLIENT_ID = process.env.CLIENT_ID;
@@ -23,6 +24,27 @@ function genToken(user) {
 }
 
 // retrieves OAuth access token
+async function getToken(code) {
+  const postData = querystring.stringify({
+    code: code,
+    client_id: CLIENT_ID,
+    client_secret: CLIENT_SECRET,
+    grant_type: 'authorization_code',
+  });
+
+  const requestOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: postData,
+  };
+
+  const response = await fetch(`${API_URL}/oauth/token`, requestOptions);
+  const data = await response.json();
+  return data;
+}
+
 async function getToken(code) {
   const response = await fetch(`${API_URL}/oauth/token?code=${code}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`);
   const data = await response.json();
