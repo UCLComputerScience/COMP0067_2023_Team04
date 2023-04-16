@@ -1,5 +1,5 @@
 // src/config.js
-const BASE_URL = "https://20.254.93.210:8080/";
+const BASE_URL = "http://20.254.93.210:8080/";
 
 const api = {
   get: async (path) => {
