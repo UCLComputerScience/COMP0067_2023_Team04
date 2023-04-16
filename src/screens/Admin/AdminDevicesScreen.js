@@ -13,6 +13,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceAdmin from "./GeneralDeviceAdmin";
+import StatisticsAdmin from "./StatisticsAdmin";
 
 const AllDevices = () => {
   const navigation = useNavigation();
@@ -204,7 +205,12 @@ const AllDevices = () => {
   return (
     <View style={styles.container}>
       <View style={{ paddingHorizontal: 20 }}>
-        <View style={{ flexDirection: "row" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
           <View style={styles.searchbar}>
             <Icon name="search" size={20} color="#000" />
             <TextInput
@@ -214,8 +220,15 @@ const AllDevices = () => {
               placeholder="Search"
             />
           </View>
-          <Ionicons style={styles.add} size={25} name="add-circle-outline" />
-          <Ionicons style={styles.add} size={25} name="stats-chart-outline" />
+          <TouchableOpacity style={styles.add}>
+            <Ionicons size={25} name="add-circle-outline" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.add}
+            onPress={() => navigation.navigate("Statistics")}
+          >
+            <Ionicons size={25} name="stats-chart-outline" />
+          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.categoryTabs}>
@@ -361,10 +374,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   add: {
-    marginTop: 10,
-    padding: 10,
-    alignItems: "center",
     flex: 1,
+    paddingTop: 10,
+    paddingLeft: 10,
   },
   list: {
     marginTop: 10,
@@ -424,6 +436,7 @@ const AdminDevicesScreen = () => {
         //options={({ route }) => ({ title: route.params.deviceName })}
         //options={({ route }) => ({ title: "Device details" })}
       />
+      <Stack.Screen name="Statistics" component={StatisticsAdmin} />
     </Stack.Navigator>
   );
 };
