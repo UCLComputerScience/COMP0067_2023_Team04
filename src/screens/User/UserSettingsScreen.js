@@ -1,129 +1,94 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-
+import {
+  View,
+  Text,
+  Button,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+} from "react-native";
+import React, { useContext } from "react";
+import { useNavigation } from "@react-navigation/native";
+import AuthContext from "../Navigation/AuthContext";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 const UserSettingsScreen = () => {
-  const [isLogoutModalVisible, setIsLogoutModalVisible] = useState(false);
+  const { logout } = useContext(AuthContext);
 
-  const handleLogout = () => {
+  const handlelogout = () => {
     Alert.alert(
-      'Are you sure?',
-      'Are you sure you want to logout of the application?',
+      "Are you sure?",
+      "Are you sure you want to logout of the application?",
       [
         {
-          text: 'YES',
-          onPress: () => console.log('YES Pressed')
+          text: "No",
+          style: "cancel",
         },
         {
-          text: 'NO',
-          onPress: () => console.log('NO Pressed'),
-          style: 'cancel'
-        }
+          text: "Yes",
+          onPress: () => logout(),
+        },
       ],
       { cancelable: false }
-    )
-  };
-
-  const handleLogoutConfirm = () => {
-    setIsLogoutModalVisible(false);
-  };
-
-  const handleLogoutCancel = () => {
-    setIsLogoutModalVisible(false);
+    );
   };
 
   return (
-    <View style={styles.container}>
-
-
-      
-      <View style={styles.sectionContainer}>
-
-        <TouchableOpacity style={styles.section} activeOpacity={0.8}>
-          <Text style={styles.sectionTitle}>Personal Details</Text>
-          <Text style={styles.sectionSubTitle}>&gt;</Text>
-        </TouchableOpacity>
-
-        <View style={styles.generalContainer}>
-          <Text style={styles.generalTitle}>General</Text>
+    <View style={{ paddingTop: 20 }}>
+      <TouchableOpacity>
+        <View style={styles.buttonRow}>
+          <Text style={styles.buttonText}>Personal details</Text>
+          <Ionicons name="chevron-forward-outline" size={20} color="#ccc" />
         </View>
-
-        <TouchableOpacity style={styles.section} activeOpacity={0.8}>
-          <Text style={styles.sectionTitle}>About</Text>
-          <Text style={styles.sectionSubTitle}>Version 1.0.0 &gt;</Text>
-        </TouchableOpacity>
-
-      </View>
-
-      <TouchableOpacity style={styles.section} activeOpacity={0.8} onPress={handleLogout}>
-        <Text style={styles.sectionTitle}>Log Out</Text>
       </TouchableOpacity>
       
-      </View>
+      
+      <View style={styles.separator} />
+      <Text style={styles.title}>General</Text>
+      <TouchableOpacity>
+        <View style={styles.buttonRow}>
+          <Text style={styles.buttonText}>About</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ color: "#ccc", fontWeight: 500 }}>1.0.0</Text>
+            <Ionicons name="chevron-forward-outline" size={20} color="#ccc" />
+          </View>
+        </View>
+      </TouchableOpacity>
+      <View style={styles.separator} />
+
+      <TouchableOpacity style={{ paddingTop: 45 }} onPress={handlelogout}>
+        <View style={styles.buttonRow}>
+          <Text style={styles.buttonText}>Logout</Text>
+          <Ionicons name="chevron-forward-outline" size={20} color="#ccc" />
+        </View>
+      </TouchableOpacity>
+      <View style={styles.separator} />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  
-  container: {
-    flex: 1,
-    backgroundColor: '#f2f2f2',
+  buttonRow: {
+    width: "100%",
+    backgroundColor: "white",
+    height: 45,
+    justifyContent: "space-between",
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
   },
-
-
-
-  sectionContainer: {
-    marginBottom: 30,
+  buttonText: {
+    fontSize: 16,
+    fontWeight: "regular",
   },
-
-
-  section: {
-    backgroundColor: '#fff',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 2,
-    elevation: 5,
+  separator: {
+    height: 0.5,
+    backgroundColor: "#D6D6D6",
   },
-
-
-  sectionTitle: {
-    fontFamily: 'System',
+  title: {
+    padding: 10,
     fontSize: 14,
-    color: '#333',
+    fontWeight: "regular",
   },
-
-
-  sectionSubTitle: {
-    fontSize: 14,
-    color: '#ccc',
-  },
-
-
-  generalContainer: {
-    height: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-
-  generalTitle: {
-    paddingLeft: 12,
-    fontSize: 12,
-    color: '#333',
-  },
-
-
-  generalSubTitle: {
-    fontSize: 20,
-    color: '#ccc',
-    marginLeft: 4,
-  },
- 
 });
+
 export default UserSettingsScreen;
