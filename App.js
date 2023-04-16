@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginTab from './src/screens/Navigation/LoginTab';
 import AuthContext from './src/screens/Navigation/AuthContext';
+import { Linking } from 'react-native';
 
 const App = () => {
   const [userRole, setUserRole] = useState(null);
@@ -14,9 +15,18 @@ const App = () => {
     setAccessToken,
   };
 
+  const linking = {
+    prefixes: ['device-loan-app://'],
+    config: {
+      screens: {
+        Login: 'auth',
+      },
+    },
+  };
+
   return (
     <AuthContext.Provider value={authContextValue}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         <LoginTab />
       </NavigationContainer>
     </AuthContext.Provider>
