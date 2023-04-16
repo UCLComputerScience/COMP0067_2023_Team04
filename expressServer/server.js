@@ -1,18 +1,21 @@
 require("dotenv").config(); // ALLOWS ENVIRONMENT VARIABLES TO BE SET ON PROCESS.ENV SHOULD BE AT TOP
 
 const express = require("express");
-const app = express();
+const session = require("express-session");
 const oauthRouter = require('./oauth/index.js');
 const fs = require('fs');
 // const cors = require("cors");
 
 // Middleware
+const app = express();
 app.use(express.json()); // parse json bodies in the request object
 // app.use(cors());
 // Redirect requests to endpoint starting with /posts to postRoutes.js
 app.use("/posts", require("./routes/postRoutes"));
 // Use the OAuth router
 app.use('/connect/uclapi', oauthRouter);
+app.use(session(/* session configuration options */));
+app.use('/oauth', oauthRouter);
 
 app.get('./schedule', (req, res) => {
   fs.readFile('schedule.txt', 'utf8', (err, data) => {

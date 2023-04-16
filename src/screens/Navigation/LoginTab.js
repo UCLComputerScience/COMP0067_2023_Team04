@@ -1,83 +1,97 @@
-import React, { useState, useContext } from "react";
-import { View, Text, Button, SafeAreaView } from "react-native";
-import {
-  NavigationContainer,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
-import AdminTabs from "./AdminTabs";
-import UserTabs from "./UserTabs";
-import { createStackNavigator } from "@react-navigation/stack";
-import AuthContext from "./AuthContext";
-
-const LoginTabScreen = () => {
-  const navigation = useNavigation();
-  const { loginAsAdmin, loginAsUser } = useContext(AuthContext);
-
-  return (
-    <SafeAreaView>
-      <Button title="SSO Login" />
-      <Button title="Admin Login" onPress={loginAsAdmin} />
-      <Button title="User Login" onPress={loginAsUser} />
-    </SafeAreaView>
-  );
-};
+import React, { useState, useEffect, useContext } from 'react';
+import { Image, View, Text, Button, Linking, AsyncStorage } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import AdminTabScreen from './AdminTabs';
+import UserTabScreen from './UserTabs';
+import jwtDecode from 'jwt-decode';
+import api from '../config';
+import AuthContext from './AuthContext';
 
 const Stack = createStackNavigator();
 
-const LoginTab = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+function LoginTab() {
+  const { userRole, setUserRole } = useContext(AuthContext);
 
-  const loginAsAdmin = () => {
-    setIsAdmin(true);
-    setLoggedIn(true);
-  };
+  useEffect(() => {
+    const handleDeepLink = async (event) => {
+      const url = new URL(event.url);
+      const jwtToken = url.searchParams.get('token');
 
-  const loginAsUser = () => {
-    setIsAdmin(false);
-    setLoggedIn(true);
-  };
+      try {
+        const decoded = jwtDecode(jwtToken);
+        const { role, apiToken } = decoded;
 
-  const logout = () => {
-    setLoggedIn(false);
-    setIsAdmin(false);
-  };
+        setUserRole(role);
+        await AsyncStorage.setItem('accessToken', apiToken);
+      } catch (error) {
+        // Handle error
+      }
+    };
 
-  const authContextValue = {
-    loggedIn,
-    isAdmin,
-    loginAsAdmin,
-    loginAsUser,
-    logout,
+    Linking.addEventListener('url', handleDeepLink);
+
+    return () => {
+      Linking.removeEventListener('url', handleDeepLink);
+    };
+  }, []);
+
+  return (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Login">
+        {userRole === 'admin' ? (
+          <Stack.Screen
+            name="AdminTab"
+            component={AdminTabScreen}
+            options={{ title: 'Admin Tab Screen' }}
+          />
+        ) : userRole === 'user' ? (
+          <Stack.Screen
+            name="UserTab"
+            component={UserTabScreen}
+            options={{ title: 'User Tab Screen' }}
+          />
+        ) : (
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ title: 'Login', headerShown: true }}
+          />
+        )}
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+function LoginScreen() {
+  const handleLogin = () => {
+    api.get('oauth').then((response) => {
+      if (response.data && response.data.url) {
+        Linking.openURL(response.data.url);
+      } else {
+        // Handle error
+      }
+    }).catch((error) => {
+      // Handle error
+    });
   };
 
   return (
-    <AuthContext.Provider value={authContextValue}>
-      <NavigationContainer>
-        {loggedIn ? (
-          isAdmin ? (
-            <AdminTabs />
-          ) : (
-            <UserTabs />
-          )
-        ) : (
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-              headerLeft: null,
-              gestureEnabled: false,
-              headerBackVisible: false,
-            }}
-          >
-            <Stack.Screen name="LoginTabScreen" component={LoginTabScreen} />
-            <Stack.Screen name="AdminTabs" component={AdminTabs} />
-            <Stack.Screen name="UserTabs" component={UserTabs} />
-          </Stack.Navigator>
-        )}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <View style={{ flex: 1, padding: 20, backgroundColor: '#fff' }}>
+      <Image
+        source={require('../../components/icons/UCL.png')}
+        resizeMode="contain"
+        style={{
+          width: 100,
+          height: 50,
+        }}
+      />
+      <Text style={{ fontWeight: 'bold', fontSize: 24, marginBottom: 10, textAlign: 'left' }}>Sign in</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'center', marginRight: 20 }}>
+        <Button title="SSO Login" onPress={handleLogin} />
+      </View>
+    </View>
   );
-};
+}
 
 export default LoginTab;
