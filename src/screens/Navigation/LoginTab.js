@@ -15,8 +15,10 @@ function LoginTab() {
 
   useEffect(() => {
     const handleDeepLink = async (event) => {
+      console.log('Deep link event:', event);
       const url = new URL(event.url);
       const jwtToken = url.searchParams.get('token');
+      console.log('JWT Token:', jwtToken);
 
       try {
         const decoded = jwtDecode(jwtToken);
@@ -26,6 +28,7 @@ function LoginTab() {
         await AsyncStorage.setItem('accessToken', apiToken);
       } catch (error) {
         // Handle error
+        console.error('Error handling deep link:', error);
       }
     };
 

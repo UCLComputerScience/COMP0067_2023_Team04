@@ -27,6 +27,7 @@ function genToken(user) {
 async function getToken(code) {
   const response = await fetch(`${API_URL}/oauth/token?code=${code}&client_id=${CLIENT_ID}&client_secret=${CLIENT_SECRET}`);
   const data = await response.json();
+  console.log("Token data:", data);
   return data;
 }
 
@@ -34,6 +35,7 @@ async function getToken(code) {
 async function getUserData(token) {
   const response = await fetch(`${API_URL}/oauth/user/data?client_secret=${CLIENT_SECRET}&token=${token}`);
   const data = await response.json();
+  console.log("User data:", data);
   return data;
 }
 
@@ -83,6 +85,7 @@ const callback = async (req, res) => {
     ...user,
     role: user.role,
   });
+  console.log("Generated JWT Token:", jwtToken);
 
   // Send the JWT token back to the mobile app
   res.redirect(`device-loan-app://auth?token=${jwtToken}`);
