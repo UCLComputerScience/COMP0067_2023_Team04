@@ -1,3 +1,4 @@
+// App.js
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import LoginTab from './src/screens/Navigation/LoginTab';

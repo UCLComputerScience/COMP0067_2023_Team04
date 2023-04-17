@@ -1,3 +1,4 @@
+// expressServer/server.js
 require("dotenv").config(); // ALLOWS ENVIRONMENT VARIABLES TO BE SET ON PROCESS.ENV SHOULD BE AT TOP
 
 const express = require("express");
@@ -74,4 +75,4 @@ app.post('/schedule', (req, res) => {
 
 // Listen on pc port
 // const PORT = process.env.PORT || 8080;
-app.listen(8080, () => console.log(`Server running on PORT 8080`)); //${PORT}
+app.listen(443, () => console.log(`Server running on PORT 443`)); //${PORT}
