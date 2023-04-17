@@ -30,6 +30,7 @@ const CollapsibleList = () => {
     }
   };
   /*please notice. We only load this week data*/
+  //device with state 'reserved' or ('loan' && 'duedate < friday'
   const loanTable = [
     {
       name: "Lenovo Legion Y9000P 2022 RTX 3070ti",

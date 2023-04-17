@@ -24,6 +24,7 @@ const DetailDeviceAdmin = () => {
   const { deviceID } = route.params;
   //console.log(deviceID);
 
+  //Fetch a detail device information with the input of id, the id is defined in variable above
   const deviceInfo = {
     deviceName: "Lenovo Legion Y9000P 2022 RTX 3070Ti",
     //deviceID: "20220901001",

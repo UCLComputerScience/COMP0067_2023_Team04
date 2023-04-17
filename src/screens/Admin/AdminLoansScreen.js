@@ -12,6 +12,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 
 const AdminLoans = () => {
+  // All loan information, where id is the device ID
   const loanTable = [
     {
       name: "Lenovo Legion Y9000P 2022 RTX 3070ti",

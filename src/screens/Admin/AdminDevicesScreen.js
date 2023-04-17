@@ -17,6 +17,7 @@ import StatisticsAdmin from "./StatisticsAdmin";
 
 const AllDevices = () => {
   const navigation = useNavigation();
+  //All devices with counts
   const initialDevices = [
     {
       name: "Lenovo Legion Y9000P 2022 RTX 3070ti",

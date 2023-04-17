@@ -1,15 +1,22 @@
-import React, { useMemo, useState } from 'react';
-import { View, StyleSheet, Text, ScrollView, TouchableOpacity } from 'react-native';
-import { PieChart } from 'react-native-chart-kit';
+import React, { useMemo, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { PieChart } from "react-native-chart-kit";
 
 const chartConfig = {
-  backgroundColor: '#e26a00',
-  backgroundGradientFrom: '#fb8c00',
-  backgroundGradientTo: '#ffa726',
+  backgroundColor: "#e26a00",
+  backgroundGradientFrom: "#fb8c00",
+  backgroundGradientTo: "#ffa726",
   decimalPlaces: 2,
   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
 };
 
+//counts of available and overdue
 const current = [
   {
     total: 400,
@@ -62,17 +69,17 @@ const calculateChartData = (data) => {
 
   return [
     {
-      name: 'Available',
+      name: "Available",
       population: availablePercentage,
-      color: '#AC145A',
-      legendFontColor: '#7F7F7F',
+      color: "#AC145A",
+      legendFontColor: "#7F7F7F",
       legendFontSize: 15,
     },
     {
-      name: 'Out',
+      name: "Out",
       population: outPercentage,
-      color: '#D9D9D9',
-      legendFontColor: '#7F7F7F',
+      color: "#D9D9D9",
+      legendFontColor: "#7F7F7F",
       legendFontSize: 15,
     },
   ];
@@ -81,7 +88,7 @@ const calculateChartData = (data) => {
 export default function AdminSettingsScreen() {
   const chartData = useMemo(() => calculateChartData(current), []);
   const yearlyChartData = useMemo(() => calculateYearlyChartData(yearly), []);
-  const [currentTab, setCurrentTab] = useState('Current');
+  const [currentTab, setCurrentTab] = useState("Current");
 
   const handleTabPress = (tab) => {
     setCurrentTab(tab);
@@ -93,14 +100,14 @@ export default function AdminSettingsScreen() {
         <TouchableOpacity
           style={[
             styles.tabButton,
-            currentTab === 'Current' && styles.activeTabButton,
+            currentTab === "Current" && styles.activeTabButton,
           ]}
-          onPress={() => handleTabPress('Current')}
+          onPress={() => handleTabPress("Current")}
         >
           <Text
             style={[
               styles.tabButtonText,
-              { color: currentTab === 'Current' ? '#000' : '#ccc' },
+              { color: currentTab === "Current" ? "#000" : "#ccc" },
             ]}
           >
             Current
@@ -110,14 +117,14 @@ export default function AdminSettingsScreen() {
         <TouchableOpacity
           style={[
             styles.tabButton,
-            currentTab === 'Yearly' && styles.activeTabButton,
+            currentTab === "Yearly" && styles.activeTabButton,
           ]}
-          onPress={() => handleTabPress('Yearly')}
+          onPress={() => handleTabPress("Yearly")}
         >
           <Text
             style={[
               styles.tabButtonText,
-              { color: currentTab === 'Yearly' ? '#000' : '#ccc' },
+              { color: currentTab === "Yearly" ? "#000" : "#ccc" },
             ]}
           >
             Yearly
@@ -125,7 +132,7 @@ export default function AdminSettingsScreen() {
         </TouchableOpacity>
       </View>
 
-      {currentTab === 'Current' && (
+      {currentTab === "Current" && (
         <ScrollView contentContainerStyle={styles.scrollView}>
           <View style={styles.contentContainer}>
             <View style={styles.container}>
@@ -148,7 +155,9 @@ export default function AdminSettingsScreen() {
                   </View>
                   <View style={styles.rightColumn}>
                     <Text style={styles.textBold}>{item.total}</Text>
-                    <Text style={styles.textBold}>{item.total - item.available}</Text>
+                    <Text style={styles.textBold}>
+                      {item.total - item.available}
+                    </Text>
                     <Text style={styles.textBold}>{item.available}</Text>
                     <Text style={styles.textBold}>{item.overdue}</Text>
                   </View>
@@ -159,7 +168,7 @@ export default function AdminSettingsScreen() {
         </ScrollView>
       )}
 
-      {currentTab === 'Yearly' && (
+      {currentTab === "Yearly" && (
         <ScrollView contentContainerStyle={styles.scrollView}>
           <View style={styles.contentContainer}>
             <View style={styles.container}>
@@ -186,7 +195,9 @@ export default function AdminSettingsScreen() {
                     <Text style={styles.textBold}>{item.expenditure}</Text>
                     <Text style={styles.textBold}>{item.borrowed}</Text>
                     <Text style={styles.textBold}>{item.onTime}</Text>
-                    <Text style={styles.textBold}>{item.borrowed - item.onTime}</Text>
+                    <Text style={styles.textBold}>
+                      {item.borrowed - item.onTime}
+                    </Text>
                     <Text style={styles.textBold}>{item.popular}</Text>
                     <Text style={styles.textBold}>{item.leastPopular}</Text>
                   </View>
@@ -205,13 +216,13 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   container: {
-    justifyContent: 'flex-start',
-    alignItems: 'center',
+    justifyContent: "flex-start",
+    alignItems: "center",
     paddingTop: 20,
   },
   listItem: {
-    flexDirection: 'row',
-    backgroundColor: '#f0f0f0',
+    flexDirection: "row",
+    backgroundColor: "#f0f0f0",
     padding: 10,
     marginBottom: 10,
     borderRadius: 5,
@@ -224,17 +235,17 @@ const styles = StyleSheet.create({
   },
   textBold: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     padding: 20,
   },
 
   tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 5,
     marginTop: -5,
   },

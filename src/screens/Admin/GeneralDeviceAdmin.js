@@ -19,6 +19,7 @@ const GeneralDeviceAdmin = () => {
   console.log("route.params:", route.params);
   console.log("deviceName:", deviceName);
 
+  //Device info
   const device = [
     {
       standardLoanDuration: 14,
@@ -34,6 +35,7 @@ const GeneralDeviceAdmin = () => {
     },
   ];
 
+  //The ids of a same device
   const devices = [
     { id: 20220901001, state: "Loaned" },
     { id: 20220901002, state: "Available" },
