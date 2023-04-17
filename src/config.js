@@ -1,6 +1,6 @@
 // src/config.js
-const fetch = require('node-fetch');
-const BASE_URL = "http://20.254.93.210:8080/";
+const fetch = require('node-fetch-commonjs');
+const BASE_URL = "https://20.254.93.210:443/";
 
 const api = {
     get: async (path) => {
