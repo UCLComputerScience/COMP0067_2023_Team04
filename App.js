@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import LoginTab from './src/screens/Navigation/LoginTab';
-import AuthContext from './src/screens/Navigation/AuthContext';
+import React, { useState } from "react";
+import { NavigationContainer } from "@react-navigation/native";
+import LoginTab from "./src/screens/Navigation/LoginTab";
+import AuthContext from "./src/screens/Navigation/AuthContext";
 
 const App = () => {
   const [userRole, setUserRole] = useState(null);
@@ -16,9 +16,7 @@ const App = () => {
 
   return (
     <AuthContext.Provider value={authContextValue}>
-      <NavigationContainer>
-        <LoginTab />
-      </NavigationContainer>
+      <LoginTab />
     </AuthContext.Provider>
   );
 };
