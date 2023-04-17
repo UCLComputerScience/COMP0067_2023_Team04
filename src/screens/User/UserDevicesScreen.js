@@ -7,8 +7,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import GeneralDeviceUser from './GeneralDeviceUser';
 
 
-//这个界面需要读取所有可租用设备的型号，上架日期，可供租用的数量，名字
-//注意！数据库里available数量为0的设备不应该出现！
+//This screen needs to read the model number, shelf date, number of available rentals, and name of all available rental devices
+//Note! The number of devices available in the database is 0 should not appear!
 
 const AllDevices = () => {
 

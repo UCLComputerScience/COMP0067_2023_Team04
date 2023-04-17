@@ -5,7 +5,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import GeneralDeviceUserScreen from './GeneralDeviceUser';
 
 
-//这个界面需要读取该用户的预约情况，他需要该用户预约过的设备的名字，状态和due date，状态只有两种情况，还在loan或者已经return了
+// This screen needs to read the reservation status of the user, it needs the name, status and due date of the device that the user has reserved, the status is only two cases, loan or has been returned
 
 const AllDevices = () => {
 
