@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `device` (
   `launchYr` int(11) DEFAULT NULL,
   `cost` double(10,2) DEFAULT NULL,
   PRIMARY KEY (`deviceId`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
 --
 -- 转存表中的数据 `device`
@@ -79,32 +79,28 @@ CREATE TABLE IF NOT EXISTS `loan` (
   `dueDate` date DEFAULT NULL,
   `deviceId` int(11) DEFAULT NULL,
   `exten` tinyint(1) DEFAULT NULL,
-  `scheduledCollectionDate` date DEFAULT NULL,
-  `scheduledReturnDate` date DEFAULT NULL,
+  `returnDate` date DEFAULT NULL,
   PRIMARY KEY (`loanId`),
   KEY `deviceId` (`deviceId`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
-INSERT INTO `loan` (`loanId`, `userId`, `startDate`, `dueDate`, `deviceId`, `exten`, `scheduledCollectionDate`, `scheduledReturnDate`)
+INSERT INTO `loan` (`loanId`, `userId`, `startDate`, `dueDate`, `deviceId`, `exten`, `returnDate`)
 VALUES
-(1, 1, '2022-01-01', '2024-01-15', 1, 0, NULL, NULL),
-(2, 1, '2022-02-05', '2024-02-20', 2, 1, NULL, NULL),
-(3, 2, '2022-03-10', '2024-03-25', 3, 0, NULL, NULL),
-(4, 2, '2022-04-01', '2024-04-16', 4, 0, NULL, NULL),
-(5, 2, '2022-05-01', '2024-05-16', 5, 1, NULL, NULL),
-(6, 1, '2022-06-01', '2024-06-16', 6, 0, NULL, NULL),
-(7, 3, '2022-07-01', '2024-07-16', 7, 0, NULL, NULL),
-(8, 2, '2022-08-01', '2024-08-16', 8, 1, NULL, NULL),
-(9, 3, '2022-09-01', '2024-09-16', 9, 0, NULL, NULL),
-(10, 3, '2022-10-01', '2024-10-16', 10, 0, NULL, NULL),
-(11, 1, '2022-11-01', '2024-11-16', 11, 1, NULL, NULL),
-(12, 1, '2022-12-01', '2024-12-16', 12, 0, NULL, NULL),
-(13, 3, '2023-01-01', '2025-01-16', 13, 0, NULL, NULL);
-
--- 'admins'
--- DROP TABLE IF EXISTS `admins` (`adminUPI`,`schedule`)
+(1, 1, '2022-01-01', '2024-01-15', 1, 0, NULL),
+(2, 1, '2022-02-05', '2024-02-20', 2, 1, NULL),
+(3, 2, '2022-03-10', '2024-03-25', 3, 0, NULL),
+(4, 2, '2022-04-01', '2024-04-16', 4, 0, NULL),
+(5, 2, '2022-05-01', '2024-05-16', 5, 1, NULL),
+(6, 1, '2022-06-01', '2024-06-16', 6, 0, NULL),
+(7, 3, '2022-07-01', '2024-07-16', 7, 0, NULL),
+(8, 2, '2022-08-01', '2024-08-16', 8, 1, NULL),
+(9, 3, '2022-09-01', '2024-09-16', 9, 0, NULL),
+(10, 3, '2022-10-01', '2024-10-16', 10, 0, NULL),
+(11, 1, '2022-11-01', '2024-11-16', 11, 1, NULL),
+(12, 1, '2022-12-01', '2024-12-16', 12, 0, NULL),
+(13, 3, '2023-01-01', '2025-01-16', 13, 0, NULL);

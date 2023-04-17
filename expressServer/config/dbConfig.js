@@ -1,6 +1,7 @@
 module.exports = {
-    HOST: "localhost",
-    USER: "root",
-    PASSWORD: "root&123",
-    DB: "device_loan"
+    HOST: "0067team4db.mysql.database.azure.com",
+    port: 3306,
+    USER: "team4",
+    PASSWORD: "Deviceloanappeng4",
+    DB: "deviceloan"
   };
