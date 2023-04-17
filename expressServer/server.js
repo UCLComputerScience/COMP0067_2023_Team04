@@ -19,13 +19,34 @@ app.use(function(req, res, next){
   next();
 })
 
+// Set up session middleware
+app.use(
+  session({
+    secret: 'secret-secret-ive-got-a-secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: 'auto'},
+  })
+);
+
 // app.use(cors());
 // Redirect requests to endpoint starting with /posts to postRoutes.js
 app.use("/posts", require("./routes/postRoutes"));
 // Use the OAuth router
 // app.use('/connect/uclapi', oauthRouter);
-// app.use(session({}));
+
 app.use('/oauth', oauthRouter);
+
+// Global Error Handler. IMPORTANT function params MUST start with err
+app.use((err, req, res, next) => {
+  console.log(err.stack);
+  console.log(err.name);
+  console.log(err.code);
+
+  res.status(500).json({
+    message: "Something went really wrong",
+  });
+});
 
 app.get('/schedule', (req, res) => {
   fs.readFile('schedule.txt', 'utf8', (err, data) => {
@@ -48,17 +69,6 @@ app.post('/schedule', (req, res) => {
     } else {
       res.send('Schedule updated')
     }
-  });
-});
-
-// Global Error Handler. IMPORTANT function params MUST start with err
-app.use((err, req, res, next) => {
-  console.log(err.stack);
-  console.log(err.name);
-  console.log(err.code);
-
-  res.status(500).json({
-    message: "Something went really wrong",
   });
 });
 
