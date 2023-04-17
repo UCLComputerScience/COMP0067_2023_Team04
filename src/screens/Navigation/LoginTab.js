@@ -23,23 +23,26 @@ const LoginTabScreen = () => {
 };
 const Stack = createStackNavigator();
 const LoginTab = () => {
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+  const [accessToken, setAccessToken] = useState(null);
+
   const loginAsAdmin = () => {
-    setIsAdmin(true);
-    setLoggedIn(true);
+    setUserRole("admin");
+    setAccessToken("your_admin_access_token");
   };
   const loginAsUser = () => {
-    setIsAdmin(false);
-    setLoggedIn(true);
+    setUserRole("user");
+    setAccessToken("your_user_access_token");
   };
   const logout = () => {
-    setLoggedIn(false);
-    setIsAdmin(false);
+    setUserRole(null);
+    setAccessToken(null);
   };
   const authContextValue = {
-    loggedIn,
-    isAdmin,
+    userRole,
+    setUserRole,
+    accessToken,
+    setAccessToken,
     loginAsAdmin,
     loginAsUser,
     logout,
@@ -48,8 +51,8 @@ const LoginTab = () => {
   return (
     <AuthContext.Provider value={authContextValue}>
       <NavigationContainer>
-        {loggedIn ? (
-          isAdmin ? (
+        {userRole ? (
+          userRole === "admin" ? (
             <AdminTabs />
           ) : (
             <UserTabs />
