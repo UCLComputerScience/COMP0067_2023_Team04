@@ -36,7 +36,7 @@ app.use("/posts", require("./routes/postRoutes"));
 // app.use('/connect/uclapi', oauthRouter);
 
 app.use('/oauth', oauthRouter);
-
+console.log("Began use of /oauth");
 // Global Error Handler. IMPORTANT function params MUST start with err
 app.use((err, req, res, next) => {
   console.log(err.stack);
