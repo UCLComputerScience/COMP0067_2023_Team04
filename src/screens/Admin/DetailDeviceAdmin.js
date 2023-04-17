@@ -259,7 +259,7 @@ const DetailDeviceAdmin = () => {
           <Text style={styles.text}>{loanDetails.loanDate}</Text>
         </View>
         <View style={styles.row}>
-          <Text style={styles.label}>User ID:</Text>
+          <Text style={styles.label}>Last user ID:</Text>
           <Text style={styles.text}>{loanDetails.userID}</Text>
         </View>
         <View style={styles.row}>
