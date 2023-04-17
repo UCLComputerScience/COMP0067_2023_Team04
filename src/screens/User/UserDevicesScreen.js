@@ -6,6 +6,10 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import GeneralDeviceUser from './GeneralDeviceUser';
 
+
+//这个界面需要读取所有可租用设备的型号，上架日期，可供租用的数量，名字
+//注意！数据库里available数量为0的设备不应该出现！
+
 const AllDevices = () => {
 
   const navigation = useNavigation();

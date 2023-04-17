@@ -6,6 +6,11 @@ import { addDays, format } from 'date-fns';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
+
+//这个界面是连接Loan的界面的Past的设备，当从loan界面过来时，只需要获取loan界面的某个device的summary details和return date
+//在246行需要读取数据库return date的数据
+
+
 const GeneralDeviceExtendScreen2 = () => {
   const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);

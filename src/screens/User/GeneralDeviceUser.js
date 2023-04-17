@@ -5,6 +5,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AgreementScreen from './UserTermScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 
+
+//这个界面连接着三个界面，当从UserDevice界面进入时，他需要获得其中某个设备的summary details，然后当reserve时间后，进入到下一界面。
+//下个界面是Userterm，当用户点击I agree时，数据库会返回用户预约的时间并将状态设置为On hold，同时也会返回到这个界面，读取这个reserve time，在169行
+//当从Appointment界面进入时，需要读取该设备的summary details和状态和预约时间，状态为Loan的status应为On hold，状态为Return的应为Available
+
 const GeneralDeviceUser = () => {
   const [selectedDate, setSelectedDate] = useState('');
   const navigation = useNavigation();

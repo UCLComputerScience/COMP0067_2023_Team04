@@ -6,6 +6,12 @@ import { addDays, format } from 'date-fns';
 
 import { createStackNavigator } from '@react-navigation/stack';
 
+//这个界面是连接Loan的界面的Ongoing的设备，当从loan界面过来时，他应该要获取loan界面的某个device的summary details和due date，然后进行return或者extend
+//extend后extension allowance和due date会发生变化，这个数据需要返回到数据库里，但是不需要再返回前端，前端已经完成了相关的操作
+//return后需要在数据库内返回他选择的return的时间
+//在251行读取数据库的due date的数据
+
+
 const GeneralDeviceExtendScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
