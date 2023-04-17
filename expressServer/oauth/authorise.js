@@ -10,6 +10,7 @@ const authorise = async (req, res) => {
 
   req.session.state = state;
   req.session.redirectURL = redirectURL;
+  console.log("Redirecting user to:", url);
   res.redirect(url);
 };
 

@@ -40,6 +40,7 @@ async function getUserData(token) {
 }
 
 const callback = async (req, res) => {
+  console.log("Entering callback function with query:", req.query);
   if (!req.session.state) {
     res.status(401).send('You need to authorize first');
     return;
