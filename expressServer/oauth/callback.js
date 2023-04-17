@@ -100,9 +100,7 @@ const callback = async (req, res) => {
   });
 
   // Send the JWT token back to the mobile app
-  res.send({ jwtToken });
-  // TEMP MODIFICATION FOR TESTING
-  // res.redirect(`device-loan-app://auth?token=${jwtToken}`);
+  res.redirect(`device-loan-app://auth?token=${jwtToken}`);
 };
 
 module.exports = callback;
