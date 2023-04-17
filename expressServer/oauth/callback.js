@@ -3,6 +3,7 @@
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const fetch = require('node-fetch');
 
 const API_URL = process.env.API_URL;
 const CLIENT_ID = process.env.CLIENT_ID;

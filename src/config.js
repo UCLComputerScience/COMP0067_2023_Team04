@@ -1,4 +1,5 @@
 // src/config.js
+const fetch = require('node-fetch');
 const BASE_URL = "http://20.254.93.210:8080/";
 
 const api = {
