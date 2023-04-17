@@ -20,7 +20,7 @@ const AdminLoans = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/loans`);
-      console.log(response.data);
+
       setLoanTable(
         response.data.map((loan) => ({
           id: loan.deviceId,
