@@ -131,10 +131,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   container: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'top',
     marginTop: 20,
     paddingHorizontal: 20,
+    paddingBottom: 300, // Add paddingBottom to increase the scrollable space
     backgroundColor: '#fff',
   },
   input: {
