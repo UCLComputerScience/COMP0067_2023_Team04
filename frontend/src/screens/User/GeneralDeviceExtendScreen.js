@@ -1,35 +1,44 @@
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimensions, Modal, Alert } from 'react-native';
-import React, { useState, useLayoutEffect } from 'react';
-import { useRoute, useNavigation } from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import { addDays, format } from 'date-fns';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  Button,
+  Dimensions,
+  Modal,
+  Alert,
+} from "react-native";
+import React, { useState, useLayoutEffect } from "react";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { addDays, format } from "date-fns";
 
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from "@react-navigation/stack";
 
 //This interface is connected to Loan's interface of Ongoing devices, when coming from Loan's interface, he should get the summary details and due date of a device in Loan's interface, and then return or extend
 //After extending, the extension allowance and date will be changed, this data needs to be returned to the database, but no need to return to the front-end, the front-end has already completed the relevant operations
 //After returning, the ruturn date should be returned in the database
 //read the database data of the date in line 251
 
-
 const GeneralDeviceExtendScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
-  
-  const [returnDateLabel, setReturnDateLabel] = useState('Due date');
-  const [dueDate, setDueDate] = useState('2023-01-01');
-  const [selectedCollectTime, setSelectedCollectTime] = useState('');
-  const [deviceList, setDeviceList] = useState('');
-  
+
+  const [returnDateLabel, setReturnDateLabel] = useState("Due date");
+  const [dueDate, setDueDate] = useState("2023-01-01");
+  const [selectedCollectTime, setSelectedCollectTime] = useState("");
+  const [deviceList, setDeviceList] = useState("");
+
   const deviceName = route.params.deviceName;
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
   const [device, setDevice] = useState([
     {
       standardLoanDuration: 14,
-      extensionAllowance: 1, 
+      extensionAllowance: 1,
       summaryDetails:
         '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
                       "GPU": "RTX 3070ti 8G 150W", \
@@ -42,10 +51,10 @@ const GeneralDeviceExtendScreen = () => {
   ]);
 
   const parseDateStringToTimestamp = (dateString) => {
-    const [day, time] = dateString.split(': ');
-    const [start, end] = time.split(' - ');
+    const [day, time] = dateString.split(": ");
+    const [start, end] = time.split(" - ");
     const date = new Date();
-    const [startHour, startMinute] = start.split(':');
+    const [startHour, startMinute] = start.split(":");
     date.setHours(parseInt(startHour, 10), parseInt(startMinute, 10), 0, 0);
     return date.getTime();
   };
@@ -53,15 +62,15 @@ const GeneralDeviceExtendScreen = () => {
   const extendDevice = () => {
     if (device[0].extensionAllowance === 1) {
       const newDueDate = addDays(new Date(dueDate), 7);
-      const formattedNewDueDate = format(newDueDate, 'yyyy-MM-dd');
-  
+      const formattedNewDueDate = format(newDueDate, "yyyy-MM-dd");
+
       setIsExtendButtonDisabled(true);
       Alert.alert(
-        'Extension successful',
-        'You have successfully extended your loan.',
+        "Extension successful",
+        "You have successfully extended your loan.",
         [
           {
-            text: 'YES',
+            text: "YES",
             onPress: () => {
               setDueDate(formattedNewDueDate);
               setDevice((prevState) => [
@@ -77,7 +86,6 @@ const GeneralDeviceExtendScreen = () => {
       );
     }
   };
-  
 
   const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
 
@@ -98,8 +106,8 @@ const GeneralDeviceExtendScreen = () => {
   const showAlert = (timeString) => {
     const timestamp = parseDateStringToTimestamp(timeString);
     Alert.alert(
-      "Return confirmation", 
-      `Are you sure you want to return the device on ${timeString}?`, 
+      "Return confirmation",
+      `Are you sure you want to return the device on ${timeString}?`,
       [
         {
           text: "NO",
@@ -111,7 +119,7 @@ const GeneralDeviceExtendScreen = () => {
           onPress: () => {
             console.log("YES Pressed");
             showSecondAlert(timestamp);
-            setReturnDateLabel('Return date');
+            setReturnDateLabel("Return date");
             setDueDate(timeString);
             setIsReturnButtonDisabled(true);
             setIsExtendButtonDisabled(true);
@@ -121,17 +129,16 @@ const GeneralDeviceExtendScreen = () => {
       { cancelable: false }
     );
   };
-  
+
   const showSecondAlert = () => {
     Alert.alert(
-      "Return Time selected", 
-      "You have successfully selected a time slot. Please return the device during the selected time slot.", 
+      "Return Time selected",
+      "You have successfully selected a time slot. Please return the device during the selected time slot.",
       [
         {
           text: "YES",
           onPress: () => {
             console.log("YES Pressed");
-            
           },
         },
       ],
@@ -151,21 +158,26 @@ const GeneralDeviceExtendScreen = () => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-
             <Text style={styles.modalTitle}>Select the collect time</Text>
             <View style={styles.modalSection}>
-              {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday: 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
+              {[
+                "Monday: 10:00 - 12:00",
+                "Tuesday: 09:00 - 12:30",
+                "Wednesday: 10:00 - 14:00",
+                "Thursday: 14:00 - 16:00",
+                "Friday: 13:00 - 14:00",
+              ].map((day, index) => (
                 <View key={index}>
                   {index === 0 && <View style={styles.modalDivider} />}
                   <TouchableOpacity
                     style={styles.modalButton}
                     onPress={() => {
-                console.log('Selected day:', day);
-                setSelectedCollectTime(day);
-                setModalVisible(false);
-                showAlert(day); 
-              }}
-              >
+                      console.log("Selected day:", day);
+                      setSelectedCollectTime(day);
+                      setModalVisible(false);
+                      showAlert(day);
+                    }}
+                  >
                     <Text style={styles.modalButtonText}>{day}</Text>
                   </TouchableOpacity>
                   {index === 4 && <View style={styles.modalDivider} />}
@@ -186,266 +198,290 @@ const GeneralDeviceExtendScreen = () => {
       </Modal>
 
       <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
-
         <View style={styles.titleView}>
-        <Text style={styles.title}>{JSON.stringify(deviceName)}</Text>
+          <Text style={styles.title}>{JSON.stringify(deviceName)}</Text>
         </View>
 
         <View style={styles.tabBar}>
           <TouchableOpacity style={styles.tabButton} onPress={toggleLoanRule}>
             <View style={styles.detailLayout}>
-              <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan Rules</Text>
-              <Ionicons style={{ marginLeft: 'auto' }} name={loanRuleExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>
+                Loan Rules
+              </Text>
+              <Ionicons
+                style={{ marginLeft: "auto" }}
+                name={loanRuleExpanded ? "chevron-up" : "chevron-down"}
+                size={16}
+                color={"#AC145A"}
+              />
             </View>
           </TouchableOpacity>
           {loanRuleExpanded && (
-            <View style={styles.detailRow}>            
-                <View style={styles.detailRowLayout}>
-                  <Text style={{ fontWeight: '500', flex: 2 }}>Standard Loan Duration:</Text>
-                  <Text style={{ fontWeight:'300', flex: 1 }}>{device[0].standardLoanDuration} Days</Text>
-                </View>
-                <View style={styles.detailRowLayout}>
-                  <Text style={{ fontWeight: '500', flex: 2 }}>Extension Allowance:</Text>
-                  <Text style={{ fontWeight:'300', flex: 1 }}>{device[0].extensionAllowance}</Text>
-                    
-                </View>
+            <View style={styles.detailRow}>
+              <View style={styles.detailRowLayout}>
+                <Text style={{ fontWeight: "500", flex: 2 }}>
+                  Standard Loan Duration:
+                </Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>
+                  {device[0].standardLoanDuration} Days
+                </Text>
+              </View>
+              <View style={styles.detailRowLayout}>
+                <Text style={{ fontWeight: "500", flex: 2 }}>
+                  Extension Allowance:
+                </Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>
+                  {device[0].extensionAllowance}
+                </Text>
+              </View>
             </View>
           )}
         </View>
-        
+
         <View style={styles.tabBar}>
-          <TouchableOpacity style={styles.tabButton} onPress={toggleSummaryDetails}>
+          <TouchableOpacity
+            style={styles.tabButton}
+            onPress={toggleSummaryDetails}
+          >
             <View style={styles.detailLayout}>
-              <Text style={[styles.tabButtonText, { flex: 1 }]}>Summary Details</Text>
-              <Ionicons style={{ marginLeft: 'auto' }} name={summaryDetailsExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>
+                Summary Details
+              </Text>
+              <Ionicons
+                style={{ marginLeft: "auto" }}
+                name={summaryDetailsExpanded ? "chevron-up" : "chevron-down"}
+                size={16}
+                color={"#AC145A"}
+              />
             </View>
           </TouchableOpacity>
           {summaryDetailsExpanded && (
             <View style={styles.detailRow}>
               {Object.entries(summaryDetailsUnpacked).map(([key, value]) => (
                 <View key={key} style={styles.detailRowLayout}>
-                  <Text style={{ fontWeight:'500', flex: 1 }}>{key}:</Text>
-                  <Text style={{ fontWeight:'300', flex: 2 }}>{value}</Text>
+                  <Text style={{ fontWeight: "500", flex: 1 }}>{key}:</Text>
+                  <Text style={{ fontWeight: "300", flex: 2 }}>{value}</Text>
                 </View>
               ))}
             </View>
           )}
         </View>
 
-
         <View style={styles.tabBar}>
           <TouchableOpacity style={styles.tabButton} onPress={toggleDevicesID}>
             <View style={styles.detailLayout}>
-              <Text style={[styles.tabButtonText, { flex: 1 }]}>Loan options</Text>
-              <Ionicons style={{ marginLeft: 'auto' }} name={devicesIDExpanded ? 'chevron-up' : 'chevron-down'} size={16} color={'#AC145A'} />
+              <Text style={[styles.tabButtonText, { flex: 1 }]}>
+                Loan options
+              </Text>
+              <Ionicons
+                style={{ marginLeft: "auto" }}
+                name={devicesIDExpanded ? "chevron-up" : "chevron-down"}
+                size={16}
+                color={"#AC145A"}
+              />
             </View>
           </TouchableOpacity>
           {devicesIDExpanded && (
             <View style={styles.detailRow}>
-            <View style={styles.detailRowLayout}>
-              <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
-              <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
+              <View style={styles.detailRowLayout}>
+                <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
+              </View>
+              <View style={styles.detailRowLayout}>
+                <Text style={{ fontWeight: "500", flex: 2 }}>
+                  {returnDateLabel}:
+                </Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>{dueDate}</Text>
+              </View>
+              <View style={styles.detailRowLayout}>
+                <Text style={{ fontWeight: "500", flex: 2 }}>Location:</Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>MPEB 4.20</Text>
+              </View>
             </View>
-            <View style={styles.detailRowLayout}>
-              <Text style={{ fontWeight: "500", flex: 2 }}>{returnDateLabel}:</Text>
-              <Text style={{ fontWeight: "300", flex: 1 }}>{dueDate}</Text>
-            </View>
-            <View style={styles.detailRowLayout}>
-              <Text style={{ fontWeight: "500", flex: 2 }}>Location:</Text>
-              <Text style={{ fontWeight: "300", flex: 1 }}>MPEB 4.20</Text>
-            </View>
+          )}
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <View style={styles.returnButtonWrapper}>
+            <Button
+              title="Return"
+              color="#AC145A"
+              onPress={() => setModalVisible(true)}
+              disabled={status !== "Loaned" || isReturnButtonDisabled}
+            />
           </View>
-      )}
-    </View>
-    
-    <View style={styles.buttonContainer}>
-      <View style={styles.returnButtonWrapper}>
-        <Button
-          title="Return"
-          color="#AC145A"
-          onPress={() => setModalVisible(true)}
-          disabled={status !== "Loaned" || isReturnButtonDisabled}
-        />
-      </View>
-      <View style={styles.extendButtonWrapper}>
-        <Button
-          title="Extend"
-          color="#AC145A"
-          onPress={extendDevice}
-          disabled={isExtendButtonDisabled}
-        />
-      </View>
-    </View>
-
-
+          <View style={styles.extendButtonWrapper}>
+            <Button
+              title="Extend"
+              color="#AC145A"
+              onPress={extendDevice}
+              disabled={isExtendButtonDisabled}
+            />
+          </View>
+        </View>
       </ScrollView>
-    </View>  
+    </View>
   );
-  
-}
+};
 
-const styles =StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingHorizontal: 20,
   },
-  titleView:{
-    alignItems:'center',
-    paddingHorizontal:50,
+  titleView: {
+    alignItems: "center",
+    paddingHorizontal: 50,
     paddingVertical: 10,
   },
-  title:{
-    fontSize:22,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  title: {
+    fontSize: 22,
+    fontWeight: "bold",
+    textAlign: "center",
   },
   tabBar: {
-    flexDirection: 'column',
-    justifyContent: 'space-between',
+    flexDirection: "column",
+    justifyContent: "space-between",
     marginBottom: 5,
   },
   tabButton: {
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderBottomWidth: 0.5,
-    borderBottomColor: '#D6D6D6'
+    borderBottomColor: "#D6D6D6",
   },
   tabButtonText: {
     fontSize: 16,
-    fontWeight: '700'
+    fontWeight: "700",
   },
-  detailLayout:{
-    flexDirection: 'row',
-    alignItems: 'center',
+  detailLayout: {
+    flexDirection: "row",
+    alignItems: "center",
   },
-  detailRow:{
+  detailRow: {
     marginHorizontal: 30,
-    marginTop: 10
+    marginTop: 10,
   },
-  detailRowLayout:{
-    flexDirection: 'row',
-    paddingVertical:2,
+  detailRowLayout: {
+    flexDirection: "row",
+    paddingVertical: 2,
   },
 
-  deviceKey:{
-    fontWeight: '500',  
-    lineHeight: 20, 
+  deviceKey: {
+    fontWeight: "500",
+    lineHeight: 20,
     fontSize: 16,
   },
-  deviceID:{
-    fontWeight: '300', 
-    flex: 2, 
+  deviceID: {
+    fontWeight: "300",
+    flex: 2,
     lineHeight: 20,
-    textDecorationLine: 'underline'
+    textDecorationLine: "underline",
   },
-  deviceState:{
-    fontWeight: '300', 
-    flex: 1, 
-    lineHeight: 20, 
-    textAlign:'center'
+  deviceState: {
+    fontWeight: "300",
+    flex: 1,
+    lineHeight: 20,
+    textAlign: "center",
   },
 
-  historyDeviceID:{
-    fontWeight: '300', 
-    flex: 1.1, 
+  historyDeviceID: {
+    fontWeight: "300",
+    flex: 1.1,
     lineHeight: 20,
-    textAlign:'left'
+    textAlign: "left",
   },
-  historyUserID:{
-    fontWeight: '300', 
-    flex: 0.6, 
+  historyUserID: {
+    fontWeight: "300",
+    flex: 0.6,
     lineHeight: 20,
-    textAlign:'center'
+    textAlign: "center",
   },
-  historyState:{
-    fontWeight: '300', 
-    flex: 1, 
+  historyState: {
+    fontWeight: "300",
+    flex: 1,
     lineHeight: 20,
-    textAlign:'right'
+    textAlign: "right",
   },
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     marginBottom: 30,
     marginTop: 250,
   },
   returnButtonWrapper: {
     marginRight: 30,
-    backgroundColor: '#EBEDEF',
+    backgroundColor: "#EBEDEF",
     borderRadius: 10,
-    width: Dimensions.get('window').width * 0.35,
+    width: Dimensions.get("window").width * 0.35,
     paddingVertical: 5,
   },
   extendButtonWrapper: {
     marginLeft: 30,
-    backgroundColor: '#EBEDEF',
+    backgroundColor: "#EBEDEF",
     borderRadius: 10,
-    width: Dimensions.get('window').width * 0.35,
+    width: Dimensions.get("window").width * 0.35,
     paddingVertical: 5,
   },
   centeredView: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalView: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 30,
-    alignItems: 'center',
+    alignItems: "center",
   },
   modalTitle: {
     fontSize: 18,
     marginBottom: 10,
     marginTop: -10,
-    color: 'black',
-    
+    color: "black",
   },
   modalSection: {
-    width: '100%',
+    width: "100%",
   },
   modalButton: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
     padding: 10,
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
     marginTop: 5,
     marginBottom: 5,
     borderTopWidth: 0,
   },
   modalButtonText: {
-    color: '#AC145A',
+    color: "#AC145A",
     fontSize: 17,
-    fontWeight: 'normal',
+    fontWeight: "normal",
   },
   modalButtonNoBorder: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 5,
     padding: 5,
-    width: '80%',
-    alignItems: 'center',
+    width: "80%",
+    alignItems: "center",
     marginTop: 10,
   },
   modalDivider: {
     borderBottomWidth: 1,
-    borderBottomColor: '#D6D6D6',
-    width: '127%',
-    alignSelf: 'center',
+    borderBottomColor: "#D6D6D6",
+    width: "127%",
+    alignSelf: "center",
     marginVertical: 5,
-    
   },
   modalCancelButtonText: {
-    color: '#AC145A',
-    fontSize: 18, 
-    fontWeight: 'normal',
+    color: "#AC145A",
+    fontSize: 18,
+    fontWeight: "normal",
     marginBottom: -15,
-    marginTop: -10
+    marginTop: -10,
   },
-})
+});
 
-
-
-export default GeneralDeviceExtendScreen
+export default GeneralDeviceExtendScreen;

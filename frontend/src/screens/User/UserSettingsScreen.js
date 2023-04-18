@@ -40,7 +40,7 @@ const UserSettingsScreen = () => {
           <Ionicons name="chevron-forward-outline" size={20} color="#ccc" />
         </View>
       </TouchableOpacity>
-      
+
       <View style={styles.separator} />
       <Text style={styles.title}>General</Text>
       <TouchableOpacity>
@@ -88,66 +88,57 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "regular",
   },
- 
+
   container: {
     flex: 1,
-    backgroundColor: '#f2f2f2',
+    backgroundColor: "#f2f2f2",
   },
-
-
 
   sectionContainer: {
     marginBottom: 30,
   },
 
-
   section: {
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     paddingVertical: 16,
     paddingHorizontal: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    shadowColor: '#000',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 2,
     elevation: 5,
   },
 
-
   sectionTitle: {
-    fontFamily: 'System',
+    fontFamily: "System",
     fontSize: 14,
-    color: '#333',
+    color: "#333",
   },
-
 
   sectionSubTitle: {
     fontSize: 14,
-    color: '#ccc',
+    color: "#ccc",
   },
-
 
   generalContainer: {
     height: 30,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
-
 
   generalTitle: {
     paddingLeft: 12,
     fontSize: 12,
-    color: '#333',
+    color: "#333",
   },
-
 
   generalSubTitle: {
     fontSize: 20,
-    color: '#ccc',
+    color: "#ccc",
     marginLeft: 4,
   },
- 
 });
 export default UserSettingsScreen;
