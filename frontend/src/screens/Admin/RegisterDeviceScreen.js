@@ -45,89 +45,97 @@ const RegisterDeviceScreen = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View>
-        <Text style={styles.label}>Device Name</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Device Name"
-          onChangeText={setDeviceName}
-          value={deviceName}
-        />
-        <Text style={styles.label}>Device Details</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Device Details"
-          onChangeText={setDeviceDetails}
-          value={deviceDetails}
-        />
-        <Text style={styles.label}>Storage Location</Text>
-        <TextInput
-          style={styles.input}
-          placeholder="Enter Storage Location"
-          onChangeText={setStorageLocation}
-          value={storageLocation}
-        />
-        <DropDownPicker
-          items={categories}
-          open={open}
-          value={category}
-          setOpen={setOpen}
-          setValue={setCategory}
-          containerStyle={styles.dropdownContainer}
-          style={{...styles.dropdown, borderColor: 'transparent'}}
-          itemStyle={styles.dropdownItem}
-          labelStyle={styles.dropdownLabel}
-          dropDownStyle={styles.dropdownList}
-        />
-        <Text style={styles.label}>Allow to extent?</Text>
-        <Switch
-          trackColor={{ false: '#ddd', true: '#2196F3' }}
-          thumbColor={ruleExt === 1 ? '#fff' : '#fff'}
-          ios_backgroundColor="#ddd"
-          onValueChange={toggleSwitch}
-          value={ruleExt === 1}
-        />
-        <Text style={styles.label}>Loan Duration</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          placeholder="Enter Loan Duration (days)"
-          onChangeText={setRuleDur}
-          value={ruleDur}
-        />
-        <Text style={styles.label}>Launch Year</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          placeholder="Enter Launch Year"
-          onChangeText={setLaunchYr}
-          value={launchYr}
-        />
-        <Text style={styles.label}>Cost</Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="numeric"
-          placeholder="Enter Cost(£)"
-          onChangeText={setCost}
-          value={cost}
-        />
+    <View style={styles.background}>
+      <ScrollView contentContainerStyle={styles.container}>
+        <View>
+        <Text style={styles.label}>Category</Text>
+          <DropDownPicker
+            items={categories}
+            open={open}
+            value={category}
+            setOpen={setOpen}
+            setValue={setCategory}
+            containerStyle={styles.dropdownContainer}
+            style={{...styles.dropdown, borderColor: 'transparent'}}
+            itemStyle={styles.dropdownItem}
+            labelStyle={styles.dropdownLabel}
+            dropDownStyle={styles.dropdownList}
+          />
+          <Text style={styles.label}>Device Name</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Device Name"
+            onChangeText={setDeviceName}
+            value={deviceName}
+          />
+          <Text style={styles.label}>Device Details</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Device Details"
+            onChangeText={setDeviceDetails}
+            value={deviceDetails}
+          />
+          <Text style={styles.label}>Storage Location</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Enter Storage Location"
+            onChangeText={setStorageLocation}
+            value={storageLocation}
+          />
+          <Text style={styles.label}>Loan Duration</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            placeholder="Enter Loan Duration (days)"
+            onChangeText={setRuleDur}
+            value={ruleDur}
+          />
+          <Text style={styles.label}>Launch Year</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            placeholder="Enter Launch Year"
+            onChangeText={setLaunchYr}
+            value={launchYr}
+          />
+          <Text style={styles.label}>Cost</Text>
+          <TextInput
+            style={styles.input}
+            keyboardType="numeric"
+            placeholder="Enter Cost(£)"
+            onChangeText={setCost}
+            value={cost}
+          />
+          <Text style={styles.label}>Allow to extent?</Text>
+          <Switch
+            trackColor={{ false: '#ddd', true: '#2196F3' }}
+            thumbColor={ruleExt === 1 ? '#fff' : '#fff'}
+            ios_backgroundColor="#ddd"
+            onValueChange={toggleSwitch}
+            value={ruleExt === 1}
+          />
 
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Register Device</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Register Device</Text>
+          </TouchableOpacity>
 
-      </View>
-    </ScrollView>
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
   container: {
     flex: 1,
     justifyContent: 'top',
     marginTop: 20,
     paddingHorizontal: 20,
+    backgroundColor: '#fff',
   },
   input: {
     borderWidth: 1,
@@ -148,7 +156,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   dropdown: {
-    backgroundColor: '#fff',
+    backgroundColor: '#aaa',
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 4,
