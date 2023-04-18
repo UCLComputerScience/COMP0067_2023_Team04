@@ -12,7 +12,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import axios from "axios";
 
-const API_BASE_URL = "http://20.254.93.210:8080/posts/";
+const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts/";
 const AdminLoans = () => {
   // All loan information, where id is the device ID
   const [loanTable, setLoanTable] = useState([]);

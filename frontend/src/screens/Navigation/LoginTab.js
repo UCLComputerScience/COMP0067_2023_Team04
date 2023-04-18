@@ -15,6 +15,7 @@ const LoginTabScreen = () => {
   const { loginAsAdmin, loginAsUser } = useContext(AuthContext);
   return (
     <SafeAreaView>
+      <View style={{ height: 100 }}></View>
       <Button title="SSO Login" />
       <Button title="Admin Login" onPress={loginAsAdmin} />
       <Button title="User Login" onPress={loginAsUser} />
