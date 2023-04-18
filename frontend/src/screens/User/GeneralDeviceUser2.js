@@ -2,22 +2,15 @@ import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Button, Dimension
 import React, { useState, useLayoutEffect } from 'react';
 import { useRoute, useNavigation } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import AgreementScreen from './UserTermScreen';
-import { createStackNavigator } from '@react-navigation/stack';
 
 
-//This interface is connected to three interfaces, when entering from the UserDevice interface, he needs to get the summary details of one of the devices, and then reserve, go to the next interface.
-//The next interface is Userterm, when the user clicks I agree, the database will return the time of the user's appointment and set the status to On hold, and also return to this interface to read this reserve time, in line 169
-//When you enter from the Appointment interface, you need to read the summary details and status of the device and the appointment time, the status of Loan should be On hold, and the status of Return should be Available.
-
-const GeneralDeviceUser = () => {
-  const [selectedDate, setSelectedDate] = useState('');
+const GeneralDeviceUser2Screen = () => {
+  const [selectedCollectTime, setSelectedCollectTime] = useState('');
   const navigation = useNavigation();
   const route = useRoute();
-  const [agr, setAgr] = useState(0);
   const deviceName = route.params;
   const [modalVisible, setModalVisible] = useState(false);
-  const [status, setStatus] = useState("Available");
+  const [status, setStatus] = useState("On hold");
   const device = [
     {
       standardLoanDuration: 14,
@@ -49,8 +42,6 @@ const GeneralDeviceUser = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
 
-  
-
   return (
     <View style={{ flex: 1 }}>
       <Modal
@@ -63,39 +54,30 @@ const GeneralDeviceUser = () => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+            <Text style={styles.modalTitle}>select the collect time</Text>
+            {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday : 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
 
-            <Text style={styles.modalTitle}>Select the collect time</Text>
-            <View style={styles.modalSection}>
-              {['Monday: 10:00 - 12:00', 'Tuesday: 09:00 - 12:30', 'Wednesday: 10:00 - 14:00', 'Thursday: 14:00 - 16:00', 'Friday: 13:00 - 14:00'].map((day, index) => (
-                <View key={index}>
-                  {index === 0 && <View style={styles.modalDivider} />}
-                  <TouchableOpacity
-                    style={styles.modalButton}
-                    onPress={() => {
-                      console.log('Selected day:', day);
-                      setSelectedDate(day);
-                      if (setAgr === 1) {
-                        setStatus("On hold");
-                      }
-                      setModalVisible(false);
-                      navigation.navigate('Userterm', { selectedDate, setAgr });
-                    }}
-                  >
-                    <Text style={styles.modalButtonText}>{day}</Text>
-                  </TouchableOpacity>
-                  {index === 4 && <View style={styles.modalDivider} />}
-                </View>
-              ))}
-            </View>
-            <View style={styles.modalDivider} />
+              <TouchableOpacity
+              key={index}
+              style={styles.modalButton}
+              onPress={() => {
+                console.log('Selected day:', day);
+                setModalVisible(false);
+                navigation.navigate('UserTerm'); // Add this line
+              }}
+              >
+              <Text style={styles.modalButtonText}>{day}</Text>
+              </TouchableOpacity>
+            ))}
             <TouchableOpacity
-              style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
+              style={[styles.modalButtonNoBorder, { marginTop: 20 }]} 
               onPress={() => {
                 setModalVisible(false);
               }}
             >
-              <Text style={styles.modalCancelButtonText}>Cancel</Text>
+              <Text style={styles.modalButtonText}>cancel</Text>
             </TouchableOpacity>
+
           </View>
         </View>
       </Modal>
@@ -158,35 +140,30 @@ const GeneralDeviceUser = () => {
           </TouchableOpacity>
           {devicesIDExpanded && (
             <View style={styles.detailRow}>
-              <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
-                <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
-              </View>
-              {status === "On hold" && (
-                <>
-                  <View style={styles.detailRowLayout}>
-                    <Text style={{ fontWeight: "500", flex: 2 }}>Collect Date:</Text>
-                    <Text style={{ fontWeight: "300", flex: 1 }}>Insert Collect Date</Text>
-                  </View>
-                  <View style={styles.detailRowLayout}>
-                    <Text style={{ fontWeight: "500", flex: 2 }}>Location:</Text>
-                    <Text style={{ fontWeight: "300", flex: 1 }}>MLEB 4.20</Text>
-                  </View>
-                </>
-              )}
+            <View style={styles.detailRowLayout}>
+              <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
             </View>
-          )}
+            <View style={styles.detailRowLayout}>
+              <Text style={{ fontWeight: "500", flex: 2 }}>Collect date:</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>2023-01-01</Text>
+            </View>
+            <View style={styles.detailRowLayout}>
+              <Text style={{ fontWeight: "500", flex: 2 }}>Lacation:</Text>
+              <Text style={{ fontWeight: "300", flex: 1 }}>MPEB 4.20</Text>
+            </View>
+          </View>
+      )}
     </View>
     
     <View style={styles.buttonContainer}>
-      <TouchableOpacity
-        style={[styles.reserveButton, status !== "Available" && styles.reserveButtonDisabled]}
-        onPress={() => setModalVisible(true)}
-        disabled={status !== "Available"}
-      >
-        <Text style={[styles.reserveButtonText, status !== "Available" && styles.reserveButtonTextDisabled]}>Reserve</Text>
-      </TouchableOpacity>
-    </View>
+          <Button
+            title="Reserve"
+            color="#AC145A"
+            onPress={() => setModalVisible(true)}
+            disabled={status !== "Available"}
+          />
+        </View>
 
 
       </ScrollView>
@@ -275,7 +252,17 @@ const styles =StyleSheet.create({
     lineHeight: 20,
     textAlign:'right'
   },
-  
+  buttonContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#EBEDEF',
+    paddingVertical: 10,
+    width: Dimensions.get('window').width * 0.6,
+    borderRadius: 10,
+    marginLeft:60,
+    marginBottom: 20,
+    marginTop: 250,
+  },
   centeredView: {
     flex: 1,
     justifyContent: 'center',
@@ -290,95 +277,36 @@ const styles =StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    marginBottom: 10,
-    marginTop: -10,
-    color: 'black',
-    
-  },
-  modalSection: {
-    width: '100%',
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: 'gray', 
   },
   modalButton: {
-    backgroundColor: 'white',
+    backgroundColor: 'white', 
     borderRadius: 5,
     padding: 10,
-    width: '100%',
+    width: '80%',
     alignItems: 'center',
-    marginTop: 5,
-    marginBottom: 5,
-    borderTopWidth: 0,
+    marginTop: 10,
+    borderBottomWidth: 1, 
+    borderBottomColor: '#D6D6D6', 
   },
   modalButtonText: {
-    color: '#AC145A',
-    fontSize: 17,
-    fontWeight: 'normal',
+    color: '#AC145A', 
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   modalButtonNoBorder: {
     backgroundColor: 'white',
     borderRadius: 5,
-    padding: 5,
+    padding: 10,
     width: '80%',
     alignItems: 'center',
     marginTop: 10,
   },
-  modalDivider: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#D6D6D6',
-    width: '127%',
-    alignSelf: 'center',
-    marginVertical: 5,
-    
-  },
-  modalCancelButtonText: {
-    color: '#AC145A',
-    fontSize: 18, 
-    fontWeight: 'normal',
-    marginBottom: -15,
-    marginTop: -10
-  },
-  buttonContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-    width: Dimensions.get('window').width * 0.6,
-    borderRadius: 10,
-    marginLeft: 60,
-    marginTop: 250,
-  },
-  reserveButton: {
-    alignItems: 'center',
-    backgroundColor: '#EBEDEF',
-    borderRadius: 10,
-    padding: 10,
-    paddingVertical: 15,
-    paddingHorizontal: 15,
-    width: '80%'
-  },
-  reserveButtonDisabled: {
-    backgroundColor: '#D6D6D6',
-  },
-  reserveButtonText: {
-    color: '#AC145A',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  reserveButtonTextDisabled: {
-    color: '#8C8C8C',
-  },
 })
 
-const Stack = createStackNavigator();
-
-const GeneralDeviceUserScreen = () => {
-  const [agreed, setAgreed] = useState(false);
-
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name="General" component={GeneralDeviceUser} options={{ headerShown: true }}/>
-      <Stack.Screen name="Userterm" component={AgreementScreen} options={{ headerShown: false }} initialParams={{ setAgreed: setAgreed }} />
-    </Stack.Navigator>
-  );
-};
 
 
-export default GeneralDeviceUserScreen
+
+export default GeneralDeviceUser2Screen

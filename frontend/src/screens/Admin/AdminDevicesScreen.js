@@ -14,7 +14,6 @@ import Icon from "react-native-vector-icons/Ionicons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceAdmin from "./GeneralDeviceAdmin";
 import StatisticsAdmin from "./StatisticsAdmin";
-import RegisterDeviceScreen from "./RegisterDeviceScreen";
 
 const AllDevices = () => {
   const navigation = useNavigation();
@@ -222,9 +221,7 @@ const AllDevices = () => {
               placeholder="Search"
             />
           </View>
-          <TouchableOpacity 
-            style={styles.add}
-            onPress={() => navigation.navigate("AddDevice")}>
+          <TouchableOpacity style={styles.add}>
             <Ionicons size={25} name="add-circle-outline" />
           </TouchableOpacity>
           <TouchableOpacity
@@ -441,7 +438,6 @@ const AdminDevicesScreen = () => {
         //options={({ route }) => ({ title: "Device details" })}
       />
       <Stack.Screen name="Statistics" component={StatisticsAdmin} />
-      <Stack.Screen name="AddDevice" component={RegisterDeviceScreen} />
     </Stack.Navigator>
   );
 };
