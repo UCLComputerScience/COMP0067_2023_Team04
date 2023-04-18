@@ -34,37 +34,13 @@ exports.getDevicesByNameAvailability = async (req, res, next) => {
   }
 };
 
-//for AdminScheduleScreen.js (loads devices reserved & overdue/due this week)
-exports.getSchedule = async (req, res, next) => {
+// for UserDevicesScreen.js (gets deviceName, launchedYear, num_available, category)
+exports.getDevicesByNameAvailabilityUser = async (req, res, next) => {
   try {
-    const schedule = await loanModel.getSchedule();
-    res.status(200).json(schedule);
+    const devices = await deviceModel.getDevicesByNameAvailabilityUser();
+    res.status(200).json(devices);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching schedule', error });
-  }
-};
-
-// Misc
-exports.getAllLoans = async (req, res, next) => {
-  try {
-    const loans = await loanModel.getAllLoans();
-    res.status(200).json(loans);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching loans', error });
-  }
-};
-
-// Misc
-exports.getLoanById = async (req, res, next) => {
-  try {
-    const loan = await loanModel.getLoanById(req.params.id);
-    if (loan) {
-      res.status(200).json(loan);
-    } else {
-      res.status(404).json({ message: 'Loan not found' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching loan', error });
+    res.status(500).json({ message: 'Error fetching devices for user by name and availability', error });
   }
 };
 
@@ -108,17 +84,6 @@ exports.getIdByName = async (req, res, next) => {
   }
 };
 
-// for GeneralDeviceAdmin.js (given name of a device, find all associated loan history)
-exports.getLoanHistoryByName = async (req, res, next) => {
-  try {
-    const deviceName = req.params.name;
-    const loanHistory = await deviceModel.getLoanHistoryByName(deviceName);
-    res.status(200).json(loanHistory);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching loan history', error });
-  }
-};
-
 // for GeneralDeviceUser.js (returns details of first available device by its name)
 exports.getDevicebyName = async (req, res, next) => {
   try {
@@ -130,13 +95,48 @@ exports.getDevicebyName = async (req, res, next) => {
   }
 };
 
-// for UserDevicesScreen.js (gets deviceName, launchedYear, num_available, category)
-exports.getDevicesByNameAvailabilityUser = async (req, res, next) => {
+//for AdminScheduleScreen.js (loads devices reserved & overdue/due this week)
+exports.getSchedule = async (req, res, next) => {
   try {
-    const devices = await deviceModel.getDevicesByNameAvailabilityUser();
-    res.status(200).json(devices);
+    const schedule = await loanModel.getSchedule();
+    res.status(200).json(schedule);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching devices for user by name and availability', error });
+    res.status(500).json({ message: 'Error fetching schedule', error });
+  }
+};
+
+// Misc
+exports.getAllLoans = async (req, res, next) => {
+  try {
+    const loans = await loanModel.getAllLoans();
+    res.status(200).json(loans);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching loans', error });
+  }
+};
+
+// Misc
+exports.getLoanById = async (req, res, next) => {
+  try {
+    const loan = await loanModel.getLoanById(req.params.id);
+    if (loan) {
+      res.status(200).json(loan);
+    } else {
+      res.status(404).json({ message: 'Loan not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching loan', error });
+  }
+};
+
+// for GeneralDeviceAdmin.js (given name of a device, find all associated loan history)
+exports.getLoanHistoryByName = async (req, res, next) => {
+  try {
+    const deviceName = req.params.name;
+    const loanHistory = await loanModel.getLoanHistoryByName(deviceName);
+    res.status(200).json(loanHistory);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching loan history', error });
   }
 };
 
@@ -144,7 +144,7 @@ exports.getDevicesByNameAvailabilityUser = async (req, res, next) => {
 exports.getLoanHistoryByUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const loanHistory = await deviceModel.getLoanHistoryByUser(userId);
+    const loanHistory = await loanModel.getLoanHistoryByUser(userId);
     res.status(200).json(loanHistory);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching loan history by user', error });
@@ -155,7 +155,7 @@ exports.getLoanHistoryByUser = async (req, res, next) => {
 exports.getReservedByUser = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const reservedDevices = await deviceModel.getReservedByUser(userId);
+    const reservedDevices = await loanModel.getReservedByUser(userId);
     res.status(200).json(reservedDevices);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching reserved devices by user', error });
@@ -166,7 +166,7 @@ exports.getReservedByUser = async (req, res, next) => {
 exports.getCurrentLoans = async (req, res, next) => {
   try {
     const userId = req.params.userId;
-    const currentLoans = await deviceModel.getCurrentLoans(userId);
+    const currentLoans = await loanModel.getCurrentLoans(userId);
     res.status(200).json(currentLoans);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching current loans by user', error });
@@ -177,7 +177,7 @@ exports.getCurrentLoans = async (req, res, next) => {
 exports.extendLoanById = async (req, res, next) => {
   try {
     const deviceId = req.params.id;
-    const updatedLoan = await deviceModel.extendLoanById(deviceId);
+    const updatedLoan = await loanModel.extendLoanById(deviceId);
     if (updatedLoan) {
       res.status(200).json({ message: 'Loan extended successfully', updatedLoan });
     } else {
