@@ -7,6 +7,7 @@ import {
   Button,
   Dimensions,
   Modal,
+  Alert,
 } from "react-native";
 import React, { useState, useLayoutEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -80,50 +81,30 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
     setDevicesIDExpanded(!devicesIDExpanded);
   };
 
+  const showAvailableDatesAlert = () => {
+    Alert.alert(
+      "Time slots",
+      `\nPlease come and collect the device on this week, with in the weekly slots: \n${timeSlot
+        .map((day) => `${day}\n`)
+        .join("")}`,
+      [
+        {
+          text: "Reserve",
+          onPress: () => {
+            setUserTermsModalVisible(true);
+          },
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   return (
     <View style={{ flex: 1 }}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Available Dates</Text>
-            <View style={styles.modalSection}>
-              {timeSlot.map((day, index) => (
-                <View key={index}>
-                  {index === 0 && <View style={styles.modalDivider} />}
-                  <Text style={styles.modalButtonText}>{day}</Text>
-                  {index === 4 && <View style={styles.modalDivider} />}
-                </View>
-              ))}
-            </View>
-            <View style={styles.modalDivider} />
-            <TouchableOpacity
-              style={[styles.modalButton, { marginTop: 2 }]}
-              onPress={() => {
-                setModalVisible(false);
-                setUserTermsModalVisible(true);
-              }}
-            >
-              <Text style={styles.modalCancelButtonText}>Reserve</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
-              onPress={() => {
-                setModalVisible(false);
-              }}
-            >
-              <Text style={styles.modalCancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
       <Modal
         animationType="slide"
         transparent={true}
@@ -142,17 +123,37 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
           }}
         >
           <View style={[styles.modalView, { width: "100%", height: "100%" }]}>
-            <Text
+            <View
               style={{
-                fontSize: 22,
-                marginBottom: 20,
-                marginTop: -10,
-                color: "black",
-                fontWeight: 700,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 10,
               }}
             >
-              User Terms
-            </Text>
+              <Text
+                style={{
+                  fontSize: 22,
+                  color: "black",
+                  fontWeight: 700,
+                  flex: 1,
+                }}
+              >
+                User Terms
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setUserTermsModalVisible(false);
+                }}
+              >
+                <Ionicons
+                  size={16}
+                  style={{ flex: 1 }}
+                  name="close-circle-outline"
+                  color={"#AC145A"}
+                />
+              </TouchableOpacity>
+            </View>
             <ScrollView style={styles.userTermsContent}>
               <Text>{userTerm}</Text>
             </ScrollView>
@@ -287,24 +288,33 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
           )}
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[
-              styles.reserveButton,
-              status !== "Available" && styles.reserveButtonDisabled,
-            ]}
-            onPress={() => setModalVisible(true)}
-            disabled={status !== "Available"}
-          >
-            <Text
-              style={[
-                styles.reserveButtonText,
-                status !== "Available" && styles.reserveButtonTextDisabled,
-              ]}
+        <View style={{ paddingTop: 80 }}>
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#EEEEEF",
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "70%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={showAvailableDatesAlert}
+              disabled={deviceAvailable === 0 || deviceAvailable === "0"}
             >
-              Reserve
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: "#AC145A",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
+              >
+                Reserve
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </ScrollView>
     </View>
