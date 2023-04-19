@@ -1,7 +1,7 @@
 const db = require('../config/db');
 
 class Device {
-  constructor(deviceId, status, details, category, name, ruleExt, ruleDur, qrCode, storage, launchYr, cost) {
+  constructor(deviceId, status, details, category, name, ruleExt, ruleDur, storage, launchYr, cost) {
     this.deviceId = deviceId;
     this.status = status;
     this.details = details;
@@ -28,11 +28,18 @@ class Device {
     return rows[0];
   }
 
-  //for AdminDevicesScreen.js (gets deviceName, num_loaned, num_available, category)
-  // write getDevicesByNameAvailability() here
-
-  // for UserDevicesScreen.js (gets deviceName, launchedYear, num_available, category)
-  // write getDevicesByNameAvailabilityUser() here
+  // for UserDevicesScreen.js (gets name, launchYr, num_available, category)
+  static async getDevicesByNameAvailabilityUser() {
+    const [rows] = await db.execute(`
+      SELECT 
+        name, 
+        launchYr, 
+        COUNT(CASE WHEN state = 'Available' THEN 1 END) AS num_available, 
+        category 
+      FROM device 
+      GROUP BY name, launchYr, category`);
+    return rows;
+  }
 
   static async getDeviceSummary() {
     let sql = `
@@ -50,14 +57,23 @@ class Device {
     return rows;
   }
 
-  // for GeneralDeviceAdmin.js (given name of device, find its details)
-  // write getDetailsByDeviceName(deviceName) here
+  // for GeneralDeviceAdmin.js (given name of device, find its details, the first row found - or any row for that matter - will do)
+  static async getDetailsByDeviceName(name) {
+    const [rows] = await db.execute('SELECT * FROM `device` WHERE `name` = ? LIMIT 1', [name]);
+    return rows[0];
+  }
 
   // for GeneralDeviceAdmin.js (given name of device, get all device IDs and associated states)
-  // write getIdByName(deviceName) here
+  static async getIdByName(name) {
+    const [rows] = await db.execute('SELECT `deviceId`, `state` FROM `device` WHERE `name` = ?', [name]);
+    return rows;
+  }
 
   // for GeneralDeviceUser.js (given name of device, returns details of first available device specified by ID)
-  // write getDevicebyName(deviceName) here
+  static async getDevicebyName(name) {
+    const [rows] = await db.execute('SELECT * FROM `device` WHERE `name` = ? AND `state` = "Available" LIMIT 1', [name]);
+    return rows[0];
+  }
 
   // Undefined route
   static async updateDeviceState(deviceId, newState) {

@@ -10,12 +10,26 @@ class Loan {
     this.exten = exten;
     this.returnDate = returnDate;
   }
+
   //for AdminScheduleScreen.js (loads devices reserved & overdue/due this week) ****TODO****
   static async getSchedule() {
     let sql = `SELECT loan.*, device.name 
                FROM loan
                INNER JOIN device ON loan.deviceId = device.deviceId
                WHERE WEEKOFYEAR(loan.startDate) = WEEKOFYEAR(CURDATE())`;
+    const [rows] = await db.execute(sql);
+    return rows;
+  }
+
+  // for AdminScheduleScreen.js (loads devices reserved this week and due by the end of this week)
+  static async getSchedule() {
+    let sql = `SELECT *
+               FROM loan
+               WHERE (state = 'reserved' OR state = 'loaned')
+               AND WEEK(reservationDate) = WEEK(NOW())
+               AND YEAR(reservationDate) = YEAR(NOW())
+               AND WEEK(dueDate) = WEEK(NOW())
+               AND YEAR(dueDate) = YEAR(NOW())`;
     const [rows] = await db.execute(sql);
     return rows;
   }
@@ -35,7 +49,15 @@ class Loan {
   }
 
   // for GeneralDeviceAdmin.js (given name of a device, find all associated loan history)
-  // write getLoanHistoryByName(deviceName) here
+  static async getLoanHistoryByName(name) {
+    let sql = `SELECT 
+               l.loanId, l.userId, l.startDate, l.dueDate, l.deviceId, l.exten, l.returnDate, d.name
+               FROM loan l
+               JOIN device d ON l.deviceId = d.deviceId
+               WHERE d.name = ?`;
+    const [rows] = await db.execute(sql, [name]);
+    return rows;
+  }
 
   // for PastDeviceScreen.js (returns all loan history for a specific user)
   static async getLoanHistoryByUser(userId) {
@@ -44,16 +66,38 @@ class Loan {
     return rows;
   }  
 
-  // for UserAppointmentScreen.js (selects loans where the state is reserved and userID is userID)
-  // write getReservedByUser(userId) here
+  // for UserAppointmentScreen.js (selects loans where the state is reserved and userID is userId)
+  static async getReservedByUser(userId) {
+    let sql = `SELECT *
+               FROM loan
+               WHERE userId = ? AND state = 'Reserved'`;
+    const [rows] = await db.execute(sql, [userId]);
+    return rows;
+  }
 
   // for UserLoansScreen.js (returns all current loans for a specific user)
-  // write getCurrentLoans(userId) here
+  static async getCurrentLoans(userId) {
+    let sql = `SELECT *
+               FROM loan
+               WHERE userId = ? AND state = 'Loaned'`;
+    const [rows] = await db.execute(sql, [userId]);
+    return rows;
+  }
 
   // for GeneralDeviceExtendScreen.js (extend specific device by its ID)
-  // write extendLoanById(deviceId) here
-
-
+  static async extendLoanById(deviceId, userId) {
+    let sql = `UPDATE loan l
+               JOIN (
+                SELECT MAX(loanId) AS latestLoanId
+                FROM loan
+                WHERE deviceId = ? AND userId = ? AND exten = 0
+                GROUP BY deviceId
+                ) latest ON l.loanId = latest.latestLoanId
+                JOIN rule r ON l.ruleId = r.ruleId
+                SET l.dueDate = DATE_ADD(l.dueDate, INTERVAL r.ruleDur DAY),l.exten = 1`;
+  const [result] = await db.execute(sql, [deviceId, userId]);
+  return result.affectedRows;
+}
 
 /*
   // Helper function to get the current week's date for the given day of the week
