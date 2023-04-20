@@ -65,7 +65,7 @@ exports.getDeviceSummary = async (req, res) => {
 // for GeneralDeviceAdmin.js (given name of device, find its details)
 exports.getDetailsByDeviceName = async (req, res, next) => {
   try {
-    const deviceName = req.query.name;
+    const deviceName = req.params.name;
     const device = await deviceModel.getDetailsByDeviceName(deviceName);
     res.status(200).json(device);
   } catch (error) {
@@ -76,7 +76,7 @@ exports.getDetailsByDeviceName = async (req, res, next) => {
 // for GeneralDeviceAdmin.js (given name of device, get all device IDs and associated states)
 exports.getIdByName = async (req, res, next) => {
   try {
-    const deviceName = req.query.name;
+    const deviceName = req.params.name;
     const devices = await deviceModel.getIdByName(deviceName);
     res.status(200).json(devices);
   } catch (error) {

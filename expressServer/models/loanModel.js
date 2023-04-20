@@ -24,12 +24,13 @@ class Loan {
   // for AdminScheduleScreen.js (loads devices reserved this week and due by the end of this week)
   static async getSchedule() {
     let sql = `SELECT *
-               FROM loan
-               WHERE (state = 'reserved' OR state = 'loaned')
-               AND WEEK(reservationDate) = WEEK(NOW())
-               AND YEAR(reservationDate) = YEAR(NOW())
-               AND WEEK(dueDate) = WEEK(NOW())
-               AND YEAR(dueDate) = YEAR(NOW())`;
+              FROM loan
+              INNER JOIN device ON loan.deviceId = device.deviceId
+              WHERE (device.state = 'Reserved' OR device.state = 'Loaned')
+              AND WEEK(loan.startDate) = WEEK(NOW())
+              AND YEAR(loan.startDate) = YEAR(NOW())
+              AND WEEK(loan.dueDate) = WEEK(NOW())
+              AND YEAR(loan.dueDate) = YEAR(NOW())`;
     const [rows] = await db.execute(sql);
     return rows;
   }
@@ -69,8 +70,9 @@ class Loan {
   // for UserAppointmentScreen.js (selects loans where the state is reserved and userID is userId)
   static async getReservedByUser(userId) {
     let sql = `SELECT *
-               FROM loan
-               WHERE userId = ? AND state = 'Reserved'`;
+              FROM loan
+              INNER JOIN device ON loan.deviceId = device.deviceId
+              WHERE loan.userId = ? AND device.state = 'Reserved'`;
     const [rows] = await db.execute(sql, [userId]);
     return rows;
   }
@@ -78,8 +80,9 @@ class Loan {
   // for UserLoansScreen.js (returns all current loans for a specific user)
   static async getCurrentLoans(userId) {
     let sql = `SELECT *
-               FROM loan
-               WHERE userId = ? AND state = 'Loaned'`;
+              FROM loan
+              INNER JOIN device ON loan.deviceId = device.deviceId
+              WHERE loan.userId = ? AND device.state = 'Loaned'`;
     const [rows] = await db.execute(sql, [userId]);
     return rows;
   }

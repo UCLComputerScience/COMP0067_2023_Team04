@@ -45,18 +45,18 @@ class Device {
     let sql = `
       SELECT
         d.name,
-        SUM(CASE WHEN d.status = 'Available' THEN 1 ELSE 0 END) AS available_count,
-        SUM(CASE WHEN d.status = 'Reserved' THEN 1 ELSE 0 END) AS reserved_count,
-        SUM(CASE WHEN l.deviceId IS NOT NULL THEN 1 ELSE 0 END) AS on_loan_count
+        SUM(CASE WHEN d.state = 'Available' THEN 1 ELSE 0 END) AS available_count,
+        SUM(CASE WHEN d.state = 'Reserved' THEN 1 ELSE 0 END) AS reserved_count,
+        SUM(CASE WHEN l.deviceId IS NOT NULL AND d.state = 'Loaned' THEN 1 ELSE 0 END) AS on_loan_count
       FROM device d
-      LEFT JOIN loan l ON d.deviceId = l.deviceId AND l.dueDate >= NOW()
+      LEFT JOIN loan l ON d.deviceId = l.deviceId AND l.returnDate IS NULL
       GROUP BY d.name
     `;
-
+  
     const [rows] = await db.execute(sql);
     return rows;
   }
-
+  
   // for GeneralDeviceAdmin.js (given name of device, find its details, the first row found - or any row for that matter - will do)
   static async getDetailsByDeviceName(name) {
     const [rows] = await db.execute('SELECT * FROM `device` WHERE `name` = ? LIMIT 1', [name]);

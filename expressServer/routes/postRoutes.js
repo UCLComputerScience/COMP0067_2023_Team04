@@ -6,10 +6,10 @@ const router = express.Router();
 // Admin methods
 router.route('/devices').get(postControllers.getAllDevices); // getting details of all devices with unique IDs
 router.route('/devices/:id').get(postControllers.getDeviceById); //for DetailDeviceAdmin.js, specific device by ID and details and latest loan
-router.route('/devices/nameAvailability').get(post.Controllers.getDevicesByNameAvailability); //for AdminDevicesScreen.js (gets deviceName, num_loaned, num_available, category)
+router.route('/devices/nameAvailability').get(postControllers.getDevicesByNameAvailability); //for AdminDevicesScreen.js (gets deviceName, num_loaned, num_available, category)
 router.get('/schedule', postControllers.getSchedule); //for AdminScheduleScreen.js (loads devices reserved & overdue/due this week)
-router.get('/details', postControllers.getDetailsByDeviceName); // for GeneralDeviceAdmin.js (given name of device, find its details)
-router.get('/idByName', postControllers.getIdByName); // for GeneralDeviceAdmin.js (given name of device, get all device IDs and associated states)
+router.get('/details/:name', postControllers.getDetailsByDeviceName); // for GeneralDeviceAdmin.js (given name of device, find its details)
+router.get('/idByName/:name', postControllers.getIdByName); // for GeneralDeviceAdmin.js (given name of device, get all device IDs and associated states)
 router.get('/loansHistoryByName/:name', postControllers.getLoanHistoryByName); // for GeneralDeviceAdmin.js (given name of a device, find all associated loan history)
 // router.post('/devices/insertNewDevice'); // for AdminScanScreen.js (INSERTS id, name, type, state, last_updated or date entered)
 
