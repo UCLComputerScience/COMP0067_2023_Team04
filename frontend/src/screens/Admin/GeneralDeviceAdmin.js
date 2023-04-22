@@ -22,9 +22,28 @@ const GeneralDeviceAdmin = () => {
   console.log("route.params:", route.params);
   console.log("deviceName:", deviceName);
 
-  //Device info, still need to work on it
+  //Device info, still need to work on it\
 
-  const device = [
+  //Devices list from DB, successful
+  const [device, setDevice] = useState("");
+  const fetchDeviceData = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/details/Lenovo Legion Y9000P 2022 RTX 3070ti`
+      );
+      console.log("Received data from API:", response.data);
+      setDevice(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchDeviceData();
+  }, []);
+
+  const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
+
+  /*const device = [
     {
       standardLoanDuration: 14,
       extensionAllowance: 1,
@@ -38,7 +57,7 @@ const GeneralDeviceAdmin = () => {
                       "WIFI": "AX211"}',
     },
   ];
-  const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
+  //const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);*/
 
   //Devices list from DB, successful
   const [devices, setDevices] = useState({});
@@ -47,7 +66,7 @@ const GeneralDeviceAdmin = () => {
       const response = await axios.get(
         `${API_BASE_URL}/idByName/Lenovo Legion Y9000P 2022 RTX 3070ti`
       );
-      console.log("Received data from API:", response.data);
+      //console.log("Received data from API:", response.data);
       setDevices(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -80,7 +99,7 @@ const GeneralDeviceAdmin = () => {
       const response = await axios.get(
         `${API_BASE_URL}/loansHistoryByName/Lenovo Legion Y9000P 2022 RTX 3070ti`
       );
-      console.log("Received data from API:", response.data);
+      //console.log("Received data from API:", response.data);
       setHistory(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -159,7 +178,7 @@ const GeneralDeviceAdmin = () => {
                   Standard Loan Duration:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {device[0].standardLoanDuration} Days
+                  {device.ruleDur} Days
                 </Text>
               </View>
               <View style={styles.detailRowLayout}>
@@ -167,9 +186,9 @@ const GeneralDeviceAdmin = () => {
                   Extension Allowance:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {parseInt(device[0].extensionAllowance) > 1
-                    ? device[0].extensionAllowance + " Times"
-                    : device[0].extensionAllowance + " Time"}
+                  {parseInt(device.ruleExt) > 1
+                    ? device.ruleExt + " Times"
+                    : device.ruleExt + " Time"}
                 </Text>
               </View>
             </View>
