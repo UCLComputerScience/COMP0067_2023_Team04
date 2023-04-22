@@ -222,9 +222,9 @@ const AllDevices = () => {
               placeholder="Search"
             />
           </View>
-          <TouchableOpacity 
-          style={styles.add}
-          onPress={() => navigation.navigate("AddDevice")}
+          <TouchableOpacity
+            style={styles.add}
+            onPress={() => navigation.navigate("AddDevice")}
           >
             <Ionicons size={25} name="add-circle-outline" />
           </TouchableOpacity>
@@ -443,7 +443,6 @@ const AdminDevicesScreen = () => {
       />
       <Stack.Screen name="Statistics" component={StatisticsAdmin} />
       <Stack.Screen name="AddDevice" component={RegisterDeviceScreen} />
-
     </Stack.Navigator>
   );
 };

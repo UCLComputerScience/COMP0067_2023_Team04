@@ -5,13 +5,16 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import { createStackNavigator } from "@react-navigation/stack";
+import axios from "axios";
 
 const GeneralDeviceAdmin = () => {
+  //!!! replace :name with variables when dubug finished by Dr. Fu
+  const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params?.deviceName;
@@ -19,7 +22,8 @@ const GeneralDeviceAdmin = () => {
   console.log("route.params:", route.params);
   console.log("deviceName:", deviceName);
 
-  //Device info
+  //Device info, still need to work on it
+
   const device = [
     {
       standardLoanDuration: 14,
@@ -34,9 +38,27 @@ const GeneralDeviceAdmin = () => {
                       "WIFI": "AX211"}',
     },
   ];
+  const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
+
+  //Devices list from DB, successful
+  const [devices, setDevices] = useState({});
+  const fetchDevicesData = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/idByName/Lenovo Legion Y9000P 2022 RTX 3070ti`
+      );
+      console.log("Received data from API:", response.data);
+      setDevices(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchDevicesData();
+  }, []);
 
   //The ids of a same device
-  const devices = [
+  /*const devices = [
     { id: 20220901001, state: "Loaned" },
     { id: 20220901002, state: "Available" },
     { id: 20220901003, state: "Maintained" },
@@ -49,10 +71,26 @@ const GeneralDeviceAdmin = () => {
     { id: 20220901010, state: "Loaned" },
     { id: 20220901011, state: "Available" },
     { id: 20220901012, state: "Available" },
-  ];
-  const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
+  ];*/
 
-  const history = [
+  //Devices list from DB, successful
+  const [history, setHistory] = useState({});
+  const fetchHistoryData = async () => {
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/loansHistoryByName/Lenovo Legion Y9000P 2022 RTX 3070ti`
+      );
+      console.log("Received data from API:", response.data);
+      setHistory(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchHistoryData();
+  }, []);
+
+  /*const history = [
     {
       deviceID: 20220901001,
       userID: "ucabcda",
@@ -73,7 +111,7 @@ const GeneralDeviceAdmin = () => {
       userID: "ucabcdc",
       date: "2023-03-19",
     },
-  ];
+  ];*/
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
@@ -198,18 +236,20 @@ const GeneralDeviceAdmin = () => {
                 <View style={{ flex: 2 }}>
                   {devices.map((device) => (
                     <TouchableOpacity
-                      key={device.id}
+                      key={device.deviceId}
                       onPress={() =>
-                        navigation.navigate("Detail", { deviceID: device.id })
+                        navigation.navigate("Detail", {
+                          deviceID: device.deviceId,
+                        })
                       }
                     >
-                      <Text style={styles.deviceID}>{device.id}</Text>
+                      <Text style={styles.deviceID}>{device.deviceId}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
                 <View style={{ flex: 1 }}>
                   {devices.map((device) => (
-                    <Text key={device.id} style={styles.deviceState}>
+                    <Text key={device.deviceId} style={styles.deviceState}>
                       {device.state}
                     </Text>
                   ))}
@@ -255,13 +295,13 @@ const GeneralDeviceAdmin = () => {
               </View>
               <View style={styles.detailRowLayout}>
                 <Text style={styles.historyDeviceID}>
-                  {history.map((history) => `${history.deviceID}`).join("\n")}
+                  {history.map((history) => `${history.deviceId}`).join("\n")}
                 </Text>
                 <Text style={styles.historyUserID}>
-                  {history.map((history) => `${history.userID}`).join("\n")}
+                  {history.map((history) => `${history.userId}`).join("\n")}
                 </Text>
                 <Text style={[styles.historyState, { flex: 1 }]}>
-                  {history.map((history) => `${history.date}`).join("\n")}
+                  {history.map((history) => `${history.returnDate}`).join("\n")}
                 </Text>
               </View>
             </View>
