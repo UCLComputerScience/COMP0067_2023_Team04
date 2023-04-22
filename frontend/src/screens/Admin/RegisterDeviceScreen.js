@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Switch, ScrollView, Alert } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, FlatList, Modal, ScrollView, TouchableWithoutFeedback, TextInput, Switch } from "react-native";
 import DropDownPicker from 'react-native-dropdown-picker';
 
+
 const RegisterDeviceScreen = () => {
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [deviceName, setDeviceName] = useState('');
   const [deviceDetails, setDeviceDetails] = useState('');
   const [storageLocation, setStorageLocation] = useState('');
@@ -12,6 +14,8 @@ const RegisterDeviceScreen = () => {
   const [ruleDur, setRuleDur] = useState('');
   const [launchYr, setLaunchYr] = useState('');
   const [cost, setCost] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
+
 
   const categories = [
     { label: 'Laptop', value: 'Laptop' },
@@ -28,7 +32,6 @@ const RegisterDeviceScreen = () => {
       return;
     }
 
-    // Process form submission here, e.g., send data to a server or save it to a local database
     console.log('Device Name:', deviceName);
     console.log('Device Details:', deviceDetails);
     console.log('Storage Location:', storageLocation);
@@ -48,19 +51,46 @@ const RegisterDeviceScreen = () => {
     <View style={styles.background}>
       <ScrollView contentContainerStyle={styles.container}>
         <View>
-        <Text style={styles.label}>Category</Text>
-          <DropDownPicker
-            items={categories}
-            open={open}
-            value={category}
-            setOpen={setOpen}
-            setValue={setCategory}
-            containerStyle={styles.dropdownContainer}
-            style={{...styles.dropdown, borderColor: 'transparent'}}
-            itemStyle={styles.dropdownItem}
-            labelStyle={styles.dropdownLabel}
-            dropDownStyle={styles.dropdownList}
-          />
+        <TouchableOpacity
+          onPress={() => setModalVisible(true)}
+          style={styles.dropdownTrigger}
+        >
+          <Text style={styles.label}>
+            {selectedCategory ? `Selected Category: ${selectedCategory}` : "Select Category"}
+          </Text>
+        </TouchableOpacity>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(false);
+          }}
+        >
+          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+            <View style={styles.modalBackground}>
+              <View style={styles.modalContent}>
+                <FlatList
+                  data={categories}
+                  renderItem={({ item }) => (
+                    <TouchableOpacity
+                      style={styles.modalItem}
+                      onPress={() => {
+                        setSelectedCategory(item.label);
+                        setModalVisible(false);
+                      }}
+                    >
+                      <Text style={styles.modalItemText}>{item.label}</Text>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(item) => item.value}
+                />
+                <Text style={styles.selectedCategoryText}>{selectedCategory}</Text>
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </Modal>
           <Text style={styles.label}>Device Name</Text>
           <TextInput
             style={styles.input}
@@ -74,6 +104,8 @@ const RegisterDeviceScreen = () => {
             placeholder="Enter Device Details"
             onChangeText={setDeviceDetails}
             value={deviceDetails}
+            multiline={true} 
+            numberOfLines={4} 
           />
           <Text style={styles.label}>Storage Location</Text>
           <TextInput
@@ -114,11 +146,9 @@ const RegisterDeviceScreen = () => {
             onValueChange={toggleSwitch}
             value={ruleExt === 1}
           />
-
           <TouchableOpacity style={styles.button} onPress={handleSubmit}>
             <Text style={styles.buttonText}>Register Device</Text>
           </TouchableOpacity>
-
         </View>
       </ScrollView>
     </View>
@@ -149,7 +179,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: 'bold',
     marginBottom: 4,
   },
   dropdownContainer: {
@@ -184,6 +213,47 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
+  dropdownWrapper: {
+    position: 'relative', // Add this line
+    zIndex: 1000, // Add this line
+  },
+  dropdownTrigger: {
+    borderWidth: 1,
+    borderColor: '#999',
+    borderRadius: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginBottom: 12,
+  },
+  
+  dropdownTriggerText: {
+
+  },
+  modalBackground: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 5,
+    padding: 20,
+    width: "80%",
+  },
+  modalItem: {
+    paddingVertical: 10,
+
+  },
+  modalItemText: {
+    fontSize: 18,
+
+  },
+  selectedCategoryText: {
+    fontSize: 16,
+    marginBottom: 12,
+  },
+  
   });
   
   export default RegisterDeviceScreen;
