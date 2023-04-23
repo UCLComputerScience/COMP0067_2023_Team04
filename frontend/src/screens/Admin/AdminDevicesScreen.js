@@ -238,31 +238,38 @@ const AllDevices = () => {
       </View>
       <View style={styles.categoryTabs}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-          {["All", "Laptop", "MacBook", "Android", "iPhone", "CPU", "GPU"].map(
-            (category, index) => (
-              <TouchableOpacity
-                key={category}
-                onPress={() => handleCategoryTabPress(category)}
+          {[
+            "All",
+            "Laptop",
+            "MacBook",
+            "Android",
+            "iPhone",
+            "CPU",
+            "GPU",
+            "Others",
+          ].map((category, index) => (
+            <TouchableOpacity
+              key={category}
+              onPress={() => handleCategoryTabPress(category)}
+              style={[
+                styles.categoryTab,
+                selectedCategory === category
+                  ? styles.selectedCategoryTab
+                  : null,
+              ]}
+            >
+              <Text
                 style={[
-                  styles.categoryTab,
+                  styles.categoryTabText,
                   selectedCategory === category
-                    ? styles.selectedCategoryTab
+                    ? styles.selectedCategoryTabText
                     : null,
                 ]}
               >
-                <Text
-                  style={[
-                    styles.categoryTabText,
-                    selectedCategory === category
-                      ? styles.selectedCategoryTabText
-                      : null,
-                  ]}
-                >
-                  {category}
-                </Text>
-              </TouchableOpacity>
-            )
-          )}
+                {category}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </ScrollView>
       </View>
 

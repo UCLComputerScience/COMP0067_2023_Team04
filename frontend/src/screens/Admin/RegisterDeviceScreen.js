@@ -1,96 +1,117 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, FlatList, Modal, ScrollView, TouchableWithoutFeedback, TextInput, Switch } from "react-native";
-import DropDownPicker from 'react-native-dropdown-picker';
-
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  FlatList,
+  Modal,
+  ScrollView,
+  TouchableWithoutFeedback,
+  TextInput,
+  Switch,
+} from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const RegisterDeviceScreen = () => {
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [deviceName, setDeviceName] = useState('');
-  const [deviceDetails, setDeviceDetails] = useState('');
-  const [storageLocation, setStorageLocation] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [deviceName, setDeviceName] = useState("");
+  const [deviceDetails, setDeviceDetails] = useState("");
+  const [storageLocation, setStorageLocation] = useState("");
   const [category, setCategory] = useState(null);
   const [open, setOpen] = useState(false);
   const [ruleExt, setRuleExt] = useState(0);
-  const [ruleDur, setRuleDur] = useState('');
-  const [launchYr, setLaunchYr] = useState('');
-  const [cost, setCost] = useState('');
+  const [ruleDur, setRuleDur] = useState("");
+  const [launchYr, setLaunchYr] = useState("");
+  const [cost, setCost] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
 
-
   const categories = [
-    { label: 'Laptop', value: 'Laptop' },
-    { label: 'MacBook', value: 'MacBook' },
-    { label: 'Android', value: 'Android' },
-    { label: 'iPhone', value: 'iPhone' },
-    { label: 'Other', value: 'Other' },
+    { label: "Laptop", value: "Laptop" },
+    { label: "MacBook", value: "MacBook" },
+    { label: "Android", value: "Android" },
+    { label: "iPhone", value: "iPhone" },
+    { label: "CPU", value: "CPU" },
+    { label: "GPU", value: "GPU" },
+    { label: "Other", value: "Other" },
   ];
 
-
   const handleSubmit = () => {
-    if (!deviceName || !deviceDetails || !storageLocation || !category || !ruleDur || !launchYr || !cost) {
-      Alert.alert('Error', 'All fields are required');
+    if (
+      !deviceName ||
+      !deviceDetails ||
+      !storageLocation ||
+      !category ||
+      !ruleDur ||
+      !launchYr ||
+      !cost
+    ) {
+      Alert.alert("Error", "All fields are required");
       return;
     }
 
-    console.log('Device Name:', deviceName);
-    console.log('Device Details:', deviceDetails);
-    console.log('Storage Location:', storageLocation);
-    console.log('Category:', category);
-    console.log('Allow to extent?:', ruleExt === 1 ? 'Yes' : 'No');
-    console.log('Loan Duration:', ruleDur);
-    console.log('Launch Year:', launchYr);
-    console.log('Cost:', cost);
+    console.log("Device Name:", deviceName);
+    console.log("Device Details:", deviceDetails);
+    console.log("Storage Location:", storageLocation);
+    console.log("Category:", category);
+    console.log("Allow to extent?:", ruleExt === 1 ? "Yes" : "No");
+    console.log("Loan Duration:", ruleDur);
+    console.log("Launch Year:", launchYr);
+    console.log("Cost:", cost);
   };
 
-
   const toggleSwitch = () => {
-    setRuleExt(prevValue => prevValue === 0 ? 1 : 0);
+    setRuleExt((prevValue) => (prevValue === 0 ? 1 : 0));
   };
 
   return (
     <View style={styles.background}>
       <ScrollView contentContainerStyle={styles.container}>
         <View>
-        <TouchableOpacity
-          onPress={() => setModalVisible(true)}
-          style={styles.dropdownTrigger}
-        >
-          <Text style={styles.label}>
-            {selectedCategory ? `Selected Category: ${selectedCategory}` : "Select Category"}
-          </Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}
+            style={styles.dropdownTrigger}
+          >
+            <Text style={styles.label}>
+              {selectedCategory
+                ? `Selected Category: ${selectedCategory}`
+                : "Select Category"}
+            </Text>
+          </TouchableOpacity>
 
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(false);
-          }}
-        >
-          <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
-            <View style={styles.modalBackground}>
-              <View style={styles.modalContent}>
-                <FlatList
-                  data={categories}
-                  renderItem={({ item }) => (
-                    <TouchableOpacity
-                      style={styles.modalItem}
-                      onPress={() => {
-                        setSelectedCategory(item.label);
-                        setModalVisible(false);
-                      }}
-                    >
-                      <Text style={styles.modalItemText}>{item.label}</Text>
-                    </TouchableOpacity>
-                  )}
-                  keyExtractor={(item) => item.value}
-                />
-                <Text style={styles.selectedCategoryText}>{selectedCategory}</Text>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setModalVisible(false);
+            }}
+          >
+            <TouchableWithoutFeedback onPress={() => setModalVisible(false)}>
+              <View style={styles.modalBackground}>
+                <View style={styles.modalContent}>
+                  <FlatList
+                    data={categories}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        style={styles.modalItem}
+                        onPress={() => {
+                          setSelectedCategory(item.label);
+                          setModalVisible(false);
+                        }}
+                      >
+                        <Text style={styles.modalItemText}>{item.label}</Text>
+                      </TouchableOpacity>
+                    )}
+                    keyExtractor={(item) => item.value}
+                  />
+                  <Text style={styles.selectedCategoryText}>
+                    {selectedCategory}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </TouchableWithoutFeedback>
-        </Modal>
+            </TouchableWithoutFeedback>
+          </Modal>
           <Text style={styles.label}>Device Name</Text>
           <TextInput
             style={styles.input}
@@ -104,8 +125,8 @@ const RegisterDeviceScreen = () => {
             placeholder="Enter Device Details"
             onChangeText={setDeviceDetails}
             value={deviceDetails}
-            multiline={true} 
-            numberOfLines={4} 
+            multiline={true}
+            numberOfLines={4}
           />
           <Text style={styles.label}>Storage Location</Text>
           <TextInput
@@ -140,8 +161,8 @@ const RegisterDeviceScreen = () => {
           />
           <Text style={styles.label}>Allow to extent?</Text>
           <Switch
-            trackColor={{ false: '#ddd', true: '#2196F3' }}
-            thumbColor={ruleExt === 1 ? '#fff' : '#fff'}
+            trackColor={{ false: "#ddd", true: "#2196F3" }}
+            thumbColor={ruleExt === 1 ? "#fff" : "#fff"}
             ios_backgroundColor="#ddd"
             onValueChange={toggleSwitch}
             value={ruleExt === 1}
@@ -158,19 +179,19 @@ const RegisterDeviceScreen = () => {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   container: {
     flexGrow: 1,
-    justifyContent: 'top',
+    justifyContent: "top",
     marginTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 300, // Add paddingBottom to increase the scrollable space
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 8,
@@ -186,54 +207,52 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   dropdown: {
-    backgroundColor: '#aaa',
+    backgroundColor: "#aaa",
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 4,
   },
   dropdownItem: {
-    justifyContent: 'flex-start',
+    justifyContent: "flex-start",
   },
   dropdownLabel: {
     fontSize: 16,
-    color: '#000',
+    color: "#000",
   },
   dropdownList: {
-    backgroundColor: '#fff',
-    borderColor: '#ddd',
+    backgroundColor: "#fff",
+    borderColor: "#ddd",
   },
   button: {
-    backgroundColor: '#AC145A',
+    backgroundColor: "#AC145A",
     borderRadius: 4,
     paddingVertical: 12,
-    alignItems: 'center',
+    alignItems: "center",
   },
   buttonText: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
+    fontWeight: "bold",
+    color: "#fff",
   },
   dropdownWrapper: {
-    position: 'relative', // Add this line
+    position: "relative", // Add this line
     zIndex: 1000, // Add this line
   },
   dropdownTrigger: {
     borderWidth: 1,
-    borderColor: '#999',
+    borderColor: "#999",
     borderRadius: 4,
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginBottom: 12,
   },
-  
-  dropdownTriggerText: {
 
-  },
+  dropdownTriggerText: {},
   modalBackground: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", 
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
     backgroundColor: "white",
@@ -243,17 +262,14 @@ const styles = StyleSheet.create({
   },
   modalItem: {
     paddingVertical: 10,
-
   },
   modalItemText: {
     fontSize: 18,
-
   },
   selectedCategoryText: {
     fontSize: 16,
     marginBottom: 12,
   },
-  
-  });
-  
-  export default RegisterDeviceScreen;
+});
+
+export default RegisterDeviceScreen;

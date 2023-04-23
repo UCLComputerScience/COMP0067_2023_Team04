@@ -342,7 +342,6 @@ const AllDevices = () => {
                   onPress={() =>
                     navigation.navigate("General Details", {
                       deviceName: item.name,
-                      deviceAvailable: item.available,
                     })
                   }
                 >

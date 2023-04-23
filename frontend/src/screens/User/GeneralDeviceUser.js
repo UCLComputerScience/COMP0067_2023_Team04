@@ -19,13 +19,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 //When you enter from the Appointment interface, you need to read the summary details and status of the device and the appointment time, the status of Loan should be On hold, and the status of Return should be Available.
 
 const GeneralDeviceUserScreen = () => {
-  const [selectedDate, setSelectedDate] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
-  const [agr, setAgr] = useState(0);
   //const deviceName = "hello";
-  const { deviceName, deviceAvailable } = route.params;
-  const [modalVisible, setModalVisible] = useState(false);
+  const { deviceName } = route.params;
   const [status, setStatus] = useState("Available");
   const device = [
     {
@@ -39,8 +36,11 @@ const GeneralDeviceUserScreen = () => {
                       "Screen": "2.5K (2560*1600) 16:10 165Hz", \
                       "Power": "300W", \
                       "WIFI": "AX211"}',
+      available: "7",
     },
   ];
+
+  const available = "7";
 
   const timeSlot = [
     "Monday: 10:00 - 12:00",
@@ -162,6 +162,10 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
               onPress={() => {
                 setUserTermsModalVisible(false);
                 loanDevie;
+                Alert.alert(
+                  "Success",
+                  "You have successfully reserve a device"
+                );
               }}
             >
               <Text style={styles.modalCancelButtonText}>I agree</Text>
@@ -261,7 +265,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {deviceAvailable} {status}
+                  {available} Available
                 </Text>
               </View>
               {status === "On hold" && (
@@ -302,7 +306,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                 justifyContent: "center",
               }}
               onPress={showAvailableDatesAlert}
-              disabled={deviceAvailable === 0 || deviceAvailable === "0"}
+              disabled={available === 0 || available === "0"}
             >
               <Text
                 style={{
