@@ -11,12 +11,18 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
+import * as Linking from "expo-linking";
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
 const Stack = createStackNavigator();
 
 const CollapsibleList = () => {
+  const route = useRoute();
+  const currentScreenPath = route.name;
+  const currentScreenUrl = Linking.createURL(currentScreenPath);
+
+  console.log("Current Screen URL:", currentScreenUrl);
   const [currentTab, setCurrentTab] = useState("today");
   const navigation = useNavigation();
   const [filteredData, setFilteredData] = useState([]);

@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "device-loan-app",
     "name": "frontend",
     "slug": "frontend",
     "version": "1.0.0",

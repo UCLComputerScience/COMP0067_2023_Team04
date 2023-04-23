@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { View, Text, Button, SafeAreaView } from "react-native";
 import {
   NavigationContainer,
@@ -9,13 +9,56 @@ import AdminTabs from "./AdminTabs";
 import UserTabs from "./UserTabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import AuthContext from "./AuthContext";
+import * as Linking from "expo-linking";
+import * as AuthSession from "expo-auth-session";
+
+const getRedirectUri = () => {
+  const redirectUri = AuthSession.makeRedirectUri();
+  console.log("Generated Redirect URI:", redirectUri);
+  return redirectUri;
+};
+
+const linking = {
+  prefixes: [Linking.makeUrl("/")],
+  config: {
+    screens: {
+      LoginTabScreen: "",
+      AdminTabs: {
+        screens: {
+          AdminSchedule: "Schedule",
+          //
+        },
+      },
+      UserTabs: {
+        screens: {
+          // 2 be added
+        },
+      },
+    },
+  },
+};
 
 const LoginTabScreen = () => {
+  useEffect(() => {
+    const handleInitialUrl = async () => {
+      const url = await Linking.getInitialURL();
+      if (url) {
+        //
+        const path = url.split("/--/")[1];
+        if (path === "Schedule") {
+          navigation.navigate("AdminTabs");
+        }
+      }
+    };
+
+    handleInitialUrl();
+  }, []);
+
   const navigation = useNavigation();
   const { loginAsAdmin, loginAsUser } = useContext(AuthContext);
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
-      <Button title="SSO Login" />
+      <Button title="SSO Login" onPress={getRedirectUri} />
       <Button title="Admin Login" onPress={loginAsAdmin} />
       <Button title="User Login" onPress={loginAsUser} />
     </SafeAreaView>
@@ -50,7 +93,7 @@ const LoginTab = () => {
 
   return (
     <AuthContext.Provider value={authContextValue}>
-      <NavigationContainer>
+      <NavigationContainer linking={linking}>
         {userRole ? (
           userRole === "admin" ? (
             <AdminTabs />
