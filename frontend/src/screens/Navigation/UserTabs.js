@@ -29,38 +29,6 @@ const Tabs = () => {
       }}
     >
       <Tab.Screen
-        name="Device"
-        component={UserDevicesScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }) => (
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "center",
-                top: 10,
-              }}
-            >
-              <Image
-                source={require("../../components/icons/Devices.png")}
-                resizeMode="contain"
-                style={{
-                  width: 25,
-                  height: 25,
-                  tintColor: focused ? "#AC145A" : "#A6AAB2",
-                }}
-              />
-              <Text
-                style={{ color: focused ? "#AC145A" : "#A6AAB2", fontSize: 12 }}
-              >
-                Devices
-              </Text>
-            </View>
-          ),
-        }}
-      />
-
-      <Tab.Screen
         name="Appointment"
         component={UserAppointmentScreen}
         options={{
@@ -93,10 +61,44 @@ const Tabs = () => {
       />
 
       <Tab.Screen
+        name="userDevice"
+        component={UserDevicesScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "Devices",
+          tabBarIcon: ({ focused }) => (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                top: 10,
+              }}
+            >
+              <Image
+                source={require("../../components/icons/Devices.png")}
+                resizeMode="contain"
+                style={{
+                  width: 25,
+                  height: 25,
+                  tintColor: focused ? "#AC145A" : "#A6AAB2",
+                }}
+              />
+              <Text
+                style={{ color: focused ? "#AC145A" : "#A6AAB2", fontSize: 12 }}
+              >
+                Devices
+              </Text>
+            </View>
+          ),
+        }}
+      />
+
+      <Tab.Screen
         name="Loans1"
         component={UserLoansScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Loans",
           tabBarIcon: ({ focused }) => (
             <View
               style={{

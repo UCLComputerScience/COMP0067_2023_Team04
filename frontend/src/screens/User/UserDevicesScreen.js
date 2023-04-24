@@ -14,6 +14,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceUser from "./GeneralDeviceUser";
+import * as Linking from "expo-linking";
 
 //This screen needs to read the model number, shelf date, number of available rentals, and name of all available rental devices
 //Note! The number of devices available in the database is 0 should not appear!
@@ -21,7 +22,12 @@ import GeneralDeviceUser from "./GeneralDeviceUser";
 const AllDevices = () => {
   const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState("All");
+
   const route = useRoute();
+  const currentScreenPath = route.name;
+  const currentScreenUrl = Linking.createURL(currentScreenPath);
+
+  console.log("Current Screen URL:", currentScreenUrl);
   const initialDevices = [
     {
       name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
@@ -462,9 +468,9 @@ const UserDevicesScreen = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Devices"
+        name="userDevices"
         component={AllDevices}
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="General Details"

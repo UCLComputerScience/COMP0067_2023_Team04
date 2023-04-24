@@ -11,13 +11,33 @@ import { createStackNavigator } from "@react-navigation/stack";
 import AuthContext from "./AuthContext";
 import * as Linking from "expo-linking";
 import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
 
 const getRedirectUri = () => {
   const redirectUri = AuthSession.makeRedirectUri();
   console.log("Generated Redirect URI:", redirectUri);
+  WebBrowser.openBrowserAsync(
+    "https://0067team4app.azurewebsites.net/authorise"
+  );
   return redirectUri;
 };
 
+/*const getRedirectUri = async () => {
+  try {
+    const response = await axios.get(
+      `${API_BASE_URL}/details/Lenovo Legion Y9000P 2022 RTX 3070ti`
+    );
+    console.log("Received data from API:", response.data);
+    setDevice(response.data);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+useEffect(() => {
+  fetchDeviceData();
+}, []);*/
+
+//onPress={() => WebBrowser.openBrowserAsync('https://expo.dev')
 const linking = {
   prefixes: [Linking.makeUrl("/")],
   config: {
@@ -47,6 +67,9 @@ const LoginTabScreen = () => {
         const path = url.split("/--/")[1];
         if (path === "Schedule") {
           navigation.navigate("AdminTabs");
+        }
+        if (path === "userDevices") {
+          navigation.navigate("UserTabs");
         }
       }
     };

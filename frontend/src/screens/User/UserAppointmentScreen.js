@@ -11,12 +11,18 @@ import React, { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GeneralDeviceUserScreen from "./GeneralDeviceUser";
+import * as Linking from "expo-linking";
 
 // This screen needs to read the reservation status of the user, it needs the name, status and due date of the device that the user has reserved, the status is only two cases, loan or has been returned
 
 const UserAppointmentScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
+
+  const currentScreenPath = route.name;
+  const currentScreenUrl = Linking.createURL(currentScreenPath);
+
+  console.log("Current Screen URL:", currentScreenUrl);
   const initialDevices = [
     {
       name: "Lenovo Legion Y9000P 2022 RTX 3070ti",

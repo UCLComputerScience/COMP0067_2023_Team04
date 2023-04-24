@@ -185,7 +185,7 @@ const UserLoansScreen = () => {
       <Stack.Screen
         name="Loans"
         component={UserLoans}
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="General Device"
