@@ -18,31 +18,28 @@ import moment from "moment";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
-//This interface is connected to Loan's interface of Ongoing devices, when coming from Loan's interface, he should get the summary details and due date of a device in Loan's interface, and then return or extend
-//After extending, the extension allowance and date will be changed, this data needs to be returned to the database, but no need to return to the front-end, the front-end has already completed the relevant operations
-//After returning, the ruturn date should be returned in the database
-//read the database data of the date in line 251
+//This interface is the device that connects to the Past of Loan's interface, when coming from Loan's interface, only need to get the summary details and return date of a device of Loan's interface
+//In line 246, you need to read the database return date data
 
-const GeneralDeviceExtendScreen = () => {
-  const navigation = useNavigation();
-  const route = useRoute();
+const GeneralDeviceExtendScreen2 = () => {
   const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
 
-  const [returnDateLabel, setReturnDateLabel] = useState("Due date");
   const [dueDate, setDueDate] = useState("2023-01-01");
   const [selectedCollectTime, setSelectedCollectTime] = useState("");
   const [deviceList, setDeviceList] = useState("");
-
+  const navigation = useNavigation();
+  const route = useRoute();
   const { item } = route.params;
   let itemObj = JSON.parse(item);
   console.log("itemObj = ", itemObj)
+  const deviceName = route.params.deviceName;
   const [modalVisible, setModalVisible] = useState(false);
-  const [status, setStatus] = useState("Loaned");
-  const [device, setDevice] = useState([
+  const [status, setStatus] = useState("Returned");
+  const device = [
     {
       standardLoanDuration: 14,
-      extensionAllowance: 1,
+      extensionAllowance: 0,
       summaryDetails:
         '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
                       "GPU": "RTX 3070ti 8G 150W", \
@@ -52,7 +49,7 @@ const GeneralDeviceExtendScreen = () => {
                       "Power": "300W", \
                       "WIFI": "AX211"}',
     },
-  ]);
+  ];
 
   const parseDateStringToTimestamp = (dateString) => {
     const [day, time] = dateString.split(": ");
@@ -63,32 +60,28 @@ const GeneralDeviceExtendScreen = () => {
     return date.getTime();
   };
 
-  const extendDevice = async () => {
-    if (itemObj.ruleExt === 1) {
-      const newDueDate = addDays(new Date(moment(itemObj.dueDate).format('YYYY-MM-DD')), 7);
+  const extendDevice = () => {
+    if (device[0].extensionAllowance === 1) {
+      const newDueDate = addDays(new Date(dueDate), 7);
       const formattedNewDueDate = format(newDueDate, "yyyy-MM-dd");
-      await request({
-        url: `/posts/loans/extend/${itemObj.deviceId}/${itemObj.userId}`,
-        method: 'post',
-      })
-      setIsExtendButtonDisabled(true);
+
+      setIsExtendButtonDisabled(device[0].extensionAllowance === 0);
       Alert.alert(
         "Extension successful",
-        "You have successfully extended your loan.",
+        "You have successfully extened your loan.",
         [
           {
             text: "YES",
             onPress: () => {
-
-
-
-              // setDueDate(formattedNewDueDate);
-              // setDevice((prevState) => [
-              //   {
-              //     ...prevState[0],
-              //     extensionAllowance: 0,
-              //   },
-              // ]);
+              setDueDate(formattedNewDueDate);
+              device[0].extensionAllowance = 0;
+              setIsExtendButtonDisabled(false);
+              setDeviceList((prevState) => [
+                {
+                  ...prevState[0],
+                  extensionAllowance: 0,
+                },
+              ]);
             },
           },
         ],
@@ -129,7 +122,7 @@ const GeneralDeviceExtendScreen = () => {
           onPress: () => {
             console.log("YES Pressed");
             showSecondAlert(timestamp);
-            setReturnDateLabel("Return date");
+
             setDueDate(timeString);
             setIsReturnButtonDisabled(true);
             setIsExtendButtonDisabled(true);
@@ -168,40 +161,34 @@ const GeneralDeviceExtendScreen = () => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Select the collect time</Text>
-            <View style={styles.modalSection}>
-              {[
-                "Monday: 10:00 - 12:00",
-                "Tuesday: 09:00 - 12:30",
-                "Wednesday: 10:00 - 14:00",
-                "Thursday: 14:00 - 16:00",
-                "Friday: 13:00 - 14:00",
-              ].map((day, index) => (
-                <View key={index}>
-                  {index === 0 && <View style={styles.modalDivider} />}
-                  <TouchableOpacity
-                    style={styles.modalButton}
-                    onPress={() => {
-                      console.log("Selected day:", day);
-                      setSelectedCollectTime(day);
-                      setModalVisible(false);
-                      showAlert(day);
-                    }}
-                  >
-                    <Text style={styles.modalButtonText}>{day}</Text>
-                  </TouchableOpacity>
-                  {index === 4 && <View style={styles.modalDivider} />}
-                </View>
-              ))}
-            </View>
-            <View style={styles.modalDivider} />
+            <Text style={styles.modalTitle}>select the return time</Text>
+            {[
+              "Monday: 10:00 - 12:00",
+              "Tuesday: 09:00 - 12:30",
+              "Wednesday : 10:00 - 14:00",
+              "Thursday: 14:00 - 16:00",
+              "Friday: 13:00 - 14:00",
+            ].map((day, index) => (
+              <TouchableOpacity
+                key={index}
+                style={styles.modalButton}
+                onPress={() => {
+                  console.log("Selected day:", day);
+                  setSelectedCollectTime(day);
+                  setModalVisible(false);
+                  showAlert(day);
+                }}
+              >
+                <Text style={styles.modalButtonText}>{day}</Text>
+              </TouchableOpacity>
+            ))}
             <TouchableOpacity
-              style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
+              style={[styles.modalButtonNoBorder, { marginTop: 20 }]}
               onPress={() => {
                 setModalVisible(false);
               }}
             >
-              <Text style={styles.modalCancelButtonText}>Cancel</Text>
+              <Text style={styles.modalButtonText}>cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -233,7 +220,7 @@ const GeneralDeviceExtendScreen = () => {
                   Standard Loan Duration:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {itemObj.ruleDur} Days
+                {itemObj.ruleDur} Days
                 </Text>
               </View>
               <View style={styles.detailRowLayout}>
@@ -241,7 +228,9 @@ const GeneralDeviceExtendScreen = () => {
                   Extension Allowance:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {itemObj.ruleExt}
+                  {parseInt(itemObj.ruleExt) > 1
+                    ? itemObj.ruleExt + " Times"
+                    : itemObj.ruleExt + " Time"}
                 </Text>
               </View>
             </View>
@@ -298,9 +287,7 @@ const GeneralDeviceExtendScreen = () => {
                 <Text style={{ fontWeight: "300", flex: 1 }}>{itemObj.state}</Text>
               </View>
               <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: "500", flex: 2 }}>
-                  {returnDateLabel}:
-                </Text>
+                <Text style={{ fontWeight: "500", flex: 2 }}>Return date:</Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>{moment(itemObj.dueDate).format("YYYY-MM-DD HH:mm:ss")}</Text>
               </View>
               <View style={styles.detailRowLayout}>
@@ -325,7 +312,9 @@ const GeneralDeviceExtendScreen = () => {
               title="Extend"
               color="#AC145A"
               onPress={extendDevice}
-              disabled={isExtendButtonDisabled}
+              disabled={
+                device[0].extensionAllowance === 0 || isExtendButtonDisabled
+              }
             />
           </View>
         </View>
@@ -333,7 +322,7 @@ const GeneralDeviceExtendScreen = () => {
     </View>
   );
 };
-
+ 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -448,50 +437,33 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     fontSize: 18,
-    marginBottom: 10,
-    marginTop: -10,
-    color: "black",
-  },
-  modalSection: {
-    width: "100%",
+    fontWeight: "bold",
+    marginBottom: 15,
+    color: "gray",
   },
   modalButton: {
     backgroundColor: "white",
     borderRadius: 5,
     padding: 10,
-    width: "100%",
+    width: "80%",
     alignItems: "center",
-    marginTop: 5,
-    marginBottom: 5,
-    borderTopWidth: 0,
+    marginTop: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#D6D6D6",
   },
   modalButtonText: {
     color: "#AC145A",
-    fontSize: 17,
-    fontWeight: "normal",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   modalButtonNoBorder: {
     backgroundColor: "white",
     borderRadius: 5,
-    padding: 5,
+    padding: 10,
     width: "80%",
     alignItems: "center",
     marginTop: 10,
   },
-  modalDivider: {
-    borderBottomWidth: 1,
-    borderBottomColor: "#D6D6D6",
-    width: "127%",
-    alignSelf: "center",
-    marginVertical: 5,
-  },
-  modalCancelButtonText: {
-    color: "#AC145A",
-    fontSize: 18,
-    fontWeight: "normal",
-    marginBottom: -15,
-    marginTop: -10,
-  },
 });
 
-export default GeneralDeviceExtendScreen;
+export default GeneralDeviceExtendScreen2;

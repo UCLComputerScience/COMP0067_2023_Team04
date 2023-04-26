@@ -9,20 +9,24 @@ import {
   Modal,
   Alert,
 } from "react-native";
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createStackNavigator } from "@react-navigation/stack";
+import request from "../../utils/request";
 
 //This interface is connected to three interfaces, when entering from the UserDevice interface, he needs to get the summary details of one of the devices, and then reserve, go to the next interface.
 //The next interface is Userterm, when the user clicks I agree, the database will return the time of the user's appointment and set the status to On hold, and also return to this interface to read this reserve time, in line 169
 //When you enter from the Appointment interface, you need to read the summary details and status of the device and the appointment time, the status of Loan should be On hold, and the status of Return should be Available.
 
 const GeneralDeviceUserScreen = () => {
+  const [selectedDate, setSelectedDate] = useState("");
   const navigation = useNavigation();
   const route = useRoute();
+  const [agr, setAgr] = useState(0);
   //const deviceName = "hello";
-  const { deviceName } = route.params;
+  const { deviceName, deviceAvailable } = route.params;
+  const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Available");
   const device = [
     {
@@ -36,11 +40,8 @@ const GeneralDeviceUserScreen = () => {
                       "Screen": "2.5K (2560*1600) 16:10 165Hz", \
                       "Power": "300W", \
                       "WIFI": "AX211"}',
-      available: "7",
     },
   ];
-
-  const available = "7";
 
   const timeSlot = [
     "Monday: 10:00 - 12:00",
@@ -102,6 +103,27 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
       { cancelable: false }
     );
   };
+  const [detail, setDetail] = useState({});
+  const [summary, setSummary] = useState({});
+  const getDeviceByName = async () => {
+    try {
+      const res = await request({
+        url: `/posts/devices/deviceByName/${deviceName}`,
+        method: "get",
+      });
+      console.log("detail res = ", res);
+      if (res) {
+        setDetail(res);
+        setSummary(JSON.parse(res.details));
+        setStatus(res.state);
+      }
+    } catch (error) {
+      console.log("error = ", error);
+    }
+  };
+  useEffect(() => {
+    getDeviceByName();
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -162,10 +184,6 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
               onPress={() => {
                 setUserTermsModalVisible(false);
                 loanDevie;
-                Alert.alert(
-                  "Success",
-                  "You have successfully reserve a device"
-                );
               }}
             >
               <Text style={styles.modalCancelButtonText}>I agree</Text>
@@ -200,7 +218,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                   Standard Loan Duration:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {device[0].standardLoanDuration} Days
+                  {detail.ruleDur} Days
                 </Text>
               </View>
               <View style={styles.detailRowLayout}>
@@ -208,9 +226,9 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                   Extension Allowance:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {parseInt(device[0].extensionAllowance) > 1
-                    ? device[0].extensionAllowance + " Times"
-                    : device[0].extensionAllowance + " Time"}
+                  {parseInt(detail.ruleExt) > 1
+                    ? detail.ruleExt + " Times"
+                    : detail.ruleExt + " Time"}
                 </Text>
               </View>
             </View>
@@ -236,7 +254,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
           </TouchableOpacity>
           {summaryDetailsExpanded && (
             <View style={styles.detailRow}>
-              {Object.entries(summaryDetailsUnpacked).map(([key, value]) => (
+              {Object.entries(summary).map(([key, value]) => (
                 <View key={key} style={styles.detailRowLayout}>
                   <Text style={{ fontWeight: "500", flex: 1 }}>{key}:</Text>
                   <Text style={{ fontWeight: "300", flex: 2 }}>{value}</Text>
@@ -265,7 +283,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {available} Available
+                  {deviceAvailable} {status}
                 </Text>
               </View>
               {status === "On hold" && (
@@ -306,7 +324,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                 justifyContent: "center",
               }}
               onPress={showAvailableDatesAlert}
-              disabled={available === 0 || available === "0"}
+              disabled={deviceAvailable === 0 || deviceAvailable === "0"}
             >
               <Text
                 style={{
