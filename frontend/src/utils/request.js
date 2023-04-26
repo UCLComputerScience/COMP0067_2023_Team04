@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseURL = "https://0067team4db.mysql.database.azure.com";
+const baseURL = "http://94.8.148.70:8080";
 // create an axios instance
 const request = axios.create({
   baseURL,
