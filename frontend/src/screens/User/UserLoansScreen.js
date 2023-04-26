@@ -6,95 +6,60 @@ import {
   View,
   FlatList,
 } from "react-native";
-import GeneralDeviceExtendScreen from "./GeneralDeviceExtendScreen";
-import GeneralDeviceExtendScreen2 from "./PastDeviceScreen";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import request from "../../utils/request";
-import moment from "moment";
+import GeneralDeviceUserScreen from "./GeneralDeviceUser";
+import GeneralDeviceExtendScreen from "./GeneralDeviceExtendScreen";
+
+const Stack = createStackNavigator();
 
 const UserLoans = () => {
   const [currentTab, setCurrentTab] = useState("ongoing");
   const [filteredData, setFilteredData] = useState([]);
   const navigation = useNavigation();
 
-  const route = useRoute();
-  const data = [
+  const loanHistory = [
     {
-      device: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      dueDate: "2023-03-01",
-      borrowDate: "2023-02-15",
+      deviceId: 20220901001,
+      deviceName: "Lenovo Legion Y9000P 2022 RTX 3070ti",
+      dueDate: "2023-04-24",
+      returnDate: null,
+      exten: 1,
     },
-    { device: "iPad Pro", dueDate: "2023-04-05", borrowDate: "2023-03-20" },
-    { device: "MacBook Air", dueDate: "2023-06-01", borrowDate: "2023-05-20" },
+    {
+      deviceId: 20220901002,
+      deviceName: "Lenovo Legion Y9000P 2022 RTX 3070ti",
+      dueDate: "2023-04-28",
+      returnDate: "2023-04-25",
+      exten: 1,
+    },
+    {
+      deviceId: 20220901003,
+      deviceName: "Dell XPS 13 2022",
+      dueDate: "2023-04-28",
+      returnDate: null,
+      exten: 0,
+    },
   ];
 
-  const now = new Date();
+  useEffect(() => {
+    filterData(currentTab);
+  }, [currentTab]);
 
   const filterData = (tab) => {
-    const filtered = data.filter((item) => {
-      const dueDate = new Date(item.dueDate);
+    const filtered = loanHistory.filter((item) => {
       if (tab === "ongoing") {
-        return dueDate >= now;
+        return item.returnDate === null;
       } else {
-        return dueDate < now;
+        return item.returnDate !== null;
       }
     });
     setFilteredData(filtered);
   };
 
-  useState(() => {
-    filterData(currentTab);
-  }, []);
-
   const handleTabPress = (tab) => {
     setCurrentTab(tab);
-    // filterData(tab);
-    getListData(tab);
   };
-
-  const handleRowPress = (item) => {
-    if (currentTab === "past") {
-      navigation.navigate("General Details(Past)", { item: JSON.stringify(item) });
-    } else {
-      navigation.navigate("Return & Extend", { item: JSON.stringify(item) });
-    }
-    // console.log(`Clicked row ${index}`);
-  };
-
-  const [listData, setListData] = useState([]);
-  const getListData = async (tab) => {
-    const userId = 1;
-    try {
-      const res = await request({
-        url: `/posts/loans/loansCurrent/${userId}`,
-        method: "get",
-      }); 
-      console.log("loansCurrent res = ", res); 
-      // console.log("cur = ", currentTab);
-      if (res) {
-        const filtered = res.filter((item) => {
-          const dueDate = new Date(item.dueDate);
-          if (tab === "ongoing") {
-            return dueDate >= now;
-          } else { 
-            return dueDate < now; 
-          }
-        });
-
-        setListData(filtered);
-
-        // setDetail(res);
-        // setSummary(JSON.parse(res.details));
-        // setStatus(res.state);
-      }
-    } catch (error) {
-      console.log("error = ", error);
-    }
-  };
-  useEffect(() => {
-    getListData(currentTab);
-  }, []);
 
   return (
     <View style={styles.container}>
@@ -103,7 +68,6 @@ const UserLoans = () => {
           style={[
             styles.tabButton,
             currentTab === "ongoing" && styles.activeTabButton,
-            { marginLeft: -7 },
           ]}
           onPress={() => handleTabPress("ongoing")}
         >
@@ -120,83 +84,47 @@ const UserLoans = () => {
         <TouchableOpacity
           style={[
             styles.tabButton,
-            currentTab === "past" && styles.activeTabButton,
-            { marginRight: 13 },
+            currentTab === "history" && styles.activeTabButton,
           ]}
-          onPress={() => handleTabPress("past")}
+          onPress={() => handleTabPress("history")}
         >
           <Text
             style={[
               styles.tabButtonText,
-              { color: currentTab === "past" ? "#000" : "#ccc" },
+              { color: currentTab === "history" ? "#000" : "#ccc" },
             ]}
           >
-            Past
+            History
           </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={[styles.header]}>
-        <Text style={[styles.headerText, { flex: 1 }]}>Device</Text>
-
-        {currentTab === "past" && (
-          <Text
-            style={[
-              styles.headerText,
-              { flex: 1, textAlign: "right", marginRight: -10 },
-            ]}
-          >
-            Borrow date
-          </Text>
-        )}
-        {currentTab !== "past" && (
-          <Text style={[styles.headerText, { flex: 1, textAlign: "right" }]}>
-            Due date
-          </Text>
-        )}
-      </View>
-      {listData.length === 0 && (
-        <Text style={{
-          fontSize: 14,
-          color: "#666",
-          textAlign: 'center'
-        }}>
-          no data
-        </Text>
-      )}
       <FlatList
-        data={listData}
-        renderItem={({ item, index }) => (
+        data={filteredData}
+        renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.dataRow}
-            key={index}
-            onPress={() => handleRowPress(item)}
+            onPress={() => {
+              if (item.returnDate !== null) {
+                navigation.navigate("General Device", {
+                  deviceName: item.deviceName,
+                });
+              } else {
+                navigation.navigate("Device Extend", {
+                  deviceId: item.deviceId,
+                });
+              }
+            }}
           >
-            <Text style={[styles.deviceText, { flex: 1 }]}>{item.name}</Text>
-
-            {currentTab === "past" && (
-              <Text
-                style={[
-                  styles.dueDateText,
-                  { marginRight: 15, flex: 1, textAlign: "right" },
-                ]}
-              >
-                {moment(item.startDate).format("YYYY-MM-DD HH:mm:ss")}
-              </Text>
-            )}
-            {currentTab !== "past" && (
-              <Text
-                style={[
-                  styles.dueDateText,
-                  { marginRight: 15, flex: 1, textAlign: "right" },
-                ]}
-              >
-                {moment(item.dueDate).format("YYYY-MM-DD HH:mm:ss")}
-              </Text>
-            )}
+            <Text style={[styles.deviceText, { flex: 1 }]}>
+              {item.deviceName}
+            </Text>
+            <Text style={[styles.dueDateText, { flex: 1, textAlign: "right" }]}>
+              {item.dueDate}
+            </Text>
           </TouchableOpacity>
         )}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item) => item.deviceId.toString()}
       />
     </View>
   );
@@ -226,28 +154,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
 
-  separator: {
-    height: 1,
-    backgroundColor: "#ccc",
-    marginLeft: -20,
-    marginRight: -20,
-  },
-
-  header: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 10,
-    marginTop: 10,
-    paddingHorizontal: 60,
-  },
-
-  headerText: {
-    fontSize: 14,
-    color: "#ccc",
-  },
-
-  dataContainer: {},
-
   dataRow: {
     paddingHorizontal: 25,
     flexDirection: "row",
@@ -273,23 +179,22 @@ const styles = StyleSheet.create({
   },
 });
 
-const Stack = createStackNavigator();
 const UserLoansScreen = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
         name="Loans"
         component={UserLoans}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="General Device"
+        component={GeneralDeviceUserScreen}
         options={{ headerShown: true }}
       />
       <Stack.Screen
-        name="Return & Extend"
+        name="Device Extend"
         component={GeneralDeviceExtendScreen}
-        options={{ headerShown: true }}
-      />
-      <Stack.Screen
-        name="General Details(Past)"
-        component={GeneralDeviceExtendScreen2}
         options={{ headerShown: true }}
       />
     </Stack.Navigator>

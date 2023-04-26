@@ -8,13 +8,13 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceUser from "./GeneralDeviceUser";
-import request from "../../utils/request";
+import * as Linking from "expo-linking";
 
 //This screen needs to read the model number, shelf date, number of available rentals, and name of all available rental devices
 //Note! The number of devices available in the database is 0 should not appear!
@@ -22,7 +22,129 @@ import request from "../../utils/request";
 const AllDevices = () => {
   const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState("All");
+
   const route = useRoute();
+  const currentScreenPath = route.name;
+  const currentScreenUrl = Linking.createURL(currentScreenPath);
+
+  console.log("Current Screen URL:", currentScreenUrl);
+  const initialDevices = [
+    {
+      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
+      launchedyear: "2021",
+      available: "5",
+      category: "Laptop",
+    },
+    {
+      name: "Lenovo Legion Y9000P 2022 RTX 3070",
+      launchedyear: "2022",
+      available: "9",
+      category: "Laptop",
+    },
+    {
+      name: "Lenovo Legion Y9000P 2022 RTX 3060",
+      launchedyear: "2023",
+      available: "8",
+      category: "Laptop",
+    },
+    {
+      name: "Dell XPS 13 2022",
+      launchedyear: "2022",
+      available: "3",
+      category: "Laptop",
+    },
+    {
+      name: "MacBook Pro M1 2021",
+      launchedyear: "2021",
+      available: "7",
+      category: "MacBook",
+    },
+    {
+      name: "ASUS ROG Zephyrus S GX701",
+      launchedyear: "2022",
+      available: "2",
+      category: "Laptop",
+    },
+    {
+      name: "Lenovo Legion Y740",
+      launchedyear: "2023",
+      available: "4",
+      category: "Laptop",
+    },
+    {
+      name: "Acer Predator Helios 300",
+      launchedyear: "2021",
+      available: "3",
+      category: "Laptop",
+    },
+    {
+      name: "MSI GE76 Raider",
+      launchedyear: "2021",
+      available: "8",
+      category: "Laptop",
+    },
+    {
+      name: "Razer Blade Pro 17",
+      launchedyear: "2022",
+      available: "9",
+      category: "Laptop",
+    },
+    {
+      name: "Alienware m15 R4",
+      launchedyear: "2020",
+      available: "6",
+      category: "Laptop",
+    },
+    {
+      name: "HP Spectre x360",
+      launchedyear: "2018",
+      available: "10",
+      category: "Laptop",
+    },
+    {
+      name: "iPhone 14 Pro Max",
+      launchedyear: "2018",
+      available: "10",
+      category: "iPhone",
+    },
+    {
+      name: "AMD Ryzen 9 5950X CPU",
+      launchedyear: "2018",
+      available: "8",
+      category: "CPU",
+    },
+    {
+      name: "NVIDIA GeForce RTX 3080 GPU",
+      launchedyear: "2023",
+      available: "3",
+      category: "GPU",
+    },
+    {
+      name: "Samsung Galaxy S21 Ultra",
+      launchedyear: "2022",
+      available: "9",
+      category: "Android",
+    },
+    {
+      name: "Intel Core i9-11900K CPU",
+      launchedyear: "2021",
+      available: "7",
+      category: "CPU",
+    },
+    {
+      name: "ASUS ROG Strix RTX 3070 GPU",
+      launchedyear: "2020",
+      available: "4",
+      category: "GPU",
+    },
+    {
+      name: "Google Pixel 6 Pro",
+      launchedyear: "2019",
+      available: "8",
+      category: "Android",
+    },
+  ];
+
   const handleicon = () => {
     Alert.alert(
       "Contact information",
@@ -41,24 +163,10 @@ const AllDevices = () => {
   };
 
   const [input, setInput] = useState("");
-  const [initialDevices, setInitialDevices] = useState([]);
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState(initialDevices);
   const [sortOrder, setSortOrder] = useState("asc");
   const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
   const [availableSortOrder, setAvailableSortOrder] = useState("asc");
-
-  const getDevices = async () => {
-    const res = await request({
-      url: "/posts/user/devices/nameAvailabilityUser",
-      method: "get",
-    });
-    console.log("res = ", res);
-    setInitialDevices(res);
-    setDevices(res);
-  };
-  useEffect(() => {
-    getDevices();
-  }, []);
 
   const sortDevices = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
@@ -74,9 +182,9 @@ const AllDevices = () => {
   const sortDevicesByLoaned = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
       if (order === "asc") {
-        return a.launchYr - b.launchYr;
+        return a.launchedyear - b.launchedyear;
       } else {
-        return b.launchYr - a.launchYr;
+        return b.launchedyear - a.launchedyear;
       }
     });
     setDevices(sortedDevices);
@@ -85,9 +193,9 @@ const AllDevices = () => {
   const sortDevicesByAvailable = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
       if (order === "asc") {
-        return a.num_available - b.num_available;
+        return a.available - b.available;
       } else {
-        return b.num_available - a.num_available;
+        return b.available - a.available;
       }
     });
     setDevices(sortedDevices);
@@ -240,8 +348,6 @@ const AllDevices = () => {
                   onPress={() =>
                     navigation.navigate("General Details", {
                       deviceName: item.name,
-                      deviceAvailable: item.num_available,
-                      deviceId: item.deviceId,
                     })
                   }
                 >
@@ -257,7 +363,7 @@ const AllDevices = () => {
                         { marginLeft: -20, flex: 1, textAlign: "center" },
                       ]}
                     >
-                      {item.launchYr}
+                      {item.launchedyear}
                     </Text>
                     <Text
                       style={[
@@ -265,7 +371,7 @@ const AllDevices = () => {
                         { marginRight: -5, flex: 0.9, textAlign: "center" },
                       ]}
                     >
-                      {item.num_available}
+                      {item.available}
                     </Text>
                   </View>
                 </TouchableOpacity>
@@ -362,9 +468,9 @@ const UserDevicesScreen = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="Devices"
+        name="userDevices"
         component={AllDevices}
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="General Details"

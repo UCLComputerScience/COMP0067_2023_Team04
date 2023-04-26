@@ -13,8 +13,6 @@ import React, { useState, useLayoutEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { addDays, format } from "date-fns";
-import request from "../../utils/request";
-import moment from "moment";
 
 import { createStackNavigator } from "@react-navigation/stack";
 
@@ -34,9 +32,7 @@ const GeneralDeviceExtendScreen = () => {
   const [selectedCollectTime, setSelectedCollectTime] = useState("");
   const [deviceList, setDeviceList] = useState("");
 
-  const { item } = route.params;
-  let itemObj = JSON.parse(item);
-  console.log("itemObj = ", itemObj)
+  const deviceName = route.params.deviceName;
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
   const [device, setDevice] = useState([
@@ -63,14 +59,11 @@ const GeneralDeviceExtendScreen = () => {
     return date.getTime();
   };
 
-  const extendDevice = async () => {
-    if (itemObj.ruleExt === 1) {
-      const newDueDate = addDays(new Date(moment(itemObj.dueDate).format('YYYY-MM-DD')), 7);
+  const extendDevice = () => {
+    if (device[0].extensionAllowance === 1) {
+      const newDueDate = addDays(new Date(dueDate), 7);
       const formattedNewDueDate = format(newDueDate, "yyyy-MM-dd");
-      await request({
-        url: `/posts/loans/extend/${itemObj.deviceId}/${itemObj.userId}`,
-        method: 'post',
-      })
+
       setIsExtendButtonDisabled(true);
       Alert.alert(
         "Extension successful",
@@ -79,16 +72,13 @@ const GeneralDeviceExtendScreen = () => {
           {
             text: "YES",
             onPress: () => {
-
-
-
-              // setDueDate(formattedNewDueDate);
-              // setDevice((prevState) => [
-              //   {
-              //     ...prevState[0],
-              //     extensionAllowance: 0,
-              //   },
-              // ]);
+              setDueDate(formattedNewDueDate);
+              setDevice((prevState) => [
+                {
+                  ...prevState[0],
+                  extensionAllowance: 0,
+                },
+              ]);
             },
           },
         ],
@@ -209,7 +199,7 @@ const GeneralDeviceExtendScreen = () => {
 
       <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
         <View style={styles.titleView}>
-          <Text style={styles.title}>{itemObj.name}</Text>
+          <Text style={styles.title}>{JSON.stringify(deviceName)}</Text>
         </View>
 
         <View style={styles.tabBar}>
@@ -233,7 +223,7 @@ const GeneralDeviceExtendScreen = () => {
                   Standard Loan Duration:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {itemObj.ruleDur} Days
+                  {device[0].standardLoanDuration} Days
                 </Text>
               </View>
               <View style={styles.detailRowLayout}>
@@ -241,7 +231,7 @@ const GeneralDeviceExtendScreen = () => {
                   Extension Allowance:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {itemObj.ruleExt}
+                  {device[0].extensionAllowance}
                 </Text>
               </View>
             </View>
@@ -267,7 +257,7 @@ const GeneralDeviceExtendScreen = () => {
           </TouchableOpacity>
           {summaryDetailsExpanded && (
             <View style={styles.detailRow}>
-              {Object.entries(JSON.parse(itemObj.details)).map(([key, value]) => (
+              {Object.entries(summaryDetailsUnpacked).map(([key, value]) => (
                 <View key={key} style={styles.detailRowLayout}>
                   <Text style={{ fontWeight: "500", flex: 1 }}>{key}:</Text>
                   <Text style={{ fontWeight: "300", flex: 2 }}>{value}</Text>
@@ -295,13 +285,13 @@ const GeneralDeviceExtendScreen = () => {
             <View style={styles.detailRow}>
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
-                <Text style={{ fontWeight: "300", flex: 1 }}>{itemObj.state}</Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
               </View>
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>
                   {returnDateLabel}:
                 </Text>
-                <Text style={{ fontWeight: "300", flex: 1 }}>{moment(itemObj.dueDate).format("YYYY-MM-DD HH:mm:ss")}</Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>{dueDate}</Text>
               </View>
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>Location:</Text>
