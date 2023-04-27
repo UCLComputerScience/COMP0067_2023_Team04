@@ -17,7 +17,7 @@ const getRedirectUri = () => {
   const redirectUri = AuthSession.makeRedirectUri();
   console.log("Generated Redirect URI:", redirectUri);
   WebBrowser.openBrowserAsync(
-    "https://0067team4app.azurewebsites.net/authorise"
+    "https://0067team4app.azurewebsites.net/posts/authorise"
   );
   return redirectUri;
 };
