@@ -475,7 +475,10 @@ const UserDevicesScreen = () => {
       <Stack.Screen
         name="General Details"
         component={GeneralDeviceUser}
-        options={{ headerShown: true, headerTitle: "Details" }}
+        options={{
+          headerShown: false,
+          headerTitle: "Details",
+        }}
       />
     </Stack.Navigator>
   );

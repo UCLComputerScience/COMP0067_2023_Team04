@@ -190,12 +190,12 @@ const UserLoansScreen = () => {
       <Stack.Screen
         name="General Device"
         component={GeneralDeviceUserScreen}
-        options={{ headerShown: true }}
+        options={{ headerShown: false, headerBackTitleVisible: true }}
       />
       <Stack.Screen
         name="Device Extend"
         component={GeneralDeviceExtendScreen}
-        options={{ headerShown: true }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

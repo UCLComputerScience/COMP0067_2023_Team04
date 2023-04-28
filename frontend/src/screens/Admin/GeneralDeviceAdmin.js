@@ -12,7 +12,7 @@ import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import { createStackNavigator } from "@react-navigation/stack";
 import axios from "axios";
 
-const GeneralDeviceAdmin = () => {
+const GeneralDeviceAdminScreen = () => {
   //!!! replace :name with variables when dubug finished by Dr. Fu
   const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
   const navigation = useNavigation();
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
 
 const Stack = createStackNavigator();
 
-const GeneralDeviceAdminScreen = () => {
+/*const GeneralDeviceAdminScreen = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
@@ -431,6 +431,6 @@ const GeneralDeviceAdminScreen = () => {
       <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
     </Stack.Navigator>
   );
-};
+};*/
 
 export default GeneralDeviceAdminScreen;

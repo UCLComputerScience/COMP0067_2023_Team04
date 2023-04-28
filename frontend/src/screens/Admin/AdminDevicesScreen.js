@@ -15,6 +15,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceAdmin from "./GeneralDeviceAdmin";
 import StatisticsAdmin from "./StatisticsAdmin";
 import RegisterDeviceScreen from "./RegisterDeviceScreen";
+import DetailDeviceAdmin from "./DetailDeviceAdmin";
 
 const AllDevices = () => {
   const navigation = useNavigation();
@@ -450,6 +451,7 @@ const AdminDevicesScreen = () => {
       />
       <Stack.Screen name="Statistics" component={StatisticsAdmin} />
       <Stack.Screen name="AddDevice" component={RegisterDeviceScreen} />
+      <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
     </Stack.Navigator>
   );
 };
