@@ -63,11 +63,17 @@ const LoginTabScreen = () => {
     const handleInitialUrl = async () => {
       const url = await Linking.getInitialURL();
       if (url) {
-        const parsedUrl = new URL(url);
-        const jwtToken = parsedUrl.searchParams.get("token");
-        //
+        const tokenRegex = /[?&]token=([^&#]*)/;
+        const match = url.match(tokenRegex);
+        const jwtToken =
+          match && match[1] ? decodeURIComponent(match[1]) : null;
+
+        // 在此处记录 JWT 令牌
+        console.log("JWT Token:", jwtToken);
+
+        // 这里可以将 jwtToken 发送给后端进行验证
+
         const path = url.split("/--/")[1];
-        console.log(jwtToken);
         if (path === "Schedule") {
           navigation.navigate("AdminTabs");
         }
