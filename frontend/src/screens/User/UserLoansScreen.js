@@ -10,6 +10,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GeneralDeviceUserScreen from "./GeneralDeviceUser";
 import GeneralDeviceExtendScreen from "./GeneralDeviceExtendScreen";
+import axios from "axios";
+import moment from "moment";
 
 const Stack = createStackNavigator();
 
@@ -18,36 +20,39 @@ const UserLoans = () => {
   const [filteredData, setFilteredData] = useState([]);
   const navigation = useNavigation();
 
-  const loanHistory = [
-    {
-      deviceId: 20220901001,
-      deviceName: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      dueDate: "2023-04-24",
-      returnDate: null,
-      exten: 1,
-    },
-    {
-      deviceId: 20220901002,
-      deviceName: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      dueDate: "2023-04-28",
-      returnDate: "2023-04-25",
-      exten: 1,
-    },
-    {
-      deviceId: 20220901003,
-      deviceName: "Dell XPS 13 2022",
-      dueDate: "2023-04-28",
-      returnDate: null,
-      exten: 0,
-    },
-  ];
+  const [listData, setListData] = useState([]);
+  const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
 
+
+  const getListData = async () => {
+    const userId = 1;
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/loans/loansCurrent/${userId}`
+      );
+      console.log("Received data from API:", response.data);
+  
+      if (response.data) {
+        const mappedData = response.data.map(item => {
+          return { ...item, deviceName: item.name };
+        });
+        setListData(mappedData);
+        filterData(currentTab);
+      }
+    } catch (error) {
+      console.log("error = ", error);
+    }
+  };
+  
+  
   useEffect(() => {
-    filterData(currentTab);
+    getListData();
   }, [currentTab]);
+  
+  
 
   const filterData = (tab) => {
-    const filtered = loanHistory.filter((item) => {
+    const filtered = listData.filter((item) => {
       if (tab === "ongoing") {
         return item.returnDate === null;
       } else {
@@ -121,7 +126,7 @@ const UserLoans = () => {
               {item.deviceName}
             </Text>
             <Text style={[styles.dueDateText, { flex: 1, textAlign: "right" }]}>
-              {item.dueDate}
+              {moment(item.dueDate).format("DD/MM/YYYY")}
             </Text>
           </TouchableOpacity>
         )}
