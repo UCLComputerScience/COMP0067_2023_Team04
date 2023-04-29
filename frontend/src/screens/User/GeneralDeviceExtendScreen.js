@@ -34,7 +34,7 @@ const GeneralDeviceExtendScreen = () => {
   const [selectedCollectTime, setSelectedCollectTime] = useState("");
   const [deviceList, setDeviceList] = useState("");
   
-
+  const [deviceName, setDeviceName] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
 
@@ -73,17 +73,18 @@ const GeneralDeviceExtendScreen = () => {
 //Call fetchData again to obtain the latest device data.
 
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("API");
-      const data = response.data;
-      setIsExtendButtonDisabled(data.isExtendButtonDisabled);
-      setIsReturnButtonDisabled(data.isReturnButtonDisabled);
-      setDueDate(data.dueDate);
-      setStatus(data.status);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+const fetchData = async () => {
+  try {
+    const response = await axios.get("API");
+    const data = response.data;
+    setIsExtendButtonDisabled(data.isExtendButtonDisabled);
+    setIsReturnButtonDisabled(data.isReturnButtonDisabled);
+    setDueDate(data.dueDate);
+    setStatus(data.status);
+    setDeviceName(data.deviceName);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
   };
 
   useEffect(() => {
