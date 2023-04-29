@@ -43,7 +43,7 @@ const GeneralDeviceExtendScreen = () => {
 //which are respectively used to set the disabled status of the "Extend" and "Return" buttons.
 
 //把这个代码的API改成具体的API
-//Change the name of 'API', such as line 51
+//Change the name of 'API', such as line 78
 
 //具体流程逻辑：当用户点击“Extend”按钮：
 //首先检查device[0].extensionAllowance的值是否为1。 如果是，则允许用户延长借用期限。
