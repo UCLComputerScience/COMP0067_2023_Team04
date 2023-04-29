@@ -2,6 +2,7 @@ const express = require("express");
 const postControllers = require("../controllers/postControllers");
 const callback = require("../oauth/callback");
 const authorise = require("../oauth/authorise");
+const verifyToken = require("../oauth/verifyToken");
 const router = express.Router();
 
 // @route GET && POST - /posts/

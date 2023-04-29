@@ -58,33 +58,52 @@ const linking = {
   },
 };
 
+// Event Listener
+
+
 const LoginTabScreen = () => {
   useEffect(() => {
-    const handleInitialUrl = async () => {
-      const url = await Linking.getInitialURL();
+    const handleUrlEvent = (event) => {
+      const url = event.url;
+      console.log("url defined")
       if (url) {
         const tokenRegex = /[?&]token=([^&#]*)/;
         const match = url.match(tokenRegex);
         const jwtToken =
-          match && match[1] ? decodeURIComponent(match[1]) : null;
+          match && match[1] ? 
+        decodeURIComponent(match[1]) : null;
 
         // 在此处记录 JWT 令牌
         console.log("JWT Token:", jwtToken);
 
         // 这里可以将 jwtToken 发送给后端进行验证
 
-        const path = url.split("/--/")[1];
-        if (path === "Schedule") {
-          navigation.navigate("AdminTabs");
-        }
-        if (path === "userDevices") {
-          navigation.navigate("UserTabs");
-        }
+        // const path = url.split("/--/")[1];
+        // if (path === "Schedule") {
+        //  navigation.navigate("AdminTabs");
+        //}
+        // if (path === "userDevices") {
+        //  navigation.navigate("UserTabs");
+        // }
       }
     };
 
-    handleInitialUrl();
-  }, []);
+    const subscription = Linking.addEventListener('url', handleUrlEvent);
+
+    // Linking.addEventListener("url", handleUrlEvent);
+
+    // Check the initial URL on app start
+    (async () => {
+      const initialUrl = await Linking.getInitialURL();
+      if (initialUrl) handleUrlEvent({ url: initialUrl});
+    })();
+
+    // Clean up the event listener on unmount
+    return () => {
+      subscription.remove();
+      // Linking.removeEventListener(handleUrlEvent);
+    }
+  },[]);
 
   const navigation = useNavigation();
   const { loginAsAdmin, loginAsUser } = useContext(AuthContext);
