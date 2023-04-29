@@ -26,7 +26,6 @@ const GeneralDeviceExtendScreen = () => {
   const route = useRoute();
   const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
-
   const [returnDateLabel, setReturnDateLabel] = useState("Due date");
   const [dueDate, setDueDate] = useState("2023-01-01");
   const [selectedCollectTime, setSelectedCollectTime] = useState("");
@@ -304,22 +303,26 @@ const GeneralDeviceExtendScreen = () => {
         <View style={{ paddingTop: 80, flexDirection: "row", justifyContent: "space-around" }}>
           <View style={{ alignItems: "center" }}>
             <TouchableOpacity
-              style={{
-                backgroundColor: "#EEEEEF",
-                paddingVertical: 10,
-                paddingHorizontal: 20,
-                borderRadius: 15,
-                width: "100%",
-                height: 50,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={[
+                {
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 15,
+                  width: "100%",
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                status !== "Loaned" || isReturnButtonDisabled
+                  ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
+                  : { backgroundColor: "#EEEEEF" },
+              ]}
               onPress={() => setModalVisible(true)}
               disabled={status !== "Loaned" || isReturnButtonDisabled}
             >
               <Text
                 style={{
-                  color: "#AC145A",
+                  color: status !== "Loaned" || isReturnButtonDisabled ? "#A0A0A0" : "#AC145A",
                   fontSize: 20,
                   fontWeight: 600,
                 }}
@@ -331,22 +334,24 @@ const GeneralDeviceExtendScreen = () => {
 
           <View style={{ alignItems: "center" }}>
             <TouchableOpacity
-              style={{
-                backgroundColor: "#EEEEEF",
-                paddingVertical: 10,
-                paddingHorizontal: 20,
-                borderRadius: 15,
-                width: "100%",
-                height: 50,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              style={[
+                {
+                  paddingVertical: 10,
+                  paddingHorizontal: 20,
+                  borderRadius: 15,
+                  width: "100%",
+                  height: 50,
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                isExtendButtonDisabled ? { backgroundColor: "#EEEEEF", opacity: 0.5 } : { backgroundColor: "#EEEEEF" },
+              ]}
               onPress={extendDevice}
               disabled={isExtendButtonDisabled}
             >
               <Text
                 style={{
-                  color: "#AC145A",
+                  color: isExtendButtonDisabled ? "#A0A0A0" : "#AC145A",
                   fontSize: 20,
                   fontWeight: 600,
                 }}
