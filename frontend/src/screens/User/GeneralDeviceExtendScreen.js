@@ -23,7 +23,10 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 const GeneralDeviceExtendScreen = () => {
   const navigation = useNavigation();
+
   const route = useRoute();
+  const deviceId = route.params.deviceId;
+
   const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
   const [returnDateLabel, setReturnDateLabel] = useState("Due date");
@@ -31,7 +34,6 @@ const GeneralDeviceExtendScreen = () => {
   const [selectedCollectTime, setSelectedCollectTime] = useState("");
   const [deviceList, setDeviceList] = useState("");
 
-  const deviceName = route.params.deviceName;
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
   const [device, setDevice] = useState([
@@ -198,7 +200,7 @@ const GeneralDeviceExtendScreen = () => {
 
       <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
         <View style={styles.titleView}>
-          <Text style={styles.title}>{JSON.stringify(deviceName)}</Text>
+          <Text style={styles.title}>{deviceName}</Text>
         </View>
 
         <View style={styles.tabBar}>
@@ -300,7 +302,13 @@ const GeneralDeviceExtendScreen = () => {
           )}
         </View>
 
-        <View style={{ paddingTop: 80, flexDirection: "row", justifyContent: "space-around" }}>
+        <View
+          style={{
+            paddingTop: 80,
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
+        >
           <View style={{ alignItems: "center" }}>
             <TouchableOpacity
               style={[
@@ -322,7 +330,10 @@ const GeneralDeviceExtendScreen = () => {
             >
               <Text
                 style={{
-                  color: status !== "Loaned" || isReturnButtonDisabled ? "#A0A0A0" : "#AC145A",
+                  color:
+                    status !== "Loaned" || isReturnButtonDisabled
+                      ? "#A0A0A0"
+                      : "#AC145A",
                   fontSize: 20,
                   fontWeight: 600,
                 }}
@@ -344,7 +355,9 @@ const GeneralDeviceExtendScreen = () => {
                   alignItems: "center",
                   justifyContent: "center",
                 },
-                isExtendButtonDisabled ? { backgroundColor: "#EEEEEF", opacity: 0.5 } : { backgroundColor: "#EEEEEF" },
+                isExtendButtonDisabled
+                  ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
+                  : { backgroundColor: "#EEEEEF" },
               ]}
               onPress={extendDevice}
               disabled={isExtendButtonDisabled}
@@ -361,8 +374,6 @@ const GeneralDeviceExtendScreen = () => {
             </TouchableOpacity>
           </View>
         </View>
-        
-        
       </ScrollView>
     </View>
   );

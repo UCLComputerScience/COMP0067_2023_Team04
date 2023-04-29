@@ -63,8 +63,11 @@ const LoginTabScreen = () => {
     const handleInitialUrl = async () => {
       const url = await Linking.getInitialURL();
       if (url) {
+        const parsedUrl = new URL(url);
+        const jwtToken = parsedUrl.searchParams.get("token");
         //
         const path = url.split("/--/")[1];
+        console.log(jwtToken);
         if (path === "Schedule") {
           navigation.navigate("AdminTabs");
         }

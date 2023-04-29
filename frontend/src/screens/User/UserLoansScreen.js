@@ -112,6 +112,7 @@ const UserLoans = () => {
               } else {
                 navigation.navigate("Device Extend", {
                   deviceId: item.deviceId,
+                  deviceName: item.deviceName,
                 });
               }
             }}
@@ -190,7 +191,7 @@ const UserLoansScreen = () => {
       <Stack.Screen
         name="General Device"
         component={GeneralDeviceUserScreen}
-        options={{ headerShown: false, headerBackTitleVisible: true }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Device Extend"

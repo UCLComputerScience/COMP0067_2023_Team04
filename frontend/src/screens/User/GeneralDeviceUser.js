@@ -268,26 +268,6 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                   {available} Available
                 </Text>
               </View>
-              {status === "On hold" && (
-                <>
-                  <View style={styles.detailRowLayout}>
-                    <Text style={{ fontWeight: "500", flex: 2 }}>
-                      Collect Date:
-                    </Text>
-                    <Text style={{ fontWeight: "300", flex: 1 }}>
-                      Insert Collect Date
-                    </Text>
-                  </View>
-                  <View style={styles.detailRowLayout}>
-                    <Text style={{ fontWeight: "500", flex: 2 }}>
-                      Location:
-                    </Text>
-                    <Text style={{ fontWeight: "300", flex: 1 }}>
-                      MLEB 4.20
-                    </Text>
-                  </View>
-                </>
-              )}
             </View>
           )}
         </View>
