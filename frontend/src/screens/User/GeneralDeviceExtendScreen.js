@@ -301,24 +301,65 @@ const GeneralDeviceExtendScreen = () => {
           )}
         </View>
 
-        <View style={styles.buttonContainer}>
-          <View style={styles.returnButtonWrapper}>
-            <Button
-              title="Return"
-              color="#AC145A"
+        <View style={{ paddingTop: 80 }}>
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#EEEEEF",
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "70%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
               onPress={() => setModalVisible(true)}
               disabled={status !== "Loaned" || isReturnButtonDisabled}
-            />
-          </View>
-          <View style={styles.extendButtonWrapper}>
-            <Button
-              title="Extend"
-              color="#AC145A"
-              onPress={extendDevice}
-              disabled={isExtendButtonDisabled}
-            />
+            >
+              <Text
+                style={{
+                  color: "#AC145A",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
+              >
+                Return
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
+
+        <View style={{ paddingTop: 80 }}>
+          <View style={{ alignItems: "center" }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#EEEEEF",
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "70%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onPress={extendDevice}
+              disabled={isExtendButtonDisabled}
+            >
+              <Text
+                style={{
+                  color: "#AC145A",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
+              >
+                Extend
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+        
+        
       </ScrollView>
     </View>
   );
