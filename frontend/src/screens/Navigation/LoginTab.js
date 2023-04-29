@@ -51,7 +51,7 @@ const linking = {
       },
       UserTabs: {
         screens: {
-          // 2 be added
+          userDevice: "userDevices",
         },
       },
     },
