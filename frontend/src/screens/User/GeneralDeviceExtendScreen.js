@@ -301,7 +301,7 @@ const GeneralDeviceExtendScreen = () => {
           )}
         </View>
 
-        <View style={{ paddingTop: 80 }}>
+        <View style={{ paddingTop: 80, flexDirection: "row", justifyContent: "space-around" }}>
           <View style={{ alignItems: "center" }}>
             <TouchableOpacity
               style={{
@@ -309,7 +309,7 @@ const GeneralDeviceExtendScreen = () => {
                 paddingVertical: 10,
                 paddingHorizontal: 20,
                 borderRadius: 15,
-                width: "70%",
+                width: "100%",
                 height: 50,
                 alignItems: "center",
                 justifyContent: "center",
@@ -328,9 +328,7 @@ const GeneralDeviceExtendScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-        </View>
 
-        <View style={{ paddingTop: 80 }}>
           <View style={{ alignItems: "center" }}>
             <TouchableOpacity
               style={{
@@ -338,7 +336,7 @@ const GeneralDeviceExtendScreen = () => {
                 paddingVertical: 10,
                 paddingHorizontal: 20,
                 borderRadius: 15,
-                width: "70%",
+                width: "100%",
                 height: 50,
                 alignItems: "center",
                 justifyContent: "center",
