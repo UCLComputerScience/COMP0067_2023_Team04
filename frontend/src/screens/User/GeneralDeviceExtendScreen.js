@@ -1,3 +1,9 @@
+
+//This interface is connected to Loan's interface of Ongoing devices, when coming from Loan's interface, he should get the summary details and due date of a device in Loan's interface, and then return or extend
+//After extending, the extension allowance and date will be changed, this data needs to be returned to the database, but no need to return to the front-end, the front-end has already completed the relevant operations
+//After returning, the ruturn date should be returned in the database
+//read the database data of the date in line 251
+
 import {
   View,
   Text,
@@ -9,17 +15,11 @@ import {
   Modal,
   Alert,
 } from "react-native";
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { addDays, format } from "date-fns";
-
-import { createStackNavigator } from "@react-navigation/stack";
-
-//This interface is connected to Loan's interface of Ongoing devices, when coming from Loan's interface, he should get the summary details and due date of a device in Loan's interface, and then return or extend
-//After extending, the extension allowance and date will be changed, this data needs to be returned to the database, but no need to return to the front-end, the front-end has already completed the relevant operations
-//After returning, the ruturn date should be returned in the database
-//read the database data of the date in line 251
+import axios from "axios";
 
 const GeneralDeviceExtendScreen = () => {
   const navigation = useNavigation();
@@ -33,9 +33,64 @@ const GeneralDeviceExtendScreen = () => {
   const [dueDate, setDueDate] = useState("2023-01-01");
   const [selectedCollectTime, setSelectedCollectTime] = useState("");
   const [deviceList, setDeviceList] = useState("");
+  
 
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
+
+//需要在后端添加设备数据中的isExtendButtonDisabled和isReturnButtonDisabled，它们分别用于设置“Extend”和“Return”按钮的禁用状态
+//It is necessary to add the "isExtendButtonDisabled" and "isReturnButtonDisabled" fields in the device data on the backend, 
+//which are respectively used to set the disabled status of the "Extend" and "Return" buttons.
+
+//把这个代码的API改成具体的API
+//Change the name of 'API', such as line 51
+
+//具体流程逻辑：当用户点击“Extend”按钮：
+//首先检查device[0].extensionAllowance的值是否为1。 如果是，则允许用户延长借用期限。
+//计算新的到期日期newDueDate。
+//使用axios向API发送请求以更新数据库中设备的到期日期。
+//再次调用fetchData以获取最新的设备数据。
+//将isExtendButtonDisabled设置为true，禁用“Extend”按钮。
+//弹出一个提示框，告知用户已成功延长借用期限。
+
+//当用户点击“Return”按钮：
+//弹出一个模态窗口，让用户选择设备归还时间。
+//用户选择一个时间后，将关闭模态窗口，显示一个弹出框要求用户确认归还时间。
+//用户确认归还时间后，使用axios向API发送请求以更新数据库中设备的归还日期。
+//再次调用fetchData以获取最新的设备数据。
+
+//When the user clicks the "Extend" button:
+//First, check if the value of device[0].extensionAllowance is 1. If so, allow the user to extend the borrowing period.
+//Calculate the new due date, newDueDate.
+//Use axios to send a request to the API to update the due date of the device in the database.
+//Call fetchData again to obtain the latest device data.
+//Set isExtendButtonDisabled to true, disabling the "Extend" button.
+//Display a prompt box to inform the user that the borrowing period has been successfully extended.
+//When the user clicks the "Return" button:
+//Display a modal window for the user to choose the device return time.
+//After the user selects a time, close the modal window and show a popup box asking the user to confirm the return time.
+//Once the user confirms the return time, use axios to send a request to the API to update the return date of the device in the database.
+//Call fetchData again to obtain the latest device data.
+
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get("API");
+      const data = response.data;
+      setIsExtendButtonDisabled(data.isExtendButtonDisabled);
+      setIsReturnButtonDisabled(data.isReturnButtonDisabled);
+      setDueDate(data.dueDate);
+      setStatus(data.status);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
   const [device, setDevice] = useState([
     {
       standardLoanDuration: 14,
@@ -60,10 +115,17 @@ const GeneralDeviceExtendScreen = () => {
     return date.getTime();
   };
 
-  const extendDevice = () => {
+  const extendDevice = async () => {
     if (device[0].extensionAllowance === 1) {
       const newDueDate = addDays(new Date(dueDate), 7);
       const formattedNewDueDate = format(newDueDate, "yyyy-MM-dd");
+      
+      await axios.post("API", {
+        action: "extend",
+        deviceId: deviceId,
+        newDueDate: formattedNewDueDate,
+      });
+      fetchData();
 
       setIsExtendButtonDisabled(true);
       Alert.alert(
@@ -117,13 +179,14 @@ const GeneralDeviceExtendScreen = () => {
         },
         {
           text: "YES",
-          onPress: () => {
-            console.log("YES Pressed");
-            showSecondAlert(timestamp);
-            setReturnDateLabel("Return date");
-            setDueDate(timeString);
-            setIsReturnButtonDisabled(true);
-            setIsExtendButtonDisabled(true);
+          onPress: async () => {
+            const timeString = new Date().toISOString();
+            await axios.post("API", {
+            action: "return",
+            deviceId: deviceId,
+            returnDate: timeString,
+            });
+            fetchData();
           },
         },
       ],
@@ -281,7 +344,7 @@ const GeneralDeviceExtendScreen = () => {
                 color={"#AC145A"}
               />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> 
           {devicesIDExpanded && (
             <View style={styles.detailRow}>
               <View style={styles.detailRowLayout}>
