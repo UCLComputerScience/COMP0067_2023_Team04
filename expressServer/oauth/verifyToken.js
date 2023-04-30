@@ -16,14 +16,17 @@ function verifyToken(req, res, next) {
     // Verify the token
     jwt.verify(bearerToken, JWT_SECRET, (err, authData) => {
       if(err) {
+        console.log("ERROR: token is invalid. Token: ", bearerToken);
         res.sendStatus(403);
       } else {
         req.authData = authData;
+        console.log("authData: ", req.authData);
         next();
       }
     });
   } else {
     // Forbidden
+    console.log("ERROR: bearer is undefined. bearerHeader: ", bearerHeader);
     res.sendStatus(403);
   }
 }

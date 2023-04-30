@@ -11,29 +11,52 @@ import { useNavigation } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
-const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts/";
+const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 const AdminLoans = () => {
   // All loan information, where id is the device ID
   const [loanTable, setLoanTable] = useState([]);
 
-  const fetchData = async () => {
+  async function getJwtToken() {
     try {
-      const response = await axios.get(`${API_BASE_URL}/loans`);
-
-      setLoanTable(
-        response.data.map((loan) => ({
-          id: loan.deviceId,
-          name: `Device ${loan.deviceId}`,
-          returnDate: loan.dueDate.substring(0, 10),
-          user: loan.userId,
-          state: new Date(loan.dueDate) >= new Date() ? "Loan" : "Returned",
-        }))
-      );
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.log("JWT token 获取失败:", error);
+      return null;
     }
-  };
+  }
+
+const fetchData = async () => {
+  try {
+    const jwtToken = await getJwtToken();
+    console.log('Token:   ',jwtToken);
+    const response = await axios.get(`${API_BASE_URL}/loans`, {
+      headers: {
+        Authorization: `Bearer ${jwtToken}`,
+      }
+    });
+
+    setLoanTable(
+      response.data.map((loan) => ({
+        id: loan.deviceId,
+        name: `Device ${loan.deviceId}`,
+        returnDate: loan.dueDate.substring(0, 10),
+        user: loan.userId,
+        state: new Date(loan.dueDate) >= new Date() ? "Loan" : "Returned",
+      }))
+    );
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
 
   useEffect(() => {
     fetchData();

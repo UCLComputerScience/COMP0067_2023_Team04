@@ -6,20 +6,33 @@ const session = require("express-session");
 const oauthRouter = require('./oauth/index.js');
 const verifyToken = require('./oauth/verifyToken');
 const fs = require('fs');
-// const cors = require("cors");
+const cors = require("cors");
 
 // Middleware
 const app = express();
 app.use(express.json()); // parse json bodies in the request object
 
 // Allows CORS in server side
+app.use(cors({
+  origin: '*',  // or specify the domains you want to allow
+  methods: ['GET', 'PUT', 'POST', 'DELETE'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'x-token', 'Authorization'],
+}));
+
+app.use((req, res, next) => {
+  console.log(req.headers);
+  next();
+});
+
+/*
 app.use(function(req, res, next){
   console.log('request', req.url, req.body, req.method);
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-token");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-token, Authorization");
   next();
 })
+*/
 
 // Set up session middleware
 app.use(
