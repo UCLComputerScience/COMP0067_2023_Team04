@@ -4,20 +4,21 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const path = require("path");
 const fetch = require("node-fetch");
+const isUserAdmin = require('./isUserAdmin');
 
 const API_URL = process.env.API_URL;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const JWT_SECRET = process.env.JWT_SECRET;
 // const CALLBACK_URL = encodeURIComponent(process.env.CALLBACK_URL);
-
+/*
 async function isUserAdmin(upi) {
   const managersFilePath = path.join(__dirname, "..", "managers.txt");
   const managersContent = await fs.promises.readFile(managersFilePath, "utf-8");
   const managersList = managersContent.split("\n");
   return managersList.includes(upi);
 }
-
+*/
 // check if correct
 function genToken(user) {
   return jwt.sign(user, JWT_SECRET);
@@ -96,7 +97,7 @@ const callback = async (req, res) => {
   const destination = user.role === 'admin' ? 'Schedule' : 'userDevices';
 
   // Send the JWT token back to the mobile app
-  res.redirect(`exp://10.97.180.108:19000/--/${destination}?token=${jwtToken}`);
+  res.redirect(`exp://192.168.165.237:19000/--/${destination}?token=${jwtToken}`);
 };
 
 module.exports = callback;
