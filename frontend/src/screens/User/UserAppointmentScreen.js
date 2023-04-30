@@ -7,51 +7,50 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GeneralDeviceUserScreen from "./GeneralDeviceUser";
 import * as Linking from "expo-linking";
+import moment from "moment";
+import axios from "axios";
+
 
 // This screen needs to read the reservation status of the user, it needs the name, status and due date of the device that the user has reserved, the status is only two cases, loan or has been returned
 
 const UserAppointmentScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-
   const currentScreenPath = route.name;
   const currentScreenUrl = Linking.createURL(currentScreenPath);
-
   console.log("Current Screen URL:", currentScreenUrl);
-  const initialDevices = [
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      status: "Reserved",
-      date: "2022-10-25",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070",
-      status: "Reserved",
-      date: "2022-11-25",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3060",
-      status: "Reserved",
-      date: "2023-01-25",
-    },
-    /*{
-      name: "Dell XPS 13 2022",
-      status: "Return",
-      data: "2023-02-25",
-    },
-    {
-      name: "MacBook Pro M1 2021",
-      status: "Return",
-      data: "2023-03-25",
-    },*/
-  ];
+  const [devices, setDevice] = useState([]);
 
-  const [devices, setDevices] = useState(initialDevices);
+  const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
+
+  const [listData, setListData] = useState([]);
+
+  const getListData = async () => {
+    const userId = 1;
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}/loans/reservedUser/${userId}`
+      );
+      console.log("Received data from API:", response.data);
+      setDevice(response.data);
+  
+      if (response.data) {
+        setListData(response.data);
+      }
+    } catch (error) {
+      console.log("error = ", error);
+    }
+  };
+
+  useEffect(() => {
+    getListData();
+  }, []);
+  
 
   const handleCanel = () => {
     Alert.alert(
@@ -116,7 +115,7 @@ const UserAppointmentScreen = () => {
                       { marginLeft: 10, flex: 1, textAlign: "center" },
                     ]}
                   >
-                    {item.status}
+                    {item.state}
                   </Text>
                 </View>
               </TouchableOpacity>
