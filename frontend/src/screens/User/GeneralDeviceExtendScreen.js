@@ -27,7 +27,7 @@ const GeneralDeviceExtendScreen = () => {
   const route = useRoute();
   const deviceId = route.params.deviceId;
 
-  const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
+
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
   const [returnDateLabel, setReturnDateLabel] = useState("Due date");
   const [dueDate, setDueDate] = useState("2023-01-01");
@@ -127,8 +127,7 @@ const fetchData = async () => {
         newDueDate: formattedNewDueDate,
       });
       fetchData();
-
-      setIsExtendButtonDisabled(true);
+  
       Alert.alert(
         "Extension successful",
         "You have successfully extended your loan.",
@@ -182,12 +181,15 @@ const fetchData = async () => {
           text: "YES",
           onPress: async () => {
             const timeString = new Date().toISOString();
-            await axios.post("API", {
-            action: "return",
-            deviceId: deviceId,
-            returnDate: timeString,
+            const response = await axios.post("API", {
+              action: "return",
+              deviceId: deviceId,
+              returnDate: timeString,
             });
+            
+            setStatus(response.data.status);
             fetchData();
+            showSecondAlert(); 
           },
         },
       ],
@@ -374,68 +376,65 @@ const fetchData = async () => {
           }}
         >
           <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              style={[
-                {
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 15,
-                  width: "100%",
-                  height: 50,
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-                status !== "Loaned" || isReturnButtonDisabled
-                  ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
-                  : { backgroundColor: "#EEEEEF" },
-              ]}
-              onPress={() => setModalVisible(true)}
-              disabled={status !== "Loaned" || isReturnButtonDisabled}
+          <TouchableOpacity
+            style={[
+              {
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "100%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              status !== "Loaned"
+                ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
+                : { backgroundColor: "#EEEEEF" },
+            ]}
+            onPress={() => setModalVisible(true)}
+            disabled={status !== "Loaned"}
+          >
+            <Text
+              style={{
+                color: status !== "Loaned" ? "#A0A0A0" : "#AC145A",
+                fontSize: 20,
+                fontWeight: 600,
+              }}
             >
-              <Text
-                style={{
-                  color:
-                    status !== "Loaned" || isReturnButtonDisabled
-                      ? "#A0A0A0"
-                      : "#AC145A",
-                  fontSize: 20,
-                  fontWeight: 600,
-                }}
-              >
-                Return
-              </Text>
-            </TouchableOpacity>
+              Return
+            </Text>
+          </TouchableOpacity>
           </View>
 
           <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              style={[
-                {
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 15,
-                  width: "100%",
-                  height: 50,
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-                isExtendButtonDisabled
-                  ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
-                  : { backgroundColor: "#EEEEEF" },
-              ]}
-              onPress={extendDevice}
-              disabled={isExtendButtonDisabled}
+          <TouchableOpacity
+            style={[
+              {
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "100%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              device[0].extensionAllowance === 0
+                ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
+                : { backgroundColor: "#EEEEEF" },
+            ]}
+            onPress={extendDevice}
+            disabled={device[0].extensionAllowance === 0}
+          >
+            <Text
+              style={{
+                color: device[0].extensionAllowance === 0 ? "#A0A0A0" : "#AC145A",
+                fontSize: 20,
+                fontWeight: 600,
+              }}
             >
-              <Text
-                style={{
-                  color: isExtendButtonDisabled ? "#A0A0A0" : "#AC145A",
-                  fontSize: 20,
-                  fontWeight: 600,
-                }}
-              >
-                Extend
-              </Text>
-            </TouchableOpacity>
+              Extend
+            </Text>
+          </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
