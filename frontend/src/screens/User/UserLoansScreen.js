@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   View,
   FlatList,
-  ActivityIndicator
 } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -19,7 +18,6 @@ const Stack = createStackNavigator();
 const UserLoans = () => {
   const [currentTab, setCurrentTab] = useState("ongoing");
   const [filteredData, setFilteredData] = useState([]);
-  const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
 
   const [listData, setListData] = useState([]);
@@ -35,12 +33,11 @@ const UserLoans = () => {
       console.log("Received data from API:", response.data);
   
       if (response.data) {
-        const mappedData = response.data.map((item) => {
+        const mappedData = response.data.map(item => {
           return { ...item, deviceName: item.name };
         });
         setListData(mappedData);
-        filterData(currentTab); 
-        setLoading(false);
+        filterData(currentTab);
       }
     } catch (error) {
       console.log("error = ", error);
@@ -48,17 +45,9 @@ const UserLoans = () => {
   };
   
   
-  
   useEffect(() => {
     getListData();
   }, [currentTab]);
-  
-  useEffect(() => {
-    filterData(currentTab);
-  }, [listData]);
-  
-  
-  
   
   
 
@@ -117,7 +106,6 @@ const UserLoans = () => {
 
       <FlatList
         data={filteredData}
-        extraData={filteredData}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.dataRow}
@@ -143,20 +131,10 @@ const UserLoans = () => {
           </TouchableOpacity>
         )}
         keyExtractor={(item) => item.deviceId.toString()}
-        ListFooterComponent={() => {
-          return (
-            loading && (
-              <View style={{ alignItems: "center", padding: 10 }}>
-                <ActivityIndicator size="large" color="#0000ff" />
-              </View>
-            )
-          );
-        }}
       />
     </View>
   );
 };
-  
 
 const styles = StyleSheet.create({
   container: {

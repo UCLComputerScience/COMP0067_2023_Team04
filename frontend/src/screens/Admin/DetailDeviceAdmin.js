@@ -37,7 +37,7 @@ const DetailDeviceAdmin = () => {
   const loanDetails = {
     loanDate: "2022-03-21",
     userID: "ucabcda",
-    deviceState: "Loan",
+    deviceState: "Reserved",
     //how to achieve the status change? fetch from DB (require refresh) : change from frontend once clicked
   };
 

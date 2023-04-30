@@ -1,3 +1,9 @@
+
+//This interface is connected to Loan's interface of Ongoing devices, when coming from Loan's interface, he should get the summary details and due date of a device in Loan's interface, and then return or extend
+//After extending, the extension allowance and date will be changed, this data needs to be returned to the database, but no need to return to the front-end, the front-end has already completed the relevant operations
+//After returning, the ruturn date should be returned in the database
+//read the database data of the date in line 251
+
 import {
   View,
   Text,
@@ -13,9 +19,7 @@ import React, { useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { addDays, format } from "date-fns";
-
-import { createStackNavigator } from "@react-navigation/stack";
-
+import axios from "axios";
 
 const GeneralDeviceExtendScreen = () => {
   const navigation = useNavigation();
@@ -23,18 +27,68 @@ const GeneralDeviceExtendScreen = () => {
   const route = useRoute();
   const deviceId = route.params.deviceId;
 
-  // Add a new state for the deviceName
-  const [deviceName, setDeviceName] = useState("Device");
 
-  const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
   const [returnDateLabel, setReturnDateLabel] = useState("Due date");
   const [dueDate, setDueDate] = useState("2023-01-01");
   const [selectedCollectTime, setSelectedCollectTime] = useState("");
   const [deviceList, setDeviceList] = useState("");
-
+  
+  const [deviceName, setDeviceName] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
+
+//现在的逻辑是，后端更新extensionAllowance和Status，来影响这两个键的禁用
+//The current logic is that the backend updates extensionAllowance and status to affect the disabling of these two keys.
+
+//把这个代码的API改成具体的API
+//Change the name of 'API', such as line 78
+
+//具体流程逻辑：当用户点击“Extend”按钮：
+//首先检查device[0].extensionAllowance的值是否为1。 如果是，则允许用户延长借用期限。
+//计算新的到期日期newDueDate。
+//使用axios向API发送请求以更新数据库中设备的到期日期。
+//再次调用fetchData以获取最新的设备数据。。
+//弹出一个提示框，告知用户已成功延长借用期限。
+
+//当用户点击“Return”按钮：
+//弹出一个模态窗口，让用户选择设备归还时间。
+//用户选择一个时间后，将关闭模态窗口，显示一个弹出框要求用户确认归还时间。
+//用户确认归还时间后，使用axios向API发送请求以更新数据库中设备的归还日期。
+//再次调用fetchData以获取最新的设备数据。
+
+//When the user clicks the "Extend" button:
+//First, check if the value of device[0].extensionAllowance is 1. If so, allow the user to extend the borrowing period.
+//Calculate the new due date, newDueDate.
+//Use axios to send a request to the API to update the due date of the device in the database.
+//Call fetchData again to obtain the latest device data.
+//Display a prompt box to inform the user that the borrowing period has been successfully extended.
+//When the user clicks the "Return" button:
+//Display a modal window for the user to choose the device return time.
+//After the user selects a time, close the modal window and show a popup box asking the user to confirm the return time.
+//Once the user confirms the return time, use axios to send a request to the API to update the return date of the device in the database.
+//Call fetchData again to obtain the latest device data.
+
+
+const fetchData = async () => {
+  try {
+    const response = await axios.get("http://0067team4app.azurewebsites.net/posts");
+    const data = response.data;
+    setIsExtendButtonDisabled(data.isExtendButtonDisabled);
+    setIsReturnButtonDisabled(data.isReturnButtonDisabled);
+    setDueDate(data.dueDate);
+    setStatus(data.status);
+    setDeviceName(data.deviceName);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+
   const [device, setDevice] = useState([
     {
       standardLoanDuration: 14,
@@ -50,11 +104,6 @@ const GeneralDeviceExtendScreen = () => {
     },
   ]);
 
-  // Update the deviceName when setting the device state
-  useEffect(() => {
-    setDeviceName(`Device ${deviceName}`);
-  }, [deviceName]);
-
   const parseDateStringToTimestamp = (dateString) => {
     const [day, time] = dateString.split(": ");
     const [start, end] = time.split(" - ");
@@ -64,12 +113,18 @@ const GeneralDeviceExtendScreen = () => {
     return date.getTime();
   };
 
-  const extendDevice = () => {
-    if (device[0].extensionAllowance > 0) {
+  const extendDevice = async () => {
+    if (device[0].extensionAllowance === 1) {
       const newDueDate = addDays(new Date(dueDate), 7);
       const formattedNewDueDate = format(newDueDate, "yyyy-MM-dd");
-
-      setIsExtendButtonDisabled(true);
+      
+      await axios.post("http://0067team4app.azurewebsites.net/posts", {
+        action: "extend",
+        deviceId: deviceId,
+        newDueDate: formattedNewDueDate,
+      });
+      fetchData();
+  
       Alert.alert(
         "Extension successful",
         "You have successfully extended your loan.",
@@ -81,7 +136,7 @@ const GeneralDeviceExtendScreen = () => {
               setDevice((prevState) => [
                 {
                   ...prevState[0],
-                  
+                  extensionAllowance: 0,
                 },
               ]);
             },
@@ -121,9 +176,17 @@ const GeneralDeviceExtendScreen = () => {
         },
         {
           text: "YES",
-          onPress: () => {
-            console.log("YES Pressed");
-            showSecondAlert(timestamp);
+          onPress: async () => {
+            const timeString = new Date().toISOString();
+            const response = await axios.post("http://0067team4app.azurewebsites.net/posts", {
+              action: "return",
+              deviceId: deviceId,
+              returnDate: timeString,
+            });
+            
+            setStatus(response.data.status);
+            fetchData();
+            showSecondAlert(); 
           },
         },
       ],
@@ -281,7 +344,7 @@ const GeneralDeviceExtendScreen = () => {
                 color={"#AC145A"}
               />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> 
           {devicesIDExpanded && (
             <View style={styles.detailRow}>
               <View style={styles.detailRowLayout}>
@@ -302,43 +365,73 @@ const GeneralDeviceExtendScreen = () => {
           )}
         </View>
 
-        
-        <View style={{ paddingTop: 80 }}>
+        <View
+          style={{
+            paddingTop: 80,
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
+        >
           <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-                style={[
-                  {
-                    
-                    backgroundColor: "#EEEEEF",
-                    paddingVertical: 10,
-                    paddingHorizontal: 20,
-                    borderRadius: 15,
-                    width: "70%",
-                    height: 50,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    
-                  },
-                  device[0].extensionAllowance === 0
-                    ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
-                    : { backgroundColor: "#EEEEEF" },
-                ]}
-                onPress={extendDevice}
-                disabled={device[0].extensionAllowance === 0}
-              >
-                <Text
-                  style={{
-                    color:
-                      device[0].extensionAllowance === 0
-                        ? "#A0A0A0"
-                        : "#AC145A",
-                    fontSize: 20,
-                    fontWeight: 600,
-                  }}
-                >
-                  Extend
-                </Text>
-              </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              {
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "100%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              status !== "Loaned"
+                ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
+                : { backgroundColor: "#EEEEEF" },
+            ]}
+            onPress={() => setModalVisible(true)}
+            disabled={status !== "Loaned"}
+          >
+            <Text
+              style={{
+                color: status !== "Loaned" ? "#A0A0A0" : "#AC145A",
+                fontSize: 20,
+                fontWeight: 600,
+              }}
+            >
+              Return
+            </Text>
+          </TouchableOpacity>
+          </View>
+
+          <View style={{ alignItems: "center" }}>
+          <TouchableOpacity
+            style={[
+              {
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "100%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              device[0].extensionAllowance === 0
+                ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
+                : { backgroundColor: "#EEEEEF" },
+            ]}
+            onPress={extendDevice}
+            disabled={device[0].extensionAllowance === 0}
+          >
+            <Text
+              style={{
+                color: device[0].extensionAllowance === 0 ? "#A0A0A0" : "#AC145A",
+                fontSize: 20,
+                fontWeight: 600,
+              }}
+            >
+              Extend
+            </Text>
+          </TouchableOpacity>
           </View>
         </View>
       </ScrollView>

@@ -8,14 +8,13 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import React, { useState , useEffect} from "react";
+import React, { useState } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/Ionicons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceUser from "./GeneralDeviceUser";
 import * as Linking from "expo-linking";
-import axios from "axios";
 
 //This screen needs to read the model number, shelf date, number of available rentals, and name of all available rental devices
 //Note! The number of devices available in the database is 0 should not appear!
@@ -29,8 +28,122 @@ const AllDevices = () => {
   const currentScreenUrl = Linking.createURL(currentScreenPath);
 
   console.log("Current Screen URL:", currentScreenUrl);
-  
-
+  const initialDevices = [
+    {
+      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
+      launchedyear: "2021",
+      available: "5",
+      category: "Laptop",
+    },
+    {
+      name: "Lenovo Legion Y9000P 2022 RTX 3070",
+      launchedyear: "2022",
+      available: "9",
+      category: "Laptop",
+    },
+    {
+      name: "Lenovo Legion Y9000P 2022 RTX 3060",
+      launchedyear: "2023",
+      available: "8",
+      category: "Laptop",
+    },
+    {
+      name: "Dell XPS 13 2022",
+      launchedyear: "2022",
+      available: "3",
+      category: "Laptop",
+    },
+    {
+      name: "MacBook Pro M1 2021",
+      launchedyear: "2021",
+      available: "7",
+      category: "MacBook",
+    },
+    {
+      name: "ASUS ROG Zephyrus S GX701",
+      launchedyear: "2022",
+      available: "2",
+      category: "Laptop",
+    },
+    {
+      name: "Lenovo Legion Y740",
+      launchedyear: "2023",
+      available: "4",
+      category: "Laptop",
+    },
+    {
+      name: "Acer Predator Helios 300",
+      launchedyear: "2021",
+      available: "3",
+      category: "Laptop",
+    },
+    {
+      name: "MSI GE76 Raider",
+      launchedyear: "2021",
+      available: "8",
+      category: "Laptop",
+    },
+    {
+      name: "Razer Blade Pro 17",
+      launchedyear: "2022",
+      available: "9",
+      category: "Laptop",
+    },
+    {
+      name: "Alienware m15 R4",
+      launchedyear: "2020",
+      available: "6",
+      category: "Laptop",
+    },
+    {
+      name: "HP Spectre x360",
+      launchedyear: "2018",
+      available: "10",
+      category: "Laptop",
+    },
+    {
+      name: "iPhone 14 Pro Max",
+      launchedyear: "2018",
+      available: "10",
+      category: "iPhone",
+    },
+    {
+      name: "AMD Ryzen 9 5950X CPU",
+      launchedyear: "2018",
+      available: "8",
+      category: "CPU",
+    },
+    {
+      name: "NVIDIA GeForce RTX 3080 GPU",
+      launchedyear: "2023",
+      available: "3",
+      category: "GPU",
+    },
+    {
+      name: "Samsung Galaxy S21 Ultra",
+      launchedyear: "2022",
+      available: "9",
+      category: "Android",
+    },
+    {
+      name: "Intel Core i9-11900K CPU",
+      launchedyear: "2021",
+      available: "7",
+      category: "CPU",
+    },
+    {
+      name: "ASUS ROG Strix RTX 3070 GPU",
+      launchedyear: "2020",
+      available: "4",
+      category: "GPU",
+    },
+    {
+      name: "Google Pixel 6 Pro",
+      launchedyear: "2019",
+      available: "8",
+      category: "Android",
+    },
+  ];
 
   const handleicon = () => {
     Alert.alert(
@@ -50,11 +163,10 @@ const AllDevices = () => {
   };
 
   const [input, setInput] = useState("");
-  const [devices, setDevices] = useState([]);
+  const [devices, setDevices] = useState(initialDevices);
   const [sortOrder, setSortOrder] = useState("asc");
   const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
   const [availableSortOrder, setAvailableSortOrder] = useState("asc");
-
 
   const sortDevices = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
@@ -67,51 +179,12 @@ const AllDevices = () => {
     setDevices(sortedDevices);
   };
 
-  const [device, setDevice] = useState(null);
-  const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
-
-  const [listData, setListData] = useState([]);
-
-  const getListData = async () => {
-    const userId = 1;
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/devices/nameAvailabilityUser`
-      );
-      console.log("Received data from API:", response.data);
-      setDevices(response.data);
-        
-      if (response.data) {
-        setListData(response.data);
-        setInitialDevices(response.data); // Add this line
-      }
-    } catch (error) {
-      console.log("error = ", error);
-    }
-  };
-
-  const [initialDevices, setInitialDevices] = useState([]);
-
-  
-
-  useEffect(() => {
-    if (input === "") {
-      setDevices(initialDevices);
-    } else {
-      const filteredDevices = initialDevices.filter((device) =>
-        device.name.toLowerCase().includes(input.toLowerCase())
-      );
-      setDevices(filteredDevices);
-    }
-  }, [input]);
-  
-
   const sortDevicesByLoaned = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
       if (order === "asc") {
-        return a.launchYr - b.launchYr;
+        return a.launchedyear - b.launchedyear;
       } else {
-        return b.launchYr - a.launchYr;
+        return b.launchedyear - a.launchedyear;
       }
     });
     setDevices(sortedDevices);
@@ -266,42 +339,45 @@ const AllDevices = () => {
         <FlatList
           data={devices}
           renderItem={({ item }) => {
-            console.log("Rendering item:", item);
-            return (
-              <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("General Details", {
-                    deviceName: item.name,
-                  })
-                }
-              >
-                <View style={styles.line}>
-                  <Text
-                    style={[styles.devices, { flex: 2.4, textAlign: "left" }]}
-                  >
-                    {item.name}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.devices,
-                      { marginLeft: -20, flex: 1, textAlign: "center" },
-                    ]}
-                  >
-                    {item.launchYr}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.devices,
-                      { marginRight: -5, flex: 0.9, textAlign: "center" },
-                    ]}
-                  >
-                    {item.state}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            );
+            if (
+              input === "" ||
+              item.name.toLowerCase().includes(input.toLowerCase())
+            ) {
+              return (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("General Details", {
+                      deviceName: item.name,
+                    })
+                  }
+                >
+                  <View style={styles.line}>
+                    <Text
+                      style={[styles.devices, { flex: 2.4, textAlign: "left" }]}
+                    >
+                      {item.name}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.devices,
+                        { marginLeft: -20, flex: 1, textAlign: "center" },
+                      ]}
+                    >
+                      {item.launchedyear}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.devices,
+                        { marginRight: -5, flex: 0.9, textAlign: "center" },
+                      ]}
+                    >
+                      {item.available}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              );
+            }
           }}
-          keyExtractor={(item) => item.id.toString()}
           contentContainerStyle={{ paddingBottom: 170 }}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />

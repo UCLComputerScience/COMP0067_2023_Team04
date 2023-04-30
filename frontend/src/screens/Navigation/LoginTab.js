@@ -12,7 +12,6 @@ import AuthContext from "./AuthContext";
 import * as Linking from "expo-linking";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import * as SecureStore from "expo-secure-store";
 
 const getRedirectUri = () => {
   const redirectUri = AuthSession.makeRedirectUri();
@@ -61,28 +60,24 @@ const linking = {
 
 // Event Listener
 
+
 const LoginTabScreen = () => {
   useEffect(() => {
-    const handleUrlEvent = async (event) => {
+    const handleUrlEvent = (event) => {
       const url = event.url;
-      console.log("url defined");
+      console.log("url defined")
       if (url) {
         const tokenRegex = /[?&]token=([^&#]*)/;
         const match = url.match(tokenRegex);
         const jwtToken =
-          match && match[1] ? decodeURIComponent(match[1]) : null;
+          match && match[1] ? 
+        decodeURIComponent(match[1]) : null;
 
         // 在此处记录 JWT 令牌
         console.log("JWT Token:", jwtToken);
 
         // 这里可以将 jwtToken 发送给后端进行验证
 
-        try {
-          await SecureStore.setItemAsync("jwtToken", jwtToken);
-          console.log("JWT token 存储成功");
-        } catch (error) {
-          console.log("JWT token 存储失败:", error);
-        }
         // const path = url.split("/--/")[1];
         // if (path === "Schedule") {
         //  navigation.navigate("AdminTabs");
@@ -93,22 +88,22 @@ const LoginTabScreen = () => {
       }
     };
 
-    const subscription = Linking.addEventListener("url", handleUrlEvent);
+    const subscription = Linking.addEventListener('url', handleUrlEvent);
 
     // Linking.addEventListener("url", handleUrlEvent);
 
     // Check the initial URL on app start
     (async () => {
       const initialUrl = await Linking.getInitialURL();
-      if (initialUrl) handleUrlEvent({ url: initialUrl });
+      if (initialUrl) handleUrlEvent({ url: initialUrl});
     })();
 
     // Clean up the event listener on unmount
     return () => {
       subscription.remove();
       // Linking.removeEventListener(handleUrlEvent);
-    };
-  }, []);
+    }
+  },[]);
 
   const navigation = useNavigation();
   const { loginAsAdmin, loginAsUser } = useContext(AuthContext);
