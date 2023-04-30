@@ -72,7 +72,7 @@ const GeneralDeviceExtendScreen = () => {
 
 const fetchData = async () => {
   try {
-    const response = await axios.get("API");
+    const response = await axios.get("http://0067team4app.azurewebsites.net/posts");
     const data = response.data;
     setIsExtendButtonDisabled(data.isExtendButtonDisabled);
     setIsReturnButtonDisabled(data.isReturnButtonDisabled);
@@ -118,7 +118,7 @@ const fetchData = async () => {
       const newDueDate = addDays(new Date(dueDate), 7);
       const formattedNewDueDate = format(newDueDate, "yyyy-MM-dd");
       
-      await axios.post("API", {
+      await axios.post("http://0067team4app.azurewebsites.net/posts", {
         action: "extend",
         deviceId: deviceId,
         newDueDate: formattedNewDueDate,
@@ -178,7 +178,7 @@ const fetchData = async () => {
           text: "YES",
           onPress: async () => {
             const timeString = new Date().toISOString();
-            const response = await axios.post("API", {
+            const response = await axios.post("http://0067team4app.azurewebsites.net/posts", {
               action: "return",
               deviceId: deviceId,
               returnDate: timeString,
