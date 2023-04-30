@@ -78,7 +78,7 @@ const LoginTabScreen = () => {
         // 这里可以将 jwtToken 发送给后端进行验证
 
         try {
-          await SecureStore.setItemAsync("Token", jwtToken);
+          await SecureStore.setItemAsync("jwtToken", jwtToken);
           console.log("JWT token 存储成功");
         } catch (error) {
           console.log("JWT token 存储失败:", error);
