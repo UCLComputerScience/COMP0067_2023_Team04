@@ -38,9 +38,8 @@ const GeneralDeviceExtendScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
 
-//需要在后端添加设备数据中的isExtendButtonDisabled和isReturnButtonDisabled，它们分别用于设置“Extend”和“Return”按钮的禁用状态
-//It is necessary to add the "isExtendButtonDisabled" and "isReturnButtonDisabled" fields in the device data on the backend, 
-//which are respectively used to set the disabled status of the "Extend" and "Return" buttons.
+//现在的逻辑是，后端更新extensionAllowance和Status，来影响这两个键的禁用
+//The current logic is that the backend updates extensionAllowance and status to affect the disabling of these two keys.
 
 //把这个代码的API改成具体的API
 //Change the name of 'API', such as line 78
@@ -49,8 +48,7 @@ const GeneralDeviceExtendScreen = () => {
 //首先检查device[0].extensionAllowance的值是否为1。 如果是，则允许用户延长借用期限。
 //计算新的到期日期newDueDate。
 //使用axios向API发送请求以更新数据库中设备的到期日期。
-//再次调用fetchData以获取最新的设备数据。
-//将isExtendButtonDisabled设置为true，禁用“Extend”按钮。
+//再次调用fetchData以获取最新的设备数据。。
 //弹出一个提示框，告知用户已成功延长借用期限。
 
 //当用户点击“Return”按钮：
@@ -64,7 +62,6 @@ const GeneralDeviceExtendScreen = () => {
 //Calculate the new due date, newDueDate.
 //Use axios to send a request to the API to update the due date of the device in the database.
 //Call fetchData again to obtain the latest device data.
-//Set isExtendButtonDisabled to true, disabling the "Extend" button.
 //Display a prompt box to inform the user that the borrowing period has been successfully extended.
 //When the user clicks the "Return" button:
 //Display a modal window for the user to choose the device return time.
