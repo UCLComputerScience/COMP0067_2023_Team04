@@ -27,30 +27,28 @@ const GeneralDeviceExtendScreen = () => {
   const route = useRoute();
   const deviceId = route.params.deviceId;
 
-  const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
+
   const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
   const [returnDateLabel, setReturnDateLabel] = useState("Due date");
   const [dueDate, setDueDate] = useState("2023-01-01");
   const [selectedCollectTime, setSelectedCollectTime] = useState("");
   const [deviceList, setDeviceList] = useState("");
   
-
+  const [deviceName, setDeviceName] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [status, setStatus] = useState("Loaned");
 
-//需要在后端添加设备数据中的isExtendButtonDisabled和isReturnButtonDisabled，它们分别用于设置“Extend”和“Return”按钮的禁用状态
-//It is necessary to add the "isExtendButtonDisabled" and "isReturnButtonDisabled" fields in the device data on the backend, 
-//which are respectively used to set the disabled status of the "Extend" and "Return" buttons.
+//现在的逻辑是，后端更新extensionAllowance和Status，来影响这两个键的禁用
+//The current logic is that the backend updates extensionAllowance and status to affect the disabling of these two keys.
 
 //把这个代码的API改成具体的API
-//Change the name of 'API', such as line 51
+//Change the name of 'API', such as line 78
 
 //具体流程逻辑：当用户点击“Extend”按钮：
 //首先检查device[0].extensionAllowance的值是否为1。 如果是，则允许用户延长借用期限。
 //计算新的到期日期newDueDate。
 //使用axios向API发送请求以更新数据库中设备的到期日期。
-//再次调用fetchData以获取最新的设备数据。
-//将isExtendButtonDisabled设置为true，禁用“Extend”按钮。
+//再次调用fetchData以获取最新的设备数据。。
 //弹出一个提示框，告知用户已成功延长借用期限。
 
 //当用户点击“Return”按钮：
@@ -64,7 +62,6 @@ const GeneralDeviceExtendScreen = () => {
 //Calculate the new due date, newDueDate.
 //Use axios to send a request to the API to update the due date of the device in the database.
 //Call fetchData again to obtain the latest device data.
-//Set isExtendButtonDisabled to true, disabling the "Extend" button.
 //Display a prompt box to inform the user that the borrowing period has been successfully extended.
 //When the user clicks the "Return" button:
 //Display a modal window for the user to choose the device return time.
@@ -73,17 +70,18 @@ const GeneralDeviceExtendScreen = () => {
 //Call fetchData again to obtain the latest device data.
 
 
-  const fetchData = async () => {
-    try {
-      const response = await axios.get("API");
-      const data = response.data;
-      setIsExtendButtonDisabled(data.isExtendButtonDisabled);
-      setIsReturnButtonDisabled(data.isReturnButtonDisabled);
-      setDueDate(data.dueDate);
-      setStatus(data.status);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
+const fetchData = async () => {
+  try {
+    const response = await axios.get("API");
+    const data = response.data;
+    setIsExtendButtonDisabled(data.isExtendButtonDisabled);
+    setIsReturnButtonDisabled(data.isReturnButtonDisabled);
+    setDueDate(data.dueDate);
+    setStatus(data.status);
+    setDeviceName(data.deviceName);
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
   };
 
   useEffect(() => {
@@ -126,8 +124,7 @@ const GeneralDeviceExtendScreen = () => {
         newDueDate: formattedNewDueDate,
       });
       fetchData();
-
-      setIsExtendButtonDisabled(true);
+  
       Alert.alert(
         "Extension successful",
         "You have successfully extended your loan.",
@@ -181,12 +178,15 @@ const GeneralDeviceExtendScreen = () => {
           text: "YES",
           onPress: async () => {
             const timeString = new Date().toISOString();
-            await axios.post("API", {
-            action: "return",
-            deviceId: deviceId,
-            returnDate: timeString,
+            const response = await axios.post("API", {
+              action: "return",
+              deviceId: deviceId,
+              returnDate: timeString,
             });
+            
+            setStatus(response.data.status);
             fetchData();
+            showSecondAlert(); 
           },
         },
       ],
@@ -373,68 +373,65 @@ const GeneralDeviceExtendScreen = () => {
           }}
         >
           <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              style={[
-                {
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 15,
-                  width: "100%",
-                  height: 50,
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-                status !== "Loaned" || isReturnButtonDisabled
-                  ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
-                  : { backgroundColor: "#EEEEEF" },
-              ]}
-              onPress={() => setModalVisible(true)}
-              disabled={status !== "Loaned" || isReturnButtonDisabled}
+          <TouchableOpacity
+            style={[
+              {
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "100%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              status !== "Loaned"
+                ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
+                : { backgroundColor: "#EEEEEF" },
+            ]}
+            onPress={() => setModalVisible(true)}
+            disabled={status !== "Loaned"}
+          >
+            <Text
+              style={{
+                color: status !== "Loaned" ? "#A0A0A0" : "#AC145A",
+                fontSize: 20,
+                fontWeight: 600,
+              }}
             >
-              <Text
-                style={{
-                  color:
-                    status !== "Loaned" || isReturnButtonDisabled
-                      ? "#A0A0A0"
-                      : "#AC145A",
-                  fontSize: 20,
-                  fontWeight: 600,
-                }}
-              >
-                Return
-              </Text>
-            </TouchableOpacity>
+              Return
+            </Text>
+          </TouchableOpacity>
           </View>
 
           <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              style={[
-                {
-                  paddingVertical: 10,
-                  paddingHorizontal: 20,
-                  borderRadius: 15,
-                  width: "100%",
-                  height: 50,
-                  alignItems: "center",
-                  justifyContent: "center",
-                },
-                isExtendButtonDisabled
-                  ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
-                  : { backgroundColor: "#EEEEEF" },
-              ]}
-              onPress={extendDevice}
-              disabled={isExtendButtonDisabled}
+          <TouchableOpacity
+            style={[
+              {
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "100%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              device[0].extensionAllowance === 0
+                ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
+                : { backgroundColor: "#EEEEEF" },
+            ]}
+            onPress={extendDevice}
+            disabled={device[0].extensionAllowance === 0}
+          >
+            <Text
+              style={{
+                color: device[0].extensionAllowance === 0 ? "#A0A0A0" : "#AC145A",
+                fontSize: 20,
+                fontWeight: 600,
+              }}
             >
-              <Text
-                style={{
-                  color: isExtendButtonDisabled ? "#A0A0A0" : "#AC145A",
-                  fontSize: 20,
-                  fontWeight: 600,
-                }}
-              >
-                Extend
-              </Text>
-            </TouchableOpacity>
+              Extend
+            </Text>
+          </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
