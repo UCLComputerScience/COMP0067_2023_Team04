@@ -22,6 +22,30 @@ const CollapsibleList = () => {
   const currentScreenPath = route.name;
   const currentScreenUrl = Linking.createURL(currentScreenPath);
 
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+  async function someFunction() {
+    const jwtToken = await getJwtToken();
+    if (jwtToken) {
+      console.log(jwtToken);
+    } else {
+      // 未找到 jwtToken，可能需要执行其他操作
+    }
+  }
+
   console.log("Current Screen URL:", currentScreenUrl);
   const [currentTab, setCurrentTab] = useState("today");
   const navigation = useNavigation();
@@ -107,6 +131,7 @@ const CollapsibleList = () => {
 
   useEffect(() => {
     filterData(currentTab);
+    someFunction();
   }, [currentTab]);
 
   const handleTabPress = (tab) => {
