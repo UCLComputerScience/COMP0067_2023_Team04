@@ -4,6 +4,7 @@ require("dotenv").config(); // ALLOWS ENVIRONMENT VARIABLES TO BE SET ON PROCESS
 const express = require("express");
 const session = require("express-session");
 const oauthRouter = require('./oauth/index.js');
+const verifyToken = require('./oauth/verifyToken');
 const fs = require('fs');
 // const cors = require("cors");
 
@@ -71,6 +72,11 @@ app.post('/schedule', (req, res) => {
       res.send('Schedule updated')
     }
   });
+});
+
+app.get('/getEmail', verifyToken, (req, res) => {
+  const email = req.authData.email;
+  res.json({ email });
 });
 
 // Listen on pc port
