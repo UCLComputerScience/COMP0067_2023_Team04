@@ -10,10 +10,16 @@ import React, { useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import AuthContext from "../Navigation/AuthContext";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import * as SecureStore from "expo-secure-store";
 
 const AdminSettingsScreen = () => {
   const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
+
+  const Logout = async () => {
+    await SecureStore.deleteItemAsync("jwtToken");
+    navigation.navigate("LoginTabScreen");
+  };
 
   const handlelogout = () => {
     Alert.alert(
@@ -26,7 +32,7 @@ const AdminSettingsScreen = () => {
         },
         {
           text: "Yes",
-          onPress: () => navigation.navigate("LoginTabScreen"),
+          onPress: () => Logout(),
         },
       ],
       { cancelable: false }
