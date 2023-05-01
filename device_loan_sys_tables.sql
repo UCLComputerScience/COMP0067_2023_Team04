@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS `device` (
   `storage` varchar(255) DEFAULT NULL,
   `launchYr` int(11) DEFAULT NULL,
   `cost` double(10,2) DEFAULT NULL,
+  `issues` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`deviceId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -46,6 +47,8 @@ CREATE TABLE IF NOT EXISTS `device` (
 -- 转存表中的数据 `device`
 -- deviceIds are UUIDs
 -- ruleExt refers to how many times a renewal can be made
+-- issues provides extra space to note down any device issues
+-- state can be Available, Reserved, Loaned, Maintenance, and Scrapped
 
 INSERT INTO `device` (`deviceId`, `state`, `details`, `category`, `name`, `ruleExt`, `ruleDur`, `storage`, `launchYr`, `cost`) VALUES
 ('fb73ee46-e7ac-11ed-93d2-6045bdd1583d', 'Available', '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", "GPU": "RTX 3070ti 8G 150W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070ti', 1, 14, 'A1', 2022, 1000.00),
@@ -74,10 +77,10 @@ CREATE TABLE IF NOT EXISTS `loan` (
   `loanId` int(11) NOT NULL AUTO_INCREMENT,
   `userId` varchar(255) DEFAULT NULL,
   `userEmail` varchar(255) DEFAULT NULL,
-  `startDate` date DEFAULT NULL,
+  `startDate` date DEFAULT CURRENT_TIMESTAMP,
   `dueDate` date DEFAULT NULL,
   `deviceId` CHAR(36) DEFAULT NULL,
-  `exten` int(11) DEFAULT NULL,
+  `exten` int(11) DEFAULT 0,
   PRIMARY KEY (`loanId`),
   KEY `deviceId` (`deviceId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

@@ -1,9 +1,11 @@
 const db = require('../config/db');
+const deviceModel = require('./deviceModel');
 
 class Loan {
-  constructor(loanId, userId, startDate, dueDate, deviceId, exten, returnDate) {
+  constructor(loanId, userId, userEmail, startDate, dueDate, deviceId, exten, returnDate) {
     this.loanId = loanId;
     this.userId = userId;
+    this.userEmail = userEmail;
     this.startDate = startDate;
     this.dueDate = dueDate;
     this.deviceId = deviceId;
@@ -101,6 +103,23 @@ class Loan {
   return result.affectedRows;
 }
 
+  // create a new loan
+  static async createLoan(loan) {
+    const isAvailable = await deviceModel.isDeviceAvailable(loan.deviceId);
+
+    if (isAvailable) {
+      const sql = 'INSERT INTO loan SET ?';
+      const [result] = await db.query(sql, loan);
+
+      if (result.affectedRows > 0) {
+        return result.insertId;
+      }
+    } else {
+      throw new Error(`Device with ID ${loan.deviceId} is not available for loan.`);
+    }
+
+    return null;
+  }
 }
 
 module.exports = Loan;

@@ -1,5 +1,17 @@
 const deviceModel = require('../models/deviceModel');
 const loanModel = require('../models/loanModel');
+const { v4: uuidv4 } = require('uuid');
+const fs = require('fs');
+const path = require('path');
+const isUserAdmin = require('../oauth/isUserAdmin');
+
+async function authorizedAction(upi, res, action) {
+  const isAdmin = await isUserAdmin(upi);
+  if (!isAdmin) {
+    return res.status(403).send("You are not authorized to perform this action");
+  }
+  action();
+}
 
 exports.getAllDevices = async (req, res, next) => {
   try {
@@ -185,5 +197,143 @@ exports.extendLoanById = async (req, res, next) => {
     }
   } catch (error) {
     res.status(500).json({ message: 'Error extending loan', error });
+  }
+};
+
+// updates device state to state specified in JSON object
+exports.updateDeviceState = (req, res) => {
+  let newState = req.body.state;
+  let deviceId = req.params.deviceId;
+
+  // Validate the state
+  const validStates = ['Available', 'Reserved', 'Loaned', 'Maintenance', 'Scrapped'];
+  if (!validStates.includes(newState)) {
+      return res.status(400).json({ error: 'Invalid state' });
+  }
+
+  deviceModel.updateState(deviceId, newState, (err, result) => {
+      if(err) {
+          console.error(err);
+          return res.status(500).json({ error: 'An error occurred while updating the device state' });
+      }
+      console.log(result);
+      res.send('Device state updated...');
+  });
+};
+
+// enters a new device into the database
+exports.addDevice = (req, res) => {
+  let device = req.body;
+  device.deviceId = uuidv4();  // generate a UUID
+
+  deviceModel.addDevice(device, (err, result) => {
+      if(err) {
+          console.error(err);
+          return res.status(500).json({ error: 'An error occurred while adding the device' });
+      }
+      console.log(result);
+      res.status(201).json({ message: 'Device added...', deviceId: device.deviceId });
+  });
+};
+
+// creates a new loan
+exports.createLoan = async (req, res) => {
+  try {
+    const userId = req.user.upi;
+    const userEmail = req.user.email;
+    const deviceId = req.body.deviceId;
+    const loan = { userId, userEmail, deviceId };
+
+    const loanId = await loanModel.createLoan(loan);
+
+    if (loanId) {
+      res.status(201).json({ message: 'Loan created successfully', loanId });
+    } else {
+      res.status(400).json({ message: 'Could not create loan' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Server error', err });
+  }
+};
+
+// to use the write user terms/manager schedule/manager contact info
+// send a POST request with a JSON object like: {"content": "The new content for the file..."}
+
+// read user terms (for user and manager)
+exports.readUserTerms = (req, res) => {
+  const filePath = path.join(__dirname, '../userTerms.txt');
+  fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) return res.status(500).send("Error reading file");
+      return res.send(data);
+  });
+};
+
+// write user terms (for manager only)
+exports.writeUserTerms = (req, res) => {
+  const filePath = path.join(__dirname, '../userTerms.txt');
+  const content = req.body.content;
+  fs.writeFile(filePath, content, 'utf8', (err) => {
+      if (err) return res.status(500).send("Error writing to file");
+      return res.send({message: "File written successfully"});
+  });
+};
+
+// read manager schedule (for user and manager)
+exports.readManagerSchedule = (req, res) => {
+  const filePath = path.join(__dirname, '../managersSchedule.txt');
+  fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) return res.status(500).send("Error reading file");
+      return res.send(data);
+  });
+};
+
+// write manager schedule (for manager only)
+exports.writeManagerSchedule = (req, res) => {
+  authorizedAction(req.user.upi, res, () => {
+    const filePath = path.join(__dirname, '../managersSchedule.txt');
+    const content = req.body.content;
+    fs.writeFile(filePath, content, 'utf8', (err) => {
+      if (err) return res.status(500).send("Error writing to file");
+      return res.send({message: "File written successfully"});
+    });
+  });
+};
+
+// read contact info of device managers (for user and manager)
+exports.readAdminContactInfo = (req, res) => {
+  const filePath = path.join(__dirname, '../adminContactInfo.txt');
+  fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) return res.status(500).send("Error reading file");
+      return res.send(data);
+  });
+};
+
+// write contact info of admins (for manager only)
+exports.writeAdminContactInfo = (req, res) => {
+  authorizedAction(req.user.upi, res, () => {
+    const filePath = path.join(__dirname, '../adminContactInfo.txt');
+    const content = req.body.content;
+    fs.writeFile(filePath, content, 'utf8', (err) => {
+      if (err) return res.status(500).send("Error writing to file");
+      return res.send({message: "File written successfully"});
+    });
+  });
+};
+
+// Cancel a reservation
+exports.cancelReservation = async (req, res) => {
+  const deviceId = req.params.id;
+  const upi = req.authData.upi;
+
+  try {
+    const result = await deviceModel.cancelReservation(deviceId, upi);
+    if (result) {
+      res.send({ message: "Reservation cancelled successfully" });
+    } else {
+      res.status(400).send({ message: "Reservation could not be cancelled, possibly because it was not made by the current user" });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "An error occurred while cancelling the reservation" });
   }
 };

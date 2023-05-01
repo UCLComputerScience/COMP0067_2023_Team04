@@ -74,12 +74,58 @@ class Device {
     return rows[0];
   }
 
-  // Undefined route
+  // updates state of the device based on JSON object //for returning, borrowing devices, changing device state to maintanence or scrapped
   static async updateDeviceState(deviceId, newState) {
-    let sql = 'UPDATE device SET status = ? WHERE deviceId = ?';
+    let sql = 'UPDATE device SET state = ? WHERE deviceId = ?';
     const [result] = await db.execute(sql, [newState, deviceId]);
     return result.affectedRows > 0;
   }
+
+  // inserts database entry based on JSON object
+  static async addDevice(device) {
+    let sql = 'INSERT INTO device SET ?';
+    const [result] = await db.query(sql, device);
+    if(result.affectedRows > 0) {
+      return device.deviceId;
+    }
+    return null;
+  }
+
+  // used for createLoan in loanModel.js
+  static async isDeviceAvailable(deviceId) {
+    const sql = 'SELECT state FROM device WHERE deviceId = ?';
+    const [rows] = await db.execute(sql, [deviceId]);
+
+    if (rows.length > 0) {
+      return rows[0].state === 'Available';
+    }
+    return false;
+  }
+
+  // checks if a device is available
+  static async isDeviceAvailable(deviceId) {
+    const sql = 'SELECT state FROM device WHERE deviceId = ?';
+    const [rows] = await db.execute(sql, [deviceId]);
+
+    if (rows.length > 0) {
+      return rows[0].state === 'Available';
+    }
+    return false;
+  }
+
+// Checks if the device is reserved by the same user and updates the state to 'Available'
+  static async cancelReservation(deviceId, upi) {
+    const sqlCheck = 'SELECT userId FROM loan WHERE deviceId = ? ORDER BY startDate DESC LIMIT 1';
+    const sqlUpdate = 'UPDATE device SET state = ? WHERE deviceId = ?';
+    
+    const [rows] = await db.query(sqlCheck, [deviceId]);
+    if (rows.length > 0 && rows[0].userId === upi) {
+      const [result] = await db.query(sqlUpdate, ['Available', deviceId]);
+      return result.affectedRows > 0;
+    }
+    
+    return false;
+}
 
 }
 
