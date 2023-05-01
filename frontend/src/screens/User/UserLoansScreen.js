@@ -25,13 +25,46 @@ const UserLoans = () => {
   const [listData, setListData] = useState([]);
   const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
 
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
 
   const getListData = async () => {
     const userId = 1;
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/loans/loansCurrent/${userId}`
-      );
+        `${API_BASE_URL}/loans/loansCurrent/${userId}`, {
+          headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiRGVwdCBvZiBDb21wdXRlciBTY2llbmNlIiwiZW1haWwiOiJ1Y2FidGM1QHVjbC5hYy51ayIsImZ1bGxfbmFtZSI6IlRpbW90aHkgQ2hhbiIsImdpdmVuX25hbWUiOiJUaW1vdGh5IiwidXBpIjoidGNoYWExNSIsInNjb3BlTnVtYmVyIjozMCwiYXBpVG9rZW4iOiJ1Y2xhcGktdXNlci1lOTNlOGIyY2ViOWM4M2UtOTc2MTE4OGY5NTQ0MWJmLTJkNmQ2OTIyYjJkZDczZC02MTFlMDdjMGI3ZTliMmUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2ODI5NDc2NjN9.rOkFIr0pC5MKLIXPLJ1NVzvGkmPy0wZykrMr6GGMhi4` },
+        });
       console.log("Received data from API:", response.data);
   
       if (response.data) {
