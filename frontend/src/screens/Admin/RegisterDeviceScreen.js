@@ -197,6 +197,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontSize: 16,
     marginBottom: 12,
+    backgroundColor: 'lightgray',
+    color: 'gray'
   },
   label: {
     fontSize: 16,
