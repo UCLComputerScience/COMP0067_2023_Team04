@@ -8,7 +8,6 @@ class Loan {
     this.dueDate = dueDate;
     this.deviceId = deviceId;
     this.exten = exten;
-    this.returnDate = returnDate;
   }
 
   //for AdminScheduleScreen.js (loads devices reserved & overdue/due this week) ****TODO****
@@ -52,7 +51,7 @@ class Loan {
   // for GeneralDeviceAdmin.js (given name of a device, find all associated loan history)
   static async getLoanHistoryByName(name) {
     let sql = `SELECT 
-               l.loanId, l.userId, l.startDate, l.dueDate, l.deviceId, l.exten, l.returnDate, d.name
+               l.loanId, l.userId, l.startDate, l.dueDate, l.deviceId, l.exten, d.name
                FROM loan l
                JOIN device d ON l.deviceId = d.deviceId
                WHERE d.name = ?`;

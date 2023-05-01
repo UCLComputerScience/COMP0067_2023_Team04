@@ -10,7 +10,7 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
-
+SET GLOBAL event_scheduler = ON;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -73,6 +73,7 @@ DROP TABLE IF EXISTS `loan`;
 CREATE TABLE IF NOT EXISTS `loan` (
   `loanId` int(11) NOT NULL AUTO_INCREMENT,
   `userId` varchar(255) DEFAULT NULL,
+  `userEmail` varchar(255) DEFAULT NULL,
   `startDate` date DEFAULT NULL,
   `dueDate` date DEFAULT NULL,
   `deviceId` CHAR(36) DEFAULT NULL,
@@ -87,18 +88,27 @@ COMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 -- note that startDate = start of reservation
 -- exten refers to how many times a loan has been extended
-INSERT INTO `loan` (`loanId`, `userId`, `startDate`, `dueDate`, `deviceId`, `exten`)
+INSERT INTO `loan` (`loanId`, `userId`, `userEmail`, `startDate`, `dueDate`, `deviceId`, `exten`)
 VALUES
-(1, 'tchaa15', '2023-01-01', '2023-05-06', 'fb73ee46-e7ac-11ed-93d2-6045bdd1583d', 0),
-(2, 'tchaa15', '2023-02-05', '2024-02-20', 'dab4de3d-e7ac-11ed-93d2-6045bdd1583d', 1),
-(3, 'zliul37', '2023-03-10', '2024-03-25', 'efbe9ea8-e7ab-11ed-93d2-6045bdd1583d', 0),
-(4, 'zliul37', '2023-04-01', '2024-04-16', '051d4e1a-e7ac-11ed-93d2-6045bdd1583d', 0),
-(5, 'zliul37', '2023-05-01', '2024-05-16', '09a5423b-e7ac-11ed-93d2-6045bdd1583d', 1),
-(6, 'tchaa15', '2023-05-08', '2024-06-16', 'a411ce8b-e7ac-11ed-93d2-6045bdd1583d', 0),
-(7, 'jhudx92', '2023-06-01', '2024-07-16', 'aad7cc2c-e7ac-11ed-93d2-6045bdd1583d', 0),
-(8, 'zliul37', '2023-07-01', '2024-08-16', 'aea90655-e7ac-11ed-93d2-6045bdd1583d', 1),
-(9, 'jhudx92', '2023-08-01', '2024-09-16', 'b397e028-e7ac-11ed-93d2-6045bdd1583d', 0),
-(10,'jhudx92', '2023-09-01', '2024-10-16', 'bacf5a3c-e7ac-11ed-93d2-6045bdd1583d', 0),
-(11,'tchaa15', '2023-10-01', '2024-11-16', 'c3ce447d-e7ac-11ed-93d2-6045bdd1583d', 1),
-(12,'tchaa15', '2023-11-01', '2024-12-16', 'cdf8c212-e7ac-11ed-93d2-6045bdd1583d', 0),
-(13,'jhudx92', '2023-12-01', '2025-01-16', 'dff5d4ba-e7ac-11ed-93d2-6045bdd1583d', 0);
+(1, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-01-01', '2023-05-06', 'fb73ee46-e7ac-11ed-93d2-6045bdd1583d', 0),
+(2, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-02-05', '2024-02-20', 'dab4de3d-e7ac-11ed-93d2-6045bdd1583d', 1),
+(3, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-03-10', '2024-03-25', 'efbe9ea8-e7ab-11ed-93d2-6045bdd1583d', 0),
+(4, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-04-01', '2024-04-16', '051d4e1a-e7ac-11ed-93d2-6045bdd1583d', 0),
+(5, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-05-01', '2024-05-16', '09a5423b-e7ac-11ed-93d2-6045bdd1583d', 1),
+(6, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-05-08', '2024-06-16', 'a411ce8b-e7ac-11ed-93d2-6045bdd1583d', 0),
+(7, 'jhudx92', 'ucabj38@ucl.ac.uk', '2023-06-01', '2024-07-16', 'aad7cc2c-e7ac-11ed-93d2-6045bdd1583d', 0),
+(8, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-07-01', '2024-08-16', 'aea90655-e7ac-11ed-93d2-6045bdd1583d', 1),
+(9, 'jhudx92', 'ucabj38@ucl.ac.uk', '2023-08-01', '2024-09-16', 'b397e028-e7ac-11ed-93d2-6045bdd1583d', 0),
+(10,'jhudx92', 'ucabj38@ucl.ac.uk', '2023-09-01', '2024-10-16', 'bacf5a3c-e7ac-11ed-93d2-6045bdd1583d', 0),
+(11,'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-10-01', '2024-11-16', 'c3ce447d-e7ac-11ed-93d2-6045bdd1583d', 1),
+(12,'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-11-01', '2024-12-16', 'cdf8c212-e7ac-11ed-93d2-6045bdd1583d', 0),
+(13,'jhudx92', 'ucabj38@ucl.ac.uk', '2023-12-01', '2025-01-16', 'dff5d4ba-e7ac-11ed-93d2-6045bdd1583d', 0);
+
+DROP EVENT IF EXISTS `change_device_state`;
+CREATE EVENT IF NOT EXISTS `change_device_state`
+ON SCHEDULE EVERY 1 WEEK STARTS CURRENT_DATE + INTERVAL (6 - DAYOFWEEK(CURRENT_DATE) + 7) % 7 DAY + INTERVAL '23:59:59' HOUR_SECOND
+ON COMPLETION PRESERVE
+DO
+  UPDATE devices
+  SET state = 'Available'
+  WHERE state = 'Reserved';

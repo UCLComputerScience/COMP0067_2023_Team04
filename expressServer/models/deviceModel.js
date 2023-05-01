@@ -9,7 +9,6 @@ class Device {
     this.name = name;
     this.ruleExt = ruleExt;
     this.ruleDur = ruleDur;
-    this.qrCode = qrCode;
     this.storage = storage;
     this.launchYr = launchYr;
     this.cost = cost;
