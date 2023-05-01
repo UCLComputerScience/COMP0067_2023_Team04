@@ -13,6 +13,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 const AdminSettingsScreen = () => {
   const { logout } = useContext(AuthContext);
+  const navigation = useNavigation();
 
   const handlelogout = () => {
     Alert.alert(
@@ -25,7 +26,7 @@ const AdminSettingsScreen = () => {
         },
         {
           text: "Yes",
-          onPress: () => logout(),
+          onPress: () => navigation.navigate("LoginTabScreen"),
         },
       ],
       { cancelable: false }

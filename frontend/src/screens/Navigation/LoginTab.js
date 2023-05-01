@@ -111,7 +111,12 @@ const LoginTabScreen = () => {
   }, []);
 
   const navigation = useNavigation();
-  const { loginAsAdmin, loginAsUser } = useContext(AuthContext);
+  const loginAsAdmin = () => {
+    navigation.navigate("AdminTabs");
+  };
+  const loginAsUser = () => {
+    navigation.navigate("UserTabs");
+  };
   return (
     <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
       <Button title="SSO Login" onPress={getRedirectUri} />
@@ -120,58 +125,24 @@ const LoginTabScreen = () => {
     </SafeAreaView>
   );
 };
+
 const Stack = createStackNavigator();
 const LoginTab = () => {
-  const [userRole, setUserRole] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
-
-  const loginAsAdmin = () => {
-    setUserRole("admin");
-    setAccessToken("your_admin_access_token");
-  };
-  const loginAsUser = () => {
-    setUserRole("user");
-    setAccessToken("your_user_access_token");
-  };
-  const logout = () => {
-    setUserRole(null);
-    setAccessToken(null);
-  };
-  const authContextValue = {
-    userRole,
-    setUserRole,
-    accessToken,
-    setAccessToken,
-    loginAsAdmin,
-    loginAsUser,
-    logout,
-  };
-
   return (
-    <AuthContext.Provider value={authContextValue}>
-      <NavigationContainer linking={linking}>
-        {userRole ? (
-          userRole === "admin" ? (
-            <AdminTabs />
-          ) : (
-            <UserTabs />
-          )
-        ) : (
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-              headerLeft: null,
-              gestureEnabled: false,
-              headerBackVisible: false,
-            }}
-          >
-            <Stack.Screen name="LoginTabScreen" component={LoginTabScreen} />
-            <Stack.Screen name="AdminTabs" component={AdminTabs} />
-            <Stack.Screen name="UserTabs" component={UserTabs} />
-          </Stack.Navigator>
-        )}
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <NavigationContainer linking={linking}>
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+          headerLeft: null,
+          gestureEnabled: false,
+          headerBackVisible: false,
+        }}
+      >
+        <Stack.Screen name="LoginTabScreen" component={LoginTabScreen} />
+        <Stack.Screen name="AdminTabs" component={AdminTabs} />
+        <Stack.Screen name="UserTabs" component={UserTabs} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
 
