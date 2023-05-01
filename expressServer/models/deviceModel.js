@@ -82,17 +82,6 @@ class Device {
     return result.affectedRows > 0;
   }
 
-/*  
-  // More methods
-
-  // 15
-  static async getAllDevicesUser() {
-    let sql = 'SELECT name, launchedyear, available FROM devices'; // Assuming the table name is 'devices'
-    const [rows] = await db.execute(sql);
-    return rows;
-  }
-
-*/
 }
 
 module.exports = Device;

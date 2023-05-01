@@ -34,9 +34,8 @@ CREATE TABLE IF NOT EXISTS `device` (
   `details` varchar(255) DEFAULT NULL,
   `category` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
-  `ruleExt` tinyint(1) DEFAULT NULL,
+  `ruleExt` int(11) DEFAULT NULL,
   `ruleDur` int(11) DEFAULT NULL,
-  `qrCode` int(11) DEFAULT NULL,
   `storage` varchar(255) DEFAULT NULL,
   `launchYr` int(11) DEFAULT NULL,
   `cost` double(10,2) DEFAULT NULL,
@@ -46,10 +45,11 @@ CREATE TABLE IF NOT EXISTS `device` (
 --
 -- 转存表中的数据 `device`
 -- deviceIds are UUIDs
+-- ruleExt refers to how many times a renewal can be made
 
 INSERT INTO `device` (`deviceId`, `state`, `details`, `category`, `name`, `ruleExt`, `ruleDur`, `storage`, `launchYr`, `cost`) VALUES
 ('fb73ee46-e7ac-11ed-93d2-6045bdd1583d', 'Available', '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", "GPU": "RTX 3070ti 8G 150W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070ti', 1, 14, 'A1', 2022, 1000.00),
-('dab4de3d-e7ac-11ed-93d2-6045bdd1583d', 'Reserved', '{"CPU": "Intel Core i7-12700H Octo-core 16 threads", "GPU": "RTX 3070 8G 140W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070', 0, 7, 'A2', 2022, 900.00),
+('dab4de3d-e7ac-11ed-93d2-6045bdd1583d', 'Reserved', '{"CPU": "Intel Core i7-12700H Octo-core 16 threads", "GPU": "RTX 3070 8G 140W", "Memory": "DDR5 16GB 4800Hz Dual", "SSD": "SAMSUNG PM9A1 512GB", "Screen": "2.5K (2560*1600) 16:10 165Hz", "Power": "300W", "WIFI": "AX211"}', 'Laptop', 'Lenovo Legion Y9000P 2022 RTX 3070', 1, 7, 'A2', 2022, 900.00),
 ('efbe9ea8-e7ab-11ed-93d2-6045bdd1583d', 'Loaned', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "13.3-inch Retina Display", "Ports": "2 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Air 2022', 1, 14, 'A3', 2022, 1300.00),
 ('051d4e1a-e7ac-11ed-93d2-6045bdd1583d', 'Available', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "14-inch Retina Display", "Ports": "3 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Pro 2022 14-inch', 1, 14, 'A4', 2022, 1500.00),
 ('09a5423b-e7ac-11ed-93d2-6045bdd1583d', 'Available', '{"CPU": "M1 Pro 10-Core", "Memory": "16GB Unified", "SSD": "512GB", "Screen": "16-inch Retina Display", "Ports": "3 x Thunderbolt 4"}', 'Laptop', 'Apple MacBook Pro 2022 16-inch', 1, 14, 'A5', 2022, 1700.00),
@@ -72,12 +72,11 @@ INSERT INTO `device` (`deviceId`, `state`, `details`, `category`, `name`, `ruleE
 DROP TABLE IF EXISTS `loan`;
 CREATE TABLE IF NOT EXISTS `loan` (
   `loanId` int(11) NOT NULL AUTO_INCREMENT,
-  `userId` int(11) DEFAULT NULL,
+  `userId` varchar(255) DEFAULT NULL,
   `startDate` date DEFAULT NULL,
   `dueDate` date DEFAULT NULL,
   `deviceId` CHAR(36) DEFAULT NULL,
-  `exten` tinyint(1) DEFAULT NULL,
-  `returnDate` date DEFAULT NULL,
+  `exten` int(11) DEFAULT NULL,
   PRIMARY KEY (`loanId`),
   KEY `deviceId` (`deviceId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -86,19 +85,20 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-INSERT INTO `loan` (`loanId`, `userId`, `startDate`, `dueDate`, `deviceId`, `exten`, `returnDate`)
+-- note that startDate = start of reservation
+-- exten refers to how many times a loan has been extended
+INSERT INTO `loan` (`loanId`, `userId`, `startDate`, `dueDate`, `deviceId`, `exten`)
 VALUES
-(1, 1, '2022-01-01', '2024-01-15', 'fb73ee46-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
-(2, 1, '2022-02-05', '2024-02-20', 'dab4de3d-e7ac-11ed-93d2-6045bdd1583d', 1, NULL),
-(3, 2, '2022-03-10', '2024-03-25', 'efbe9ea8-e7ab-11ed-93d2-6045bdd1583d', 0, NULL),
-(4, 2, '2022-04-01', '2024-04-16', '051d4e1a-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
-(5, 2, '2022-05-01', '2024-05-16', '09a5423b-e7ac-11ed-93d2-6045bdd1583d', 1, NULL),
-(6, 1, '2022-06-01', '2024-06-16', 'a411ce8b-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
-(7, 3, '2022-07-01', '2024-07-16', 'aad7cc2c-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
-(8, 2, '2022-08-01', '2024-08-16', 'aea90655-e7ac-11ed-93d2-6045bdd1583d', 1, NULL),
-(9, 3, '2022-09-01', '2024-09-16', 'b397e028-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
-(10, 3, '2022-10-01', '2024-10-16', 'bacf5a3c-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
-(11, 1, '2022-11-01', '2024-11-16', 'c3ce447d-e7ac-11ed-93d2-6045bdd1583d', 1, NULL),
-(12, 1, '2022-12-01', '2024-12-16', 'cdf8c212-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
-(13, 3, '2023-01-01', '2025-01-16', 'dff5d4ba-e7ac-11ed-93d2-6045bdd1583d', 0, NULL);
+(1, 'tchaa15', '2023-01-01', '2023-05-06', 'fb73ee46-e7ac-11ed-93d2-6045bdd1583d', 0),
+(2, 'tchaa15', '2023-02-05', '2024-02-20', 'dab4de3d-e7ac-11ed-93d2-6045bdd1583d', 1),
+(3, 'zliul37', '2023-03-10', '2024-03-25', 'efbe9ea8-e7ab-11ed-93d2-6045bdd1583d', 0),
+(4, 'zliul37', '2023-04-01', '2024-04-16', '051d4e1a-e7ac-11ed-93d2-6045bdd1583d', 0),
+(5, 'zliul37', '2023-05-01', '2024-05-16', '09a5423b-e7ac-11ed-93d2-6045bdd1583d', 1),
+(6, 'tchaa15', '2023-05-08', '2024-06-16', 'a411ce8b-e7ac-11ed-93d2-6045bdd1583d', 0),
+(7, 'jhudx92', '2023-06-01', '2024-07-16', 'aad7cc2c-e7ac-11ed-93d2-6045bdd1583d', 0),
+(8, 'zliul37', '2023-07-01', '2024-08-16', 'aea90655-e7ac-11ed-93d2-6045bdd1583d', 1),
+(9, 'jhudx92', '2023-08-01', '2024-09-16', 'b397e028-e7ac-11ed-93d2-6045bdd1583d', 0),
+(10,'jhudx92', '2023-09-01', '2024-10-16', 'bacf5a3c-e7ac-11ed-93d2-6045bdd1583d', 0),
+(11,'tchaa15', '2023-10-01', '2024-11-16', 'c3ce447d-e7ac-11ed-93d2-6045bdd1583d', 1),
+(12,'tchaa15', '2023-11-01', '2024-12-16', 'cdf8c212-e7ac-11ed-93d2-6045bdd1583d', 0),
+(13,'jhudx92', '2023-12-01', '2025-01-16', 'dff5d4ba-e7ac-11ed-93d2-6045bdd1583d', 0);
