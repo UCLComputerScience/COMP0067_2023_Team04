@@ -1,7 +1,6 @@
 import {
   View,
   Text,
-  ScrollView,
   StyleSheet,
   TouchableOpacity,
   FlatList,
@@ -14,9 +13,12 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
+
+
 const AdminLoans = () => {
-  // All loan information, where id is the device ID
   const [loanTable, setLoanTable] = useState([]);
+  const [currentTab, setCurrentTab] = useState("Overdue");
+  const [filteredData, setFilteredData] = useState([]);
 
   async function getJwtToken() {
     try {
@@ -34,38 +36,30 @@ const AdminLoans = () => {
     }
   }
 
-const fetchData = async () => {
-  try {
-    const jwtToken = await getJwtToken();
-    console.log('Token:   ',jwtToken);
-    const response = await axios.get(`${API_BASE_URL}/loans`, {
-      headers: {
-        Authorization: `Bearer ${jwtToken}`,
-      }
-    });
+  const fetchData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/loans`, {
+        headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiRGVwdCBvZiBDb21wdXRlciBTY2llbmNlIiwiZW1haWwiOiJ1Y2FidGM1QHVjbC5hYy51ayIsImZ1bGxfbmFtZSI6IlRpbW90aHkgQ2hhbiIsImdpdmVuX25hbWUiOiJUaW1vdGh5IiwidXBpIjoidGNoYWExNSIsInNjb3BlTnVtYmVyIjozMCwiYXBpVG9rZW4iOiJ1Y2xhcGktdXNlci1lOTNlOGIyY2ViOWM4M2UtOTc2MTE4OGY5NTQ0MWJmLTJkNmQ2OTIyYjJkZDczZC02MTFlMDdjMGI3ZTliMmUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2ODI5NDc2NjN9.rOkFIr0pC5MKLIXPLJ1NVzvGkmPy0wZykrMr6GGMhi4` },
+      });
 
-    setLoanTable(
-      response.data.map((loan) => ({
-        id: loan.deviceId,
-        name: `Device ${loan.deviceId}`,
-        returnDate: loan.dueDate.substring(0, 10),
-        user: loan.userId,
-        state: new Date(loan.dueDate) >= new Date() ? "Loan" : "Returned",
-      }))
-    );
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
+      setLoanTable(
+        response.data.map((loan) => ({
+          id: loan.deviceId,
+          name: `Device ${loan.deviceId}`,
+          returnDate: loan.dueDate.substring(0, 10),
+          user: loan.userId,
+          state: new Date(loan.dueDate) >= new Date() ? "Loan" : "Returned",
+        }))
+      );
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   useEffect(() => {
     fetchData();
   }, []);
-
-  const navigation = useNavigation();
-
-  const [currentTab, setCurrentTab] = useState("Overdue");
-  const [filteredData, setFilteredData] = useState([]);
 
   const filterData = (tab) => {
     const filtered = loanTable.filter((item) => {
@@ -85,11 +79,12 @@ const fetchData = async () => {
     setCurrentTab(tab);
     filterData(tab);
   };
+
   useEffect(() => {
-    fetchData().then(() => {
-      filterData(currentTab);
-    });
-  }, []);
+    filterData(currentTab);
+  }, [loanTable]);
+
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
