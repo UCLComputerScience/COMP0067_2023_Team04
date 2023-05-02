@@ -38,50 +38,48 @@ const CollapsibleList = () => {
   /*please notice. We only load this week data*/
   //device with state 'reserved' or ('loan' && 'duedate < friday'
   /*please notice. We only load this week data*/
-  const loanTable = [
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      user: "ucabj38",
-      state: "Loan",
-      startDate: "2023-03-21",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      user: "ucabj38",
-      state: "Loan",
-      startDate: "2023-03-14",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      user: "ucabj38",
-      state: "Loan",
-      startDate: "2023-03-15",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      user: "ucabj38",
-      state: "Loan",
-      startDate: "2023-03-16",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      user: "ucabj38",
-      state: "Loan",
-      startDate: "2023-03-17",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      user: "ucabj38",
-      state: "Loan",
-      startDate: "2023-03-18",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      user: "ucabj38",
-      state: "Loan",
-      startDate: "2023-03-19",
-    },
-  ];
+
+  const [loanTable, setLoanTable] = useState([]);
+
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
+
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
+  const fetchData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/schedule`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+
+      setLoanTable(
+        response.data.map((loan) => ({
+          id: loan.deviceId,
+          name: `Device ${loan.deviceId}`,
+          returnDate: loan.dueDate.substring(0, 10),
+          user: loan.userId,
+          state: new Date(loan.dueDate) >= new Date() ? "Loan" : "Returned",
+        }))
+      );      
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
 
   const now = new Date();
 
@@ -106,8 +104,10 @@ const CollapsibleList = () => {
   };
 
   useEffect(() => {
+    fetchData();
     filterData(currentTab);
-  }, [currentTab]);
+  }, [loanTable, currentTab]);
+  
 
   const handleTabPress = (tab) => {
     setCurrentTab(tab);
