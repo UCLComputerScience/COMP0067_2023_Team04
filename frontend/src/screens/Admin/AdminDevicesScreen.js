@@ -18,125 +18,54 @@ import RegisterDeviceScreen from "./RegisterDeviceScreen";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 
 const AllDevices = () => {
+
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
+
   const navigation = useNavigation();
-  //All devices with counts
-  const initialDevices = [
+  /*const initialDevices = [
     {
       name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
       loaned: "10",
       available: "5",
       category: "Laptop",
     },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070",
-      loaned: "6",
-      available: "9",
-      category: "Laptop",
-    },
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3060",
-      loaned: "3",
-      available: "8",
-      category: "Laptop",
-    },
-    {
-      name: "Dell XPS 13 2022",
-      loaned: "2",
-      available: "3",
-      category: "Laptop",
-    },
-    {
-      name: "MacBook Pro M1 2021",
-      loaned: "5",
-      available: "7",
-      category: "MacBook",
-    },
-    {
-      name: "ASUS ROG Zephyrus S GX701",
-      loaned: "4",
-      available: "2",
-      category: "Laptop",
-    },
-    {
-      name: "Lenovo Legion Y740",
-      loaned: "6",
-      available: "4",
-      category: "Laptop",
-    },
-    {
-      name: "Acer Predator Helios 300",
-      loaned: "7",
-      available: "3",
-      category: "Laptop",
-    },
-    {
-      name: "MSI GE76 Raider",
-      loaned: "2",
-      available: "8",
-      category: "Laptop",
-    },
-    {
-      name: "Razer Blade Pro 17",
-      loaned: "1",
-      available: "9",
-      category: "Laptop",
-    },
-    {
-      name: "Alienware m15 R4",
-      loaned: "4",
-      available: "6",
-      category: "Laptop",
-    },
-    {
-      name: "HP Spectre x360",
-      loaned: "0",
-      available: "10",
-      category: "Laptop",
-    },
-    {
-      name: "iPhone 14 Pro Max",
-      loaned: "3",
-      available: "10",
-      category: "iPhone",
-    },
-    {
-      name: "AMD Ryzen 9 5950X CPU",
-      loaned: "2",
-      available: "8",
-      category: "CPU",
-    },
-    {
-      name: "NVIDIA GeForce RTX 3080 GPU",
-      loaned: "5",
-      available: "3",
-      category: "GPU",
-    },
-    {
-      name: "Samsung Galaxy S21 Ultra",
-      loaned: "1",
-      available: "9",
-      category: "Android",
-    },
-    {
-      name: "Intel Core i9-11900K CPU",
-      loaned: "3",
-      available: "7",
-      category: "CPU",
-    },
-    {
-      name: "ASUS ROG Strix RTX 3070 GPU",
-      loaned: "4",
-      available: "4",
-      category: "GPU",
-    },
-    {
-      name: "Google Pixel 6 Pro",
-      loaned: "2",
-      available: "8",
-      category: "Android",
-    },
-  ];
+  ];*/
 
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
+  const fetchData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/nameAvailability`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+
+      initialDevices
+        response.data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);  
+
+  
   const [input, setInput] = useState("");
   const [devices, setDevices] = useState(initialDevices);
   const [sortOrder, setSortOrder] = useState("asc");
