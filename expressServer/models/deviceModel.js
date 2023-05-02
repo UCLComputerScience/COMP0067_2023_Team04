@@ -50,22 +50,6 @@ class Device {
       GROUP BY name, launchYr, category`);
     return rows;
   }
-
-  static async getDeviceSummary() {
-    let sql = `
-      SELECT
-        d.name,
-        SUM(CASE WHEN d.state = 'Available' THEN 1 ELSE 0 END) AS available_count,
-        SUM(CASE WHEN d.state = 'Reserved' THEN 1 ELSE 0 END) AS reserved_count,
-        SUM(CASE WHEN l.deviceId IS NOT NULL AND d.state = 'Loaned' THEN 1 ELSE 0 END) AS on_loan_count
-      FROM device d
-      LEFT JOIN loan l ON d.deviceId = l.deviceId AND l.returnDate IS NULL
-      GROUP BY d.name
-    `;
-  
-    const [rows] = await db.execute(sql);
-    return rows;
-  }
   
   // for GeneralDeviceAdmin.js (given name of device, find its details, the first row found - or any row for that matter - will do)
   static async getDetailsByDeviceName(name) {
@@ -86,7 +70,7 @@ class Device {
   }
 
   // updates state of the device based on JSON object //for returning, borrowing devices, changing device state to maintanence or scrapped
-  static async updateDeviceState(deviceId, newState) {
+  static async updateState(deviceId, newState) {
     let sql = 'UPDATE device SET state = ? WHERE deviceId = ?';
     const [result] = await db.execute(sql, [newState, deviceId]);
     return result.affectedRows > 0;
