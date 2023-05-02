@@ -83,10 +83,25 @@ class Device {
 
   // inserts database entry based on JSON object
   static async addDevice(device) {
-    let sql = 'INSERT INTO device SET ?';
-    const [result] = await db.query(sql, device);
+    const sql = `INSERT INTO device 
+                (deviceId, registerDate, state, details, category, name, ruleExt, ruleDur, storage, launchYr, cost, issues) 
+                VALUES (?, CURRENT_DATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [
+      device.deviceId, 
+      device.state, 
+      device.details, 
+      device.category, 
+      device.name, 
+      device.ruleExt, 
+      device.ruleDur, 
+      device.storage, 
+      device.launchYr, 
+      device.cost, 
+      device.issues
+    ];
+    const [result] = await db.query(sql, values);
     if(result.affectedRows > 0) {
-      return device.deviceId;
+      return device.deviceId; //returns UUID for device
     }
     return null;
   }
@@ -113,19 +128,12 @@ class Device {
     return false;
   }
 
-// Checks if the device is reserved by the same user and updates the state to 'Available'
-  static async cancelReservation(deviceId, upi) {
-    const sqlCheck = 'SELECT userId FROM loan WHERE deviceId = ? ORDER BY startDate DESC LIMIT 1';
-    const sqlUpdate = 'UPDATE device SET state = ? WHERE deviceId = ?';
-    
-    const [rows] = await db.query(sqlCheck, [deviceId]);
-    if (rows.length > 0 && rows[0].userId === upi) {
-      const [result] = await db.query(sqlUpdate, ['Available', deviceId]);
-      return result.affectedRows > 0;
-    }
-    
-    return false;
-}
+  // for cancel reservation: cancel reservation for a specific device
+  static async cancelReservation(deviceId) {
+    const sql = 'UPDATE device SET state = ? WHERE deviceId = ?';
+    const [result] = await db.execute(sql, ['Available', deviceId]);
+    return result.affectedRows > 0;
+  }
 
 }
 

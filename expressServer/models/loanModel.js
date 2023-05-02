@@ -103,7 +103,7 @@ class Loan {
   return result.affectedRows;
 }
 
-  // create a new loan
+  // Create a new loan
   static async createLoan(loan) {
     const isAvailable = await deviceModel.isDeviceAvailable(loan.deviceId);
 
@@ -119,6 +119,58 @@ class Loan {
     }
 
     return null;
+  }
+
+  // Cancel Reservations
+  // for cancel reservation: get deviceId for a specific loan
+  static async getDeviceIdByLoan(loanId) {
+    const sql = 'SELECT deviceId FROM loan WHERE loanId = ?';
+    const [rows] = await db.execute(sql, [loanId]);
+    return rows.length ? rows[0].deviceId : null;
+  }
+
+  // for cancel reservation's userId check
+  static async getUserIdByLoan(loanId) {
+    const sql = 'SELECT userId FROM loan WHERE loanId = ?';
+    const [rows] = await db.execute(sql, [loanId]);
+    return rows.length ? rows[0].userId : null;
+  }
+  
+  // for cancel reservation: remove a loan by its ID 
+  static async removeLoan(loanId) {
+    const sql = 'DELETE FROM loan WHERE loanId = ?';
+    const [result] = await db.execute(sql, [loanId]);
+    return result.affectedRows > 0;
+  }
+
+  // Renew Loans
+  // Get the number of remaining renewals
+  static async getRemainingRenewals(loanId) {
+    const sql = 'SELECT device.ruleExt, loan.exten FROM loan INNER JOIN device ON loan.deviceId = device.deviceId WHERE loan.loanId = ?';
+    const [rows] = await db.execute(sql, [loanId]);
+    if (rows.length > 0) {
+      const { ruleExt, exten } = rows[0];
+      return ruleExt - exten;
+    }
+    return null;
+  }
+
+  // renew a loan
+  static async renewLoan(loanId) {
+    const remainingRenewals = await this.getRemainingRenewals(loanId);
+    if (remainingRenewals > 0) {
+      const sql = 'UPDATE loan INNER JOIN device ON loan.deviceId = device.deviceId SET loan.dueDate = DATE_ADD(loan.dueDate, INTERVAL device.ruleDur DAY), loan.exten = loan.exten + 1 WHERE loan.loanId = ?';
+      const [result] = await db.execute(sql, [loanId]);
+      return result.affectedRows > 0;
+    }
+    return false;
+  }
+
+  // Loan is marked complete after the device is returned.
+  static async completeLoan(deviceId) {
+    const sql = 'UPDATE loan SET returnedDate = CURRENT_DATE() WHERE deviceId = ? AND returnedDate IS NULL';
+    const [result] = await db.execute(sql, [deviceId]);
+    return result.affectedRows > 0;
   }
 }
 

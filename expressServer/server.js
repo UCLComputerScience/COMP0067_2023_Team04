@@ -4,7 +4,7 @@ require("dotenv").config(); // ALLOWS ENVIRONMENT VARIABLES TO BE SET ON PROCESS
 const express = require("express");
 const session = require("express-session");
 const oauthRouter = require('./oauth/index.js');
-const verifyToken = require('./oauth/verifyToken');
+const verifyToken = require('./oauth/verifyToken').verifyToken;
 const fs = require('fs');
 const cors = require("cors");
 

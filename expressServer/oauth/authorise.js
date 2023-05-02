@@ -1,12 +1,11 @@
 // expressServer/oauth/authorise.js
 const API_URL = process.env.API_URL;
 const CLIENT_ID = process.env.CLIENT_ID;
-// const CALLBACK_URL = process.env.CALLBACK_URL;
 
 const authorise = async (req, res) => {
   const state = Math.floor(Math.random() * 100) + 1;
   const redirectURL = decodeURIComponent(
-    req.query.return || "exp://10.97.180.108:19000/--/Schedule"
+    req.query.return || "exp://192.168.72.237:19000/--/Schedule"
   );
   const url = `${API_URL}/oauth/authorise/?client_id=${CLIENT_ID}&state=${state}`;
 
