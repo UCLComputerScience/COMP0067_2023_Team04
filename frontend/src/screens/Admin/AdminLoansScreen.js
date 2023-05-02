@@ -40,7 +40,7 @@ const AdminLoans = () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/loans`, {
-        headers: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkZXBhcnRtZW50IjoiRGVwdCBvZiBDb21wdXRlciBTY2llbmNlIiwiZW1haWwiOiJ1Y2FidGM1QHVjbC5hYy51ayIsImZ1bGxfbmFtZSI6IlRpbW90aHkgQ2hhbiIsImdpdmVuX25hbWUiOiJUaW1vdGh5IiwidXBpIjoidGNoYWExNSIsInNjb3BlTnVtYmVyIjozMCwiYXBpVG9rZW4iOiJ1Y2xhcGktdXNlci1lOTNlOGIyY2ViOWM4M2UtOTc2MTE4OGY5NTQ0MWJmLTJkNmQ2OTIyYjJkZDczZC02MTFlMDdjMGI3ZTliMmUiLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE2ODI5NDc2NjN9.rOkFIr0pC5MKLIXPLJ1NVzvGkmPy0wZykrMr6GGMhi4` },
+        headers: { Authorization: `Bearer ${jwtToken}` },
       });
 
       setLoanTable(
