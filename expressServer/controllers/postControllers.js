@@ -37,7 +37,7 @@ exports.getDeviceById = async (req, res, next) => {
   }
 };
 
-//for AdminDevicesScreen.js (gets deviceName, num_loaned, num_available, category)
+//for AdminDevicesScreen.js (gets name, num_loaned, num_available, category)
 exports.getDevicesByNameAvailability = async (req, res, next) => {
   try {
     const devices = await deviceModel.getDevicesByNameAvailability();
@@ -47,7 +47,7 @@ exports.getDevicesByNameAvailability = async (req, res, next) => {
   }
 };
 
-// for UserDevicesScreen.js (gets deviceName, launchedYear, num_available, category)
+// for UserDevicesScreen.js (gets name, launchedYear, num_available, category)
 exports.getDevicesByNameAvailabilityUser = async (req, res, next) => {
   try {
     const devices = await deviceModel.getDevicesByNameAvailabilityUser();

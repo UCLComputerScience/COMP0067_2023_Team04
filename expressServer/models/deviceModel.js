@@ -27,6 +27,17 @@ class Device {
     return rows[0];
   }
 
+  static async getDevicesByNameAvailability() {
+    const sql = `SELECT name,category,
+                 SUM(IF(state = 'Loaned', 1, 0)) AS num_loaned,
+                 SUM(IF(state = 'Available', 1, 0)) AS num_available
+                 FROM device
+                GROUP BY name, category`;
+    
+    const [rows] = await db.execute(sql);
+    return rows;
+  }
+
   // for UserDevicesScreen.js (gets name, launchYr, num_available, category)
   static async getDevicesByNameAvailabilityUser() {
     const [rows] = await db.execute(`
