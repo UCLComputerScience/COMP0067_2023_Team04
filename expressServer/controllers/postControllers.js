@@ -129,7 +129,7 @@ exports.getLoanHistoryByName = async (req, res, next) => {
 // for PastDeviceScreen.js (returns all loan history for a specific user)
 exports.getLoanHistoryByUser = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.authData.upi;
     const loanHistory = await loanModel.getLoanHistoryByUser(userId);
     res.status(200).json(loanHistory);
   } catch (error) {
@@ -140,7 +140,7 @@ exports.getLoanHistoryByUser = async (req, res, next) => {
 // for UserAppointmentScreen.js (selects loans where the state is reserved and userID is userID)
 exports.getReservedByUser = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.authData.upi;
     const reservedDevices = await loanModel.getReservedByUser(userId);
     res.status(200).json(reservedDevices);
   } catch (error) {
@@ -151,7 +151,7 @@ exports.getReservedByUser = async (req, res, next) => {
 // for UserLoansScreen.js (returns all current loans for a specific user)
 exports.getCurrentLoans = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.authData.upi;
     const currentLoans = await loanModel.getCurrentLoans(userId);
     res.status(200).json(currentLoans);
   } catch (error) {
@@ -198,8 +198,8 @@ exports.addDevice = (req, res) => {
 // creates a new loan
 exports.createLoan = async (req, res) => {
   try {
-    const userId = req.user.upi;
-    const userEmail = req.user.email;
+    const userId = req.authData.upi;
+    const userEmail = req.authData.email;
     const deviceId = req.body.deviceId;
     const loan = { userId, userEmail, deviceId };
 
