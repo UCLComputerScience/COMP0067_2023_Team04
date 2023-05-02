@@ -1,5 +1,6 @@
 const deviceModel = require('../models/deviceModel');
 const loanModel = require('../models/loanModel');
+const statsModel = require('../models/statsModel');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
@@ -320,20 +321,100 @@ exports.writeAdminContactInfo = (req, res) => {
   });
 };
 
-// Cancel a reservation
+// cancels a reservation, used by a user
 exports.cancelReservation = async (req, res) => {
-  const deviceId = req.params.id;
-  const upi = req.authData.upi;
-
+  const { loanId } = req.params;
+  const userUpi = req.user.upi;
   try {
-    const result = await deviceModel.cancelReservation(deviceId, upi);
-    if (result) {
-      res.send({ message: "Reservation cancelled successfully" });
+    const userId = await loanModel.getUserIdByLoan(loanId);
+    if (userUpi !== userId) {
+      return res.status(403).send({ message: "You are not authorized to cancel this reservation" });
+    }
+
+    const deviceId = await loanModel.getDeviceIdByLoan(loanId);
+    if (deviceId) {
+      const successDevice = await deviceModel.cancelReservation(deviceId);
+      const successLoan = await loanModel.removeLoan(loanId);
+      if (successDevice && successLoan) {
+        res.send({ message: "Reservation cancelled and loan entry deleted successfully" });
+      } else {
+        res.status(400).send({ message: "Device not found, not reserved or loan not found" });
+      }
     } else {
-      res.status(400).send({ message: "Reservation could not be cancelled, possibly because it was not made by the current user" });
+      res.status(400).send({ message: "Loan not found" });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).send({ message: "An error occurred while cancelling the reservation" });
+    res.status(500).send({ message: "An error occurred", error });
+  }
+};
+
+// Get the number of remaining renewals
+exports.getRemainingRenewals = async (req, res) => {
+  const { loanId } = req.params;
+  try {
+    const remainingRenewals = await loanModel.getRemainingRenewals(loanId);
+    if (remainingRenewals !== null) {
+      res.send({ remainingRenewals });
+    } else {
+      res.status(404).send({ message: "Loan not found" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "An error occurred", error });
+  }
+};
+
+// Renew a loan
+exports.renewLoan = async (req, res) => {
+  const { loanId } = req.params;
+  try {
+    const success = await loanModel.renewLoan(loanId);
+    if (success) {
+      res.send({ message: "Loan renewed successfully" });
+    } else {
+      res.status(400).send({ message: "Loan not found or no remaining renewals" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "An error occurred", error });
+  }
+};
+
+// Returns a device and thus marks the loan complete and changes device state back to available.
+exports.returnDevice = async (req, res) => {
+  const { deviceId } = req.params;
+  try {
+    const loanCompleted = await loanModel.completeLoan(deviceId);
+    if (loanCompleted) {
+      const deviceStateUpdated = await deviceModel.updateDeviceState(deviceId, 'Available');
+      if (deviceStateUpdated) {
+        res.send({ message: "Loan marked as completed and device returned" });
+      } else {
+        res.status(400).send({ message: "Device not found" });
+      }
+    } else {
+      res.status(400).send({ message: "Loan not found or already completed" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "An error occurred", error });
+  }
+};
+
+// Retrieves statistics on loans and devices, at the present moment, and during the current year
+exports.getCurrentStats = async (req, res) => {
+  try {
+    const stats = await statsModel.getCurrentStats();
+    res.json(stats);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch current stats' });
+  }
+};
+
+exports.getYearlyStats = async (req, res) => {
+  try {
+    const stats = await statsModel.getYearlyStats();
+    res.json(stats);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch yearly stats' });
   }
 };
