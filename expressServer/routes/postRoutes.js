@@ -32,9 +32,9 @@ router.post('/addDevice/', verifyAdmin, postControllers.addDevice); //enter new 
 router.post('/device/return/:deviceId', verifyAdmin, postControllers.returnDevice); //used when physically returning a device, by its ID
 
 // Admin POST file writing methods
-router.post("/writeUserTerms", verifyAdmin, postControllers.writeUserTerms);
-router.post("/writeManagerSchedule", verifyAdmin, postControllers.writeManagerSchedule);
-router.post("/writeAdminContactInfo", verifyAdmin, postControllers.writeAdminContactInfo);
+router.post("/writeUserTerms", verifyAdmin, postControllers.writeUserTerms); //**--------**
+router.post("/writeManagerSchedule", verifyAdmin, postControllers.writeManagerSchedule); //**--------**
+router.post("/writeAdminContactInfo", verifyAdmin, postControllers.writeAdminContactInfo); //**--------**
 
 // Both GET file reading methods
 router.get("/readUserTerms", verifyToken, postControllers.readUserTerms); //both, UserTermScreen.js
@@ -57,7 +57,7 @@ router.put('/cancelReservation/:id', verifyToken, postControllers.cancelReservat
 
 // User Loan renewal methods
 router.get("/remainingRenewals/:loanId", verifyToken, postControllers.getRemainingRenewals);
-router.put("/renew/:loanId", verifyToken, postControllers.renewLoan); // for GeneralDeviceExtendScreen.js (extend specific device by its (or loan's???) ID)
+router.put("/renew/:loanId", verifyToken, postControllers.renewLoan); // **--------** for GeneralDeviceExtendScreen.js (extend specific device by loanId) 
 
 // Miscellaneous methods
 router.get("/loans", verifyToken, postControllers.getAllLoans);
