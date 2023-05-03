@@ -28,8 +28,8 @@ router.get('/stats/yearly', verifyAdmin, postControllers.getYearlyStats);
 router.put('/changeState/:id', verifyAdmin, postControllers.updateDeviceState); // **--------** changes device state to state specified in JSON object, id is deviceId
 
 // Admin POST methods
-router.post('/addDevice/', verifyAdmin, postControllers.addDevice); //enter new device into database
-router.post('/device/return/:deviceId', verifyAdmin, postControllers.returnDevice); //used when physically returning a device, by its ID
+router.post('/addDevice/', verifyAdmin, postControllers.addDevice); //**--------** enter new device into database
+router.post('/return/:deviceId', verifyAdmin, postControllers.returnDevice); //**--------** used when physically returning a device, by its ID
 
 // Admin POST file writing methods
 router.post("/writeUserTerms", verifyAdmin, postControllers.writeUserTerms); //**--------**
@@ -50,7 +50,7 @@ router.get("/reservedUser", verifyToken, postControllers.getReservedByUser); // 
 router.get("/loansCurrent", verifyToken, postControllers.getCurrentLoans); // for UserLoansScreen.js (returns all current loans for a specific user)
 
 // User POST methods
-router.post('/createLoan/', verifyToken, postControllers.createLoan); // create a new loan (with state 'Reserved')
+router.post('/createLoan/deviceId', verifyToken, postControllers.createLoan); // create a new loan (with state 'Reserved')
 
 // User PUT methods
 router.put('/cancelReservation/:id', verifyToken, postControllers.cancelReservation); // **--------** id is loanId

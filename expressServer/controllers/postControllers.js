@@ -183,28 +183,33 @@ exports.updateDeviceState = async (req, res) => {
   }
 };
 
-// enters a new device into the database
-exports.addDevice = (req, res) => {
+exports.addDevice = async (req, res) => {
   let device = req.body;
-  device.deviceId = uuidv4();  // generate a UUID
+  device.deviceId = uuidv4(); // generate a UUID
 
-  deviceModel.addDevice(device, (err, result) => {
-      if(err) {
-          console.error(err);
-          return res.status(500).json({ error: 'An error occurred while adding the device' });
-      }
-      console.log(result);
-      res.status(201).json({ message: 'Device added...', deviceId: device.deviceId });
-  });
+  try {
+    const result = await deviceModel.addDevice(device);
+    console.log(result);
+    res.status(201).json({ message: 'Device added...', deviceId: device.deviceId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while adding the device' });
+  }
 };
+
 
 // creates a new loan
 exports.createLoan = async (req, res) => {
   try {
     const userId = req.authData.upi;
     const userEmail = req.authData.email;
-    const deviceId = req.body.deviceId;
+    const deviceId = req.params.deviceId;
     const loan = { userId, userEmail, deviceId };
+
+    // check if device is available
+    if (!isDeviceAvailable(deviceId)){
+      return res.status(403).json({message: 'Device is not available.'})
+    }
 
     const loanId = await loanModel.createLoan(loan);
 

@@ -83,16 +83,16 @@ class Device {
                 VALUES (?, CURRENT_DATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
     const values = [
       device.deviceId, 
-      device.state, 
-      device.details, 
-      device.category, 
-      device.name, 
-      device.ruleExt, 
-      device.ruleDur, 
-      device.storage, 
-      device.launchYr, 
-      device.cost, 
-      device.issues
+      device.state || null, 
+      device.details || null, 
+      device.category || null, 
+      device.name || null, 
+      device.ruleExt || null, 
+      device.ruleDur || null, 
+      device.storage || null, 
+      device.launchYr || null, 
+      device.cost || null, 
+      device.issues || null
     ];
     const [result] = await db.query(sql, values);
     if(result.affectedRows > 0) {
