@@ -26,8 +26,10 @@ const CollapsibleList = () => {
   const currentScreenPath = route.name;
   const currentScreenUrl = Linking.createURL(currentScreenPath);
 
-  console.log("Current Screen URL:", currentScreenUrl);
-  const [currentTab, setCurrentTab] = useState("today");
+  useEffect(() => {
+    console.log("Current Screen URL:", currentScreenUrl);
+  }, []);
+    const [currentTab, setCurrentTab] = useState("today");
   const navigation = useNavigation();
   const [filteredData, setFilteredData] = useState([]);
   const [expandedDays, setExpandedDays] = useState([]);
@@ -63,9 +65,8 @@ const CollapsibleList = () => {
     }
   }
 
-  const fetchData = async () => {
+  const fetchData = async (jwtToken) => {
     try {
-      const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/schedule`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
@@ -85,9 +86,15 @@ const CollapsibleList = () => {
   };
 
   useEffect(() => {
-    fetchData();
-    filterData(currentTab);
+    const fetchDataWithJwtToken = async () => {
+      const jwtToken = await getJwtToken();
+      fetchData(jwtToken);
+      filterData(currentTab);
+    };
+
+    fetchDataWithJwtToken();
   }, [loanTable, currentTab]);
+
 
 
   const now = new Date();
