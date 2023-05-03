@@ -14,24 +14,14 @@ class Loan {
 
   //for AdminScheduleScreen.js (loads devices reserved & overdue/due this week) ****TODO****
   static async getSchedule() {
-    let sql = `SELECT loan.*, device.name 
-               FROM loan
-               INNER JOIN device ON loan.deviceId = device.deviceId
-               WHERE WEEKOFYEAR(loan.startDate) = WEEKOFYEAR(CURDATE())`;
-    const [rows] = await db.execute(sql);
-    return rows;
-  }
+    const sql = `
+    SELECT loanId, userId, userEmail, startDate, dueDate, deviceId, exten, returnedDate
+    FROM loan
+    WHERE (WEEK(startDate) = WEEK(CURRENT_DATE) AND YEAR(startDate) = YEAR(CURRENT_DATE)) OR
+    ((dueDate <= CURRENT_DATE + INTERVAL (7 - DAYOFWEEK(CURRENT_DATE)) DAY) AND returnedDate IS NULL)
+    ORDER BY startDate;
+    `;
 
-  // for AdminScheduleScreen.js (loads devices reserved this week and due by the end of this week)
-  static async getSchedule() {
-    let sql = `SELECT *
-              FROM loan
-              INNER JOIN device ON loan.deviceId = device.deviceId
-              WHERE (device.state = 'Reserved' OR device.state = 'Loaned')
-              AND WEEK(loan.startDate) = WEEK(NOW())
-              AND YEAR(loan.startDate) = YEAR(NOW())
-              AND WEEK(loan.dueDate) = WEEK(NOW())
-              AND YEAR(loan.dueDate) = YEAR(NOW())`;
     const [rows] = await db.execute(sql);
     return rows;
   }

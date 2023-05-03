@@ -11,7 +11,8 @@ class StatsModel {
     const sqlOverdue = `
     SELECT COUNT(*) as overdue
     FROM loan
-    WHERE state = 'Loaned' AND dueDate < CURDATE() AND returnedDate IS NULL
+    JOIN device ON loan.deviceId = device.deviceId
+    WHERE device.state = 'Loaned' AND dueDate < CURDATE() AND returnedDate IS NULL
     `;
 
     const [stateResults] = await db.execute(sqlCurrentStats);

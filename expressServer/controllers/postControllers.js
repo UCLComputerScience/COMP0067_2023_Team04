@@ -4,15 +4,6 @@ const statsModel = require('../models/statsModel');
 const { v4: uuidv4 } = require('uuid');
 const fs = require('fs');
 const path = require('path');
-const isUserAdmin = require('../oauth/isUserAdmin');
-
-async function authorizedAction(upi, res, action) {
-  const isAdmin = await isUserAdmin(upi);
-  if (!isAdmin) {
-    return res.status(403).send("You are not authorized to perform this action");
-  }
-  action();
-}
 
 exports.getAllDevices = async (req, res, next) => {
   try {
@@ -54,24 +45,6 @@ exports.getDevicesByNameAvailabilityUser = async (req, res, next) => {
     res.status(200).json(devices);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching devices for user by name and availability', error });
-  }
-};
-
-// Misc
-exports.getDeviceSummary = async (req, res) => {
-  try {
-    const deviceSummary = await deviceModel.getDeviceSummary();
-    res.status(200).json({
-      status: 'success',
-      data: {
-        deviceSummary,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: 'error',
-      message: 'An error occurred while fetching the device summary',
-    });
   }
 };
 
@@ -156,7 +129,7 @@ exports.getLoanHistoryByName = async (req, res, next) => {
 // for PastDeviceScreen.js (returns all loan history for a specific user)
 exports.getLoanHistoryByUser = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.authData.upi;
     const loanHistory = await loanModel.getLoanHistoryByUser(userId);
     res.status(200).json(loanHistory);
   } catch (error) {
@@ -167,7 +140,7 @@ exports.getLoanHistoryByUser = async (req, res, next) => {
 // for UserAppointmentScreen.js (selects loans where the state is reserved and userID is userID)
 exports.getReservedByUser = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.authData.upi;
     const reservedDevices = await loanModel.getReservedByUser(userId);
     res.status(200).json(reservedDevices);
   } catch (error) {
@@ -178,7 +151,7 @@ exports.getReservedByUser = async (req, res, next) => {
 // for UserLoansScreen.js (returns all current loans for a specific user)
 exports.getCurrentLoans = async (req, res, next) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.authData.upi;
     const currentLoans = await loanModel.getCurrentLoans(userId);
     res.status(200).json(currentLoans);
   } catch (error) {
@@ -186,25 +159,10 @@ exports.getCurrentLoans = async (req, res, next) => {
   }
 };
 
-// for GeneralDeviceExtendScreen.js (extend specific device by its ID)
-exports.extendLoanById = async (req, res, next) => {
-  try {
-    const deviceId = req.params.id;
-    const updatedLoan = await loanModel.extendLoanById(deviceId);
-    if (updatedLoan) {
-      res.status(200).json({ message: 'Loan extended successfully', updatedLoan });
-    } else {
-      res.status(404).json({ message: 'Loan not found for the given device ID' });
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Error extending loan', error });
-  }
-};
-
 // updates device state to state specified in JSON object
 exports.updateDeviceState = (req, res) => {
   let newState = req.body.state;
-  let deviceId = req.params.deviceId;
+  let deviceId = req.params.id;
 
   // Validate the state
   const validStates = ['Available', 'Reserved', 'Loaned', 'Maintenance', 'Scrapped'];
@@ -240,8 +198,8 @@ exports.addDevice = (req, res) => {
 // creates a new loan
 exports.createLoan = async (req, res) => {
   try {
-    const userId = req.user.upi;
-    const userEmail = req.user.email;
+    const userId = req.authData.upi;
+    const userEmail = req.authData.email;
     const deviceId = req.body.deviceId;
     const loan = { userId, userEmail, deviceId };
 
@@ -290,13 +248,11 @@ exports.readManagerSchedule = (req, res) => {
 
 // write manager schedule (for manager only)
 exports.writeManagerSchedule = (req, res) => {
-  authorizedAction(req.user.upi, res, () => {
-    const filePath = path.join(__dirname, '../managersSchedule.txt');
-    const content = req.body.content;
-    fs.writeFile(filePath, content, 'utf8', (err) => {
-      if (err) return res.status(500).send("Error writing to file");
-      return res.send({message: "File written successfully"});
-    });
+  const filePath = path.join(__dirname, '../managersSchedule.txt');
+  const content = req.body.content;
+  fs.writeFile(filePath, content, 'utf8', (err) => {
+    if (err) return res.status(500).send("Error writing to file");
+    return res.send({message: "File written successfully"});
   });
 };
 
@@ -311,26 +267,18 @@ exports.readAdminContactInfo = (req, res) => {
 
 // write contact info of admins (for manager only)
 exports.writeAdminContactInfo = (req, res) => {
-  authorizedAction(req.user.upi, res, () => {
-    const filePath = path.join(__dirname, '../adminContactInfo.txt');
-    const content = req.body.content;
-    fs.writeFile(filePath, content, 'utf8', (err) => {
-      if (err) return res.status(500).send("Error writing to file");
-      return res.send({message: "File written successfully"});
-    });
+  const filePath = path.join(__dirname, '../adminContactInfo.txt');
+  const content = req.body.content;
+  fs.writeFile(filePath, content, 'utf8', (err) => {
+    if (err) return res.status(500).send("Error writing to file");
+    return res.send({message: "File written successfully"});
   });
 };
 
 // cancels a reservation, used by a user
 exports.cancelReservation = async (req, res) => {
-  const { loanId } = req.params;
-  const userUpi = req.user.upi;
+  const { loanId } = req.params.id;
   try {
-    const userId = await loanModel.getUserIdByLoan(loanId);
-    if (userUpi !== userId) {
-      return res.status(403).send({ message: "You are not authorized to cancel this reservation" });
-    }
-
     const deviceId = await loanModel.getDeviceIdByLoan(loanId);
     if (deviceId) {
       const successDevice = await deviceModel.cancelReservation(deviceId);
@@ -350,7 +298,7 @@ exports.cancelReservation = async (req, res) => {
 
 // Get the number of remaining renewals
 exports.getRemainingRenewals = async (req, res) => {
-  const { loanId } = req.params;
+  let loanId = req.params.loanId;
   try {
     const remainingRenewals = await loanModel.getRemainingRenewals(loanId);
     if (remainingRenewals !== null) {
@@ -363,9 +311,26 @@ exports.getRemainingRenewals = async (req, res) => {
   }
 };
 
+/*
+// for GeneralDeviceExtendScreen.js (extend specific device by its ID)
+exports.extendLoanById = async (req, res, next) => {
+  try {
+    const deviceId = req.params.id;
+    const updatedLoan = await loanModel.extendLoanById(deviceId);
+    if (updatedLoan) {
+      res.status(200).json({ message: 'Loan extended successfully', updatedLoan });
+    } else {
+      res.status(404).json({ message: 'Loan not found for the given device ID' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error extending loan', error });
+  }
+};
+*/
+
 // Renew a loan
 exports.renewLoan = async (req, res) => {
-  const { loanId } = req.params;
+  let loanId = req.params.loanId;
   try {
     const success = await loanModel.renewLoan(loanId);
     if (success) {
@@ -380,7 +345,7 @@ exports.renewLoan = async (req, res) => {
 
 // Returns a device and thus marks the loan complete and changes device state back to available.
 exports.returnDevice = async (req, res) => {
-  const { deviceId } = req.params;
+  let deviceId = req.params.deviceId;
   try {
     const loanCompleted = await loanModel.completeLoan(deviceId);
     if (loanCompleted) {

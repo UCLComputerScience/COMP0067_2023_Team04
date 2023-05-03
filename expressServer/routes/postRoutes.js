@@ -32,9 +32,9 @@ router.post('/addDevice/', verifyAdmin, postControllers.addDevice); //enter new 
 router.post('/device/return/:deviceId', verifyAdmin, postControllers.returnDevice); //used when physically returning a device, by its ID
 
 // Admin POST file writing methods
-router.post("/writeUserTerms", verifyAdmin, postControllers.writeUserTerms);
-router.post("/writeManagerSchedule", verifyAdmin, postControllers.writeManagerSchedule);
-router.post("/writeAdminContactInfo", verifyAdmin, postControllers.writeAdminContactInfo);
+router.post("/writeUserTerms", verifyAdmin, postControllers.writeUserTerms); //**--------**
+router.post("/writeManagerSchedule", verifyAdmin, postControllers.writeManagerSchedule); //**--------**
+router.post("/writeAdminContactInfo", verifyAdmin, postControllers.writeAdminContactInfo); //**--------**
 
 // Both GET file reading methods
 router.get("/readUserTerms", verifyToken, postControllers.readUserTerms); //both, UserTermScreen.js
@@ -44,9 +44,10 @@ router.get("/readAdminContactInfo", verifyToken, postControllers.readAdminContac
 // User GET methods
 router.get("/nameAvailabilityUser", verifyToken, postControllers.getDevicesByNameAvailabilityUser); // for UserDevicesScreen.js (gets deviceName, launchedYear, num_available, category)
 router.get("/deviceByName/:name", verifyToken, postControllers.getDevicebyName); // for GeneralDeviceUser.js (returns details of first available device by its name)
-router.get("/loansUser/", verifyToken, postControllers.getLoanHistoryByUser); // for PastDeviceScreen.js (returns all loan history for a specific user)
-router.get("/reservedUser/", verifyToken, postControllers.getReservedByUser); // for UserAppointmentScreen.js (selects loans where the the state is reserved and userID is userID)
-router.get("/loansCurrent/", verifyToken, postControllers.getCurrentLoans); // for UserLoansScreen.js (returns all current loans for a specific user)
+
+router.get("/loansUser", verifyToken, postControllers.getLoanHistoryByUser); // for PastDeviceScreen.js (returns all loan history for a specific user) 
+router.get("/reservedUser", verifyToken, postControllers.getReservedByUser); // for UserAppointmentScreen.js (selects loans where the the state is reserved and userID is userID)
+router.get("/loansCurrent", verifyToken, postControllers.getCurrentLoans); // for UserLoansScreen.js (returns all current loans for a specific user)
 
 // User POST methods
 router.post('/createLoan/', verifyToken, postControllers.createLoan); // create a new loan (with state 'Reserved')
@@ -56,12 +57,12 @@ router.put('/cancelReservation/:id', verifyToken, postControllers.cancelReservat
 
 // User Loan renewal methods
 router.get("/remainingRenewals/:loanId", verifyToken, postControllers.getRemainingRenewals);
-router.put("/renew/:loanId", verifyToken, postControllers.renewLoan); // for GeneralDeviceExtendScreen.js (extend specific device by its (or loan's???) ID)
+router.put("/renew/:loanId", verifyToken, postControllers.renewLoan); // **--------** for GeneralDeviceExtendScreen.js (extend specific device by loanId) 
 
 // Miscellaneous methods
 router.get("/loans", verifyToken, postControllers.getAllLoans);
 router.get("/loans/:id", verifyToken, postControllers.getLoanById);
-router.get("/summary", verifyToken, postControllers.getDeviceSummary);
+
 // no methods for UserSettingsScreen.js
 
 module.exports = router;

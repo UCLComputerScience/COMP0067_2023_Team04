@@ -1,5 +1,5 @@
 Monday: 10:00 - 12:00,
 Tuesday: 09:00 - 12:30,
 Wednesday: 10:00 - 14:00,
-Thursday: 14:00 - 16:00",
+Thursday: 14:00 - 16:00,
 Friday: 13:00 - 14:00
