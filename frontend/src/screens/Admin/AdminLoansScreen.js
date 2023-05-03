@@ -40,7 +40,7 @@ const AdminLoans = () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/loans`, {
-        headers: { Authorization: `Bearer ${jwtToken}}` },
+        headers: { Authorization: `Bearer ${jwtToken}` },
       });
       setLoanTable(
         response.data.map((loan) => ({
