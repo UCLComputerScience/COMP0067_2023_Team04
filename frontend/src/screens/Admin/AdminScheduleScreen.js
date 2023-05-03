@@ -89,11 +89,10 @@ const CollapsibleList = () => {
     const fetchDataWithJwtToken = async () => {
       const jwtToken = await getJwtToken();
       fetchData(jwtToken);
-      filterData(currentTab);
     };
-
+  
     fetchDataWithJwtToken();
-  }, [loanTable, currentTab]);
+  }, []);
 
 
 
