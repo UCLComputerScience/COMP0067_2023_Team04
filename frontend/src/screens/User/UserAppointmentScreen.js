@@ -31,10 +31,9 @@ const UserAppointmentScreen = () => {
   const [listData, setListData] = useState([]);
 
   const getListData = async () => {
-    const userId = 1;
     try {
       const response = await axios.get(
-        `${API_BASE_URL}/loans/reservedUser/${userId}`
+        `${API_BASE_URL}/loans/reservedUser`
       );
       console.log("Received data from API:", response.data);
       setDevice(response.data);
