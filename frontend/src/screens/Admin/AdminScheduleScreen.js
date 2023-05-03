@@ -93,7 +93,7 @@ const CollapsibleList = () => {
         renderItem={({ item, index }) => (
           <TouchableOpacity
             style={styles.dataRow}
-            onPress={() => handleRowPress(index)}
+            onPress={() => handleRowPress(item)}
           >
             <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
             <Text style={[styles.userText, { flex: 1, textAlign: "center" }]}>
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
-    alignItems: "left",
+    alignItems: "flex-start",
   },
   
   deviceText: {
