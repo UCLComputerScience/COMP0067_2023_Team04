@@ -160,7 +160,7 @@ exports.getCurrentLoans = async (req, res, next) => {
 };
 
 // updates device state to state specified in JSON object
-exports.updateDeviceState = (req, res) => {
+exports.updateDeviceState = async (req, res) => {
   let newState = req.body.state;
   let deviceId = req.params.id;
 
@@ -170,14 +170,17 @@ exports.updateDeviceState = (req, res) => {
       return res.status(400).json({ error: 'Invalid state' });
   }
 
-  deviceModel.updateState(deviceId, newState, (err, result) => {
-      if(err) {
-          console.error(err);
-          return res.status(500).json({ error: 'An error occurred while updating the device state' });
-      }
-      console.log(result);
-      res.send('Device state updated...');
-  });
+  try {
+    const result = await deviceModel.updateState(deviceId, newState);
+    if (result) {
+      res.json({ message: 'Device state updated...', deviceId, newState });
+    } else {
+      res.status(500).json({ error: 'An error occurred while updating the device state' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while updating the device state' });
+  }
 };
 
 // enters a new device into the database
