@@ -32,6 +32,23 @@ const AllDevices = () => {
     },
   ];*/
 
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
+
   const processData = (data) => {
     return data.map((item) => ({
       name: item.name,
