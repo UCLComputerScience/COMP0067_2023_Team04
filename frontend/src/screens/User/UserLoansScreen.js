@@ -24,7 +24,7 @@ const UserLoans = () => {
   const navigation = useNavigation();
 
   const [listData, setListData] = useState([]);
-  const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
   async function getJwtToken() {
     try {
@@ -43,11 +43,10 @@ const UserLoans = () => {
   }
 
   const getListData = async () => {
-    const userId = 1;
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(
-        `${API_BASE_URL}/loans/loansCurrent/${userId}`, {
+        `${API_BASE_URL}/loans/loansCurrent`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
       console.log("Received data from API:", response.data);
