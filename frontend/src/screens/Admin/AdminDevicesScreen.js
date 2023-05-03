@@ -17,8 +17,7 @@ import StatisticsAdmin from "./StatisticsAdmin";
 import RegisterDeviceScreen from "./RegisterDeviceScreen";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import axios from "axios";
-import * from SecureStore from "expo-secure-store";
-
+import * as SecureStore from "expo-secure-store";
 
 const AllDevices = () => {
 
