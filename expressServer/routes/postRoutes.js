@@ -53,7 +53,7 @@ router.get("/loansCurrent", verifyToken, postControllers.getCurrentLoans); // fo
 router.post('/createLoan/', verifyToken, postControllers.createLoan); // create a new loan (with state 'Reserved')
 
 // User PUT methods
-router.put('/cancelReservation/:id', verifyToken, postControllers.cancelReservation);
+router.put('/cancelReservation/:id', verifyToken, postControllers.cancelReservation); // **---------** id is loanId
 
 // User Loan renewal methods
 router.get("/remainingRenewals/:loanId", verifyToken, postControllers.getRemainingRenewals);
