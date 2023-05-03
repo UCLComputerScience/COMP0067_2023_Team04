@@ -25,7 +25,7 @@ router.get('/stats/current', verifyAdmin, postControllers.getCurrentStats);
 router.get('/stats/yearly', verifyAdmin, postControllers.getYearlyStats);
 
 // Admin PUT methods
-router.put('/changeState/:id', verifyAdmin, postControllers.updateDeviceState); //changes device state to state specified in JSON object
+router.put('/changeState/:id', verifyAdmin, postControllers.updateDeviceState); // **--------** changes device state to state specified in JSON object, id is deviceId
 
 // Admin POST methods
 router.post('/addDevice/', verifyAdmin, postControllers.addDevice); //enter new device into database
@@ -53,7 +53,7 @@ router.get("/loansCurrent", verifyToken, postControllers.getCurrentLoans); // fo
 router.post('/createLoan/', verifyToken, postControllers.createLoan); // create a new loan (with state 'Reserved')
 
 // User PUT methods
-router.put('/cancelReservation/:id', verifyToken, postControllers.cancelReservation);
+router.put('/cancelReservation/:id', verifyToken, postControllers.cancelReservation); // **--------** id is loanId
 
 // User Loan renewal methods
 router.get("/remainingRenewals/:loanId", verifyToken, postControllers.getRemainingRenewals);

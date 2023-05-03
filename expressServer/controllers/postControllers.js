@@ -160,7 +160,7 @@ exports.getCurrentLoans = async (req, res, next) => {
 };
 
 // updates device state to state specified in JSON object
-exports.updateDeviceState = (req, res) => {
+exports.updateDeviceState = async (req, res) => {
   let newState = req.body.state;
   let deviceId = req.params.id;
 
@@ -170,14 +170,17 @@ exports.updateDeviceState = (req, res) => {
       return res.status(400).json({ error: 'Invalid state' });
   }
 
-  deviceModel.updateState(deviceId, newState, (err, result) => {
-      if(err) {
-          console.error(err);
-          return res.status(500).json({ error: 'An error occurred while updating the device state' });
-      }
-      console.log(result);
-      res.send('Device state updated...');
-  });
+  try {
+    const result = await deviceModel.updateState(deviceId, newState);
+    if (result) {
+      res.json({ message: 'Device state updated...', deviceId, newState });
+    } else {
+      res.status(500).json({ error: 'An error occurred while updating the device state' });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while updating the device state' });
+  }
 };
 
 // enters a new device into the database
@@ -277,9 +280,15 @@ exports.writeAdminContactInfo = (req, res) => {
 
 // cancels a reservation, used by a user
 exports.cancelReservation = async (req, res) => {
-  const { loanId } = req.params.id;
+  const loanId = req.params.id;
   try {
     const deviceId = await loanModel.getDeviceIdByLoan(loanId);
+    const userId = await loanModel.getUserIdByLoan(loanId);
+    // check userId = req.authData.upi
+    if (userId !== req.authData.upi){
+      console.log("User is not associated with loan.")
+      return res.status(403).send({ message: "User is not associated with loan." });
+    }
     if (deviceId) {
       const successDevice = await deviceModel.cancelReservation(deviceId);
       const successLoan = await loanModel.removeLoan(loanId);
@@ -349,7 +358,7 @@ exports.returnDevice = async (req, res) => {
   try {
     const loanCompleted = await loanModel.completeLoan(deviceId);
     if (loanCompleted) {
-      const deviceStateUpdated = await deviceModel.updateDeviceState(deviceId, 'Available');
+      const deviceStateUpdated = await deviceModel.updateState(deviceId, 'Available');
       if (deviceStateUpdated) {
         res.send({ message: "Loan marked as completed and device returned" });
       } else {
