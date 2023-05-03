@@ -40,16 +40,20 @@ const AdminLoans = () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/loans`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
+        headers: { Authorization: `Bearer ${jwtToken}}` },
       });
-
       setLoanTable(
         response.data.map((loan) => ({
           id: loan.deviceId,
           name: `Device ${loan.deviceId}`,
-          returnDate: loan.dueDate.substring(0, 10),
-          user: loan.userId,
-          state: new Date(loan.dueDate) >= new Date() ? "Loan" : "Returned",
+          startDate: loan.startDate.substring(0, 10),
+          dueDate: loan.dueDate.substring(0, 10),
+          userEmail: loan.userEmail,
+          userId: loan.userId,
+          loanId: loan.loanId,
+          exten: loan.exten,
+          returnedDate: loan.returnedDate ? loan.returnedDate.substring(0, 10) : null,
+          state: loan.returnedDate ? "Returned" : "Loan",
         }))
       );
     } catch (error) {
