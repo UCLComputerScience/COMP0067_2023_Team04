@@ -72,17 +72,23 @@ const LoginTabScreen = () => {
         const jwtToken =
           match && match[1] ? decodeURIComponent(match[1]) : null;
 
-        // 在此处记录 JWT 令牌
         console.log("JWT Token:", jwtToken);
 
-        // 这里可以将 jwtToken 发送给后端进行验证
-
-        try {
-          await SecureStore.setItemAsync("jwtToken", jwtToken);
-          console.log("JWT token 存储成功");
-        } catch (error) {
-          console.log("JWT token 存储失败:", error);
+        if (jwtToken) {
+          const existingToken = await SecureStore.getItemAsync("jwtToken");
+          if (!existingToken) {
+            try {
+              await SecureStore.setItemAsync("jwtToken", jwtToken);
+              console.log("JWT token 存储成功");
+            } catch (error) {
+              console.log("JWT token 存储失败:", error);
+            }
+          } else {
+            console.log("JWT token 已存在，跳过存储");
+            return; // 如果 JWT 令牌已存在，则立即返回
+          }
         }
+
         // const path = url.split("/--/")[1];
         // if (path === "Schedule") {
         //  navigation.navigate("AdminTabs");
