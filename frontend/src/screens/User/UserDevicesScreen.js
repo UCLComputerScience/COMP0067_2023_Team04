@@ -55,20 +55,8 @@ const AllDevices = () => {
   const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
   const [availableSortOrder, setAvailableSortOrder] = useState("asc");
 
-
-  const sortDevices = (order) => {
-    const sortedDevices = [...devices].sort((a, b) => {
-      if (order === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
-    setDevices(sortedDevices);
-  };
-
   const [device, setDevice] = useState(null);
-  const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
   const [listData, setListData] = useState([]);
 
