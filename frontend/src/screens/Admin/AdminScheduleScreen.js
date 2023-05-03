@@ -12,6 +12,10 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import * as Linking from "expo-linking";
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+
+
 
 const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"];
 
@@ -80,6 +84,11 @@ const CollapsibleList = () => {
     }
   };
 
+  useEffect(() => {
+    fetchData();
+    filterData(currentTab);
+  }, [loanTable, currentTab]);
+
 
   const now = new Date();
 
@@ -103,10 +112,7 @@ const CollapsibleList = () => {
     setFilteredData(filtered);
   };
 
-  useEffect(() => {
-    fetchData();
-    filterData(currentTab);
-  }, [loanTable, currentTab]);
+
   
 
   const handleTabPress = (tab) => {
