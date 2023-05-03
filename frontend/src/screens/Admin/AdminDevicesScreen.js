@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -16,6 +16,7 @@ import GeneralDeviceAdmin from "./GeneralDeviceAdmin";
 import StatisticsAdmin from "./StatisticsAdmin";
 import RegisterDeviceScreen from "./RegisterDeviceScreen";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
+import axios from "axios";
 
 const AllDevices = () => {
 
@@ -31,43 +32,36 @@ const AllDevices = () => {
     },
   ];*/
 
-  async function getJwtToken() {
-    try {
-      const jwtToken = await SecureStore.getItemAsync("jwtToken");
-      if (jwtToken) {
-        console.log("JWT token 获取成功:", jwtToken);
-        return jwtToken;
-      } else {
-        console.log("未找到 JWT token");
-        return null;
-      }
-    } catch (error) {
-      console.log("JWT token 获取失败:", error);
-      return null;
-    }
-  }
-
+  const processData = (data) => {
+    return data.map((item) => ({
+      name: item.name,
+      category: item.category,
+      loaned: parseInt(item.num_loaned),
+      available: parseInt(item.num_available),
+    }));
+  };
+  
   const fetchData = async () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/nameAvailability`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-
-      initialDevices
-        response.data;
+  
+      setDevices(processData(response.data));
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-
+  
   useEffect(() => {
     fetchData();
-  }, []);  
+  }, []);
+  
 
   
   const [input, setInput] = useState("");
-  const [devices, setDevices] = useState(initialDevices);
+  const [devices, setDevices] = useState([]);  
   const [sortOrder, setSortOrder] = useState("asc");
   const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
   const [availableSortOrder, setAvailableSortOrder] = useState("asc");
@@ -120,9 +114,9 @@ const AllDevices = () => {
 
   const filterDevicesByCategory = (category) => {
     if (category === "All") {
-      setDevices(initialDevices);
+      setDevices(fetchData);
     } else {
-      const filteredDevices = initialDevices.filter(
+      const filteredDevices = fetchData.filter(
         (device) => device.category === category
       );
       setDevices(filteredDevices);
