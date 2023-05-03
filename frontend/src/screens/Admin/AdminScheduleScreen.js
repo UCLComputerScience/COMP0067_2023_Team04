@@ -68,7 +68,7 @@ const CollapsibleList = () => {
   const getLoanState = (loanState) => {
     switch (loanState) {
       case "Loaned":
-        return "Returne";
+        return "Return";
       case "Reserved":
         return "Pick up";
       default:
@@ -88,7 +88,7 @@ const CollapsibleList = () => {
 
   const handleRowPress = (item) => {
     navigation.navigate("Detail", {
-      user: item.user,
+      id: item.id,
       state: item.state,
       startDate: item.startDate,
     });
@@ -105,7 +105,7 @@ const CollapsibleList = () => {
             style={styles.dataRow}
             onPress={() => handleRowPress(item)}
           >
-            <Text style={[styles.deviceText, { flex: 2 }]}>{item.name}</Text>
+            <Text style={[styles.deviceText, { flex: 2 }]}>{item.id}</Text>
             <Text style={[styles.userText, { flex: 1, textAlign: "center" }]}>
               {item.user}
             </Text>
