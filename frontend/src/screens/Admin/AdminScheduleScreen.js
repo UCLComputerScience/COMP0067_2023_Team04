@@ -56,16 +56,26 @@ const CollapsibleList = () => {
       setLoanTable(
         response.data.map((loan) => ({
           id: loan.deviceId,
-          name: `Device ${loan.deviceId}`,
-          returnDate: loan.dueDate.substring(0, 10),
           user: loan.userId,
-          state: new Date(loan.dueDate) >= new Date() ? "Loan" : "Returned",
+          state: getLoanState(loan.state),
         }))
       );
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
+  const getLoanState = (loanState) => {
+    switch (loanState) {
+      case "Loaned":
+        return "Returne";
+      case "Reserved":
+        return "Pick up";
+      default:
+        return loanState;
+    }
+  };
+  
 
   useEffect(() => {
     const fetchDataWithJwtToken = async () => {
