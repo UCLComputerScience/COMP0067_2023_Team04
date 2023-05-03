@@ -53,23 +53,39 @@ const AllDevices = () => {
     return data.map((item) => ({
       name: item.name,
       category: item.category,
-      loaned: parseInt(item.num_loaned),
-      available: parseInt(item.num_available),
+      loaned: item.num_loaned,
+      available: item.num_available,
     }));
   };
   
   const fetchData = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/nameAvailability`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+      if (jwtToken) {
+        console.log("正在使用 JWT token 发送请求:", jwtToken);
+        const response = await axios.get(`${API_BASE_URL}/nameAvailability`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
   
-      setDevices(processData(response.data));
+        if (response) {
+          console.log("成功获取数据:", response.data);
+        } else {
+          console.log("请求成功，但没有返回数据");
+        }
+  
+        setDevices(processData(response.data));
+      } else {
+        console.log("由于缺少 JWT token，未能发送请求");
+      }
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error("获取数据时出错:", error);
+      if (error.response) {
+        console.log("服务器响应状态码:", error.response.status);
+        console.log("服务器响应数据:", error.response.data);
+      }
     }
   };
+  
   
   useEffect(() => {
     fetchData();
