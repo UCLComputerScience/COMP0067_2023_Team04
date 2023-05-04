@@ -28,28 +28,46 @@ const UserAppointmentScreen = () => {
 
   const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
 
-  const [listData, setListData] = useState([]);
-
-  const getListData = async () => {
+  async function getJwtToken() {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/loans/reservedUser`
-      );
-      console.log("Received data from API:", response.data);
-      setDevice(response.data);
-  
-      if (response.data) {
-        setListData(response.data);
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
       }
     } catch (error) {
-      console.log("error = ", error);
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
+  const fetchData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/reservedUser`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+      setDevice([
+        {
+          id: response.data.deviceId,
+          name: response.data.name,
+          state: response.data.state === "Reserved" ? "Pick up" : "Return",
+        },
+      ]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
+  
+  
 
   useEffect(() => {
-    getListData();
+    fetchData();
   }, []);
-  
+
 
   const handleCanel = () => {
     Alert.alert(
