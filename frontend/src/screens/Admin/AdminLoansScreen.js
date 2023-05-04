@@ -137,7 +137,7 @@ const AdminLoans = () => {
                         {item.name}
                       </Text>
                       <Text style={[styles.user, { textAlign: "center" }]}>
-                        User ID: {item.user}
+                        User ID: {item.userId}
                       </Text>
                     </View>
                     <Text
