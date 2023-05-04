@@ -10,11 +10,12 @@ import { useRoute, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import { createStackNavigator } from "@react-navigation/stack";
+import * as SecureStore from "expo-secure-store";
 import axios from "axios";
 
 const GeneralDeviceAdminScreen = () => {
   //!!! replace :name with variables when dubug finished by Dr. Fu
-  const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params?.deviceName;
@@ -22,15 +23,31 @@ const GeneralDeviceAdminScreen = () => {
   console.log("route.params:", route.params);
   console.log("deviceName:", deviceName);
 
-  //Device info, still need to work on it\
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
 
   //Devices list from DB, successful
   const [device, setDevice] = useState("");
   const fetchDeviceData = async () => {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/details/Lenovo Legion Y9000P 2022 RTX 3070ti`
-      );
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/details/${deviceName}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });      
       console.log("Received data from API:", response.data);
       setDevice(response.data);
     } catch (error) {
@@ -43,29 +60,12 @@ const GeneralDeviceAdminScreen = () => {
 
   const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
 
-  /*const device = [
-    {
-      standardLoanDuration: 14,
-      extensionAllowance: 1,
-      summaryDetails:
-        '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
-                      "GPU": "RTX 3070ti 8G 150W", \
-                      "Memory": "DDR5 16GB 4800Hz Dual", \
-                      "SSD": "SAMSUNG PM9A1 512GB", \
-                      "Screen": "2.5K (2560*1600) 16:10 165Hz", \
-                      "Power": "300W", \
-                      "WIFI": "AX211"}',
-    },
-  ];
-  //const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);*/
-
-  //Devices list from DB, successful
   const [devices, setDevices] = useState({});
   const fetchDevicesData = async () => {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/idByName/Lenovo Legion Y9000P 2022 RTX 3070ti`
-      );
+      const response = await axios.get(`${API_BASE_URL}/idByName/${deviceName}`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
       //console.log("Received data from API:", response.data);
       setDevices(response.data);
     } catch (error) {
@@ -76,29 +76,12 @@ const GeneralDeviceAdminScreen = () => {
     fetchDevicesData();
   }, []);
 
-  //The ids of a same device
-  /*const devices = [
-    { id: 20220901001, state: "Loaned" },
-    { id: 20220901002, state: "Available" },
-    { id: 20220901003, state: "Maintained" },
-    { id: 20220901004, state: "Loaned" },
-    { id: 20220901005, state: "Loaned" },
-    { id: 20220901006, state: "Available" },
-    { id: 20220901007, state: "Loaned" },
-    { id: 20220901008, state: "Available" },
-    { id: 20220901009, state: "Available" },
-    { id: 20220901010, state: "Loaned" },
-    { id: 20220901011, state: "Available" },
-    { id: 20220901012, state: "Available" },
-  ];*/
-
-  //Devices list from DB, successful
   const [history, setHistory] = useState({});
   const fetchHistoryData = async () => {
     try {
-      const response = await axios.get(
-        `${API_BASE_URL}/loansHistoryByName/Lenovo Legion Y9000P 2022 RTX 3070ti`
-      );
+      const response = await axios.get(`${API_BASE_URL}/loansHistoryByName/${deviceName}`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
       //console.log("Received data from API:", response.data);
       setHistory(response.data);
     } catch (error) {
@@ -108,29 +91,6 @@ const GeneralDeviceAdminScreen = () => {
   useEffect(() => {
     fetchHistoryData();
   }, []);
-
-  /*const history = [
-    {
-      deviceID: 20220901001,
-      userID: "ucabcda",
-      date: "2023-03-21",
-    },
-    {
-      deviceID: 20220901001,
-      userID: "ucabccb",
-      date: "2023-03-20",
-    },
-    {
-      deviceID: 20220901002,
-      userID: "ucabcdb",
-      date: "2023-03-20",
-    },
-    {
-      deviceID: 20220901003,
-      userID: "ucabcdc",
-      date: "2023-03-19",
-    },
-  ];*/
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
