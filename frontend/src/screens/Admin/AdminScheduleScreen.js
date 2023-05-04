@@ -62,7 +62,8 @@ const CollapsibleList = () => {
       );
     } catch (error) {
       console.error("Error fetching data:", error);
-    }
+    };
+    console.log('API Response:', response.data);
   };
 
   const getLoanState = (loanState) => {
