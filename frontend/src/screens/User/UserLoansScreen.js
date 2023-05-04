@@ -45,8 +45,7 @@ const UserLoans = () => {
   const getListData = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(
-        `${API_BASE_URL}/loans/loansCurrent`, {
+      const response = await axios.get(`${API_BASE_URL}/loans/loansCurrent`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
       console.log("Received data from API:", response.data);
@@ -64,8 +63,6 @@ const UserLoans = () => {
     }
   };
   
-  
-  
   useEffect(() => {
     getListData();
   }, [currentTab]);
@@ -74,11 +71,6 @@ const UserLoans = () => {
     filterData(currentTab);
   }, [listData]);
   
-  
-  
-  
-  
-
   const filterData = (tab) => {
     const filtered = listData.filter((item) => {
       if (tab === "ongoing") {
@@ -124,14 +116,14 @@ const UserLoans = () => {
           <Text
             style={[
               styles.tabButtonText,
-              { color: currentTab === "history" ? "#000" : "#ccc" },
+              { color:           currentTab === "history" ? "#000" : "#ccc" },
             ]}
           >
             History
           </Text>
         </TouchableOpacity>
       </View>
-
+    
       <FlatList
         data={filteredData}
         extraData={filteredData}
@@ -172,7 +164,8 @@ const UserLoans = () => {
       />
     </View>
   );
-};
+};  
+
   
 
 const styles = StyleSheet.create({
