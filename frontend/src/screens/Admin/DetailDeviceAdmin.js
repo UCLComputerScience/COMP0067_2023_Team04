@@ -22,24 +22,43 @@ import * as FileSystem from "expo-file-system";
 const DetailDeviceAdmin = () => {
   const route = useRoute();
   const { deviceID } = route.params;
-  //console.log(deviceID);
 
-  //Fetch a detail device information with the input of id, the id is defined in variable above
-  const deviceInfo = {
-    deviceName: "Lenovo Legion Y9000P 2022 RTX 3070Ti",
-    //deviceID: "20220901001",
-    standardLoanDuration: "14",
-    extensionAllowance: "1",
-    storageLocation: "E17",
-    QRCode: "010 001 110 001 001 010 111 010 110 100 001 011 111 001 101",
-  };
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
-  const loanDetails = {
-    loanDate: "2022-03-21",
-    userID: "ucabcda",
-    deviceState: "Loan",
-    //how to achieve the status change? fetch from DB (require refresh) : change from frontend once clicked
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
+  const [device, setDevice] = useState("");
+  const fetchDeviceData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/devices/${deviceID}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });      
+      console.log("Received data from API:", response.data);
+      setDevice(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   };
+  useEffect(() => {
+    fetchDeviceData();
+  }, []);
+
+
 
   const navigation = useNavigation();
 
