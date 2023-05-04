@@ -21,26 +21,41 @@ import { createStackNavigator } from "@react-navigation/stack";
 const GeneralDeviceUserScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  //const deviceName = "hello";
-  const { deviceName } = route.params;
-  const [status, setStatus] = useState("Available");
-  const device = [
-    {
-      standardLoanDuration: 14,
-      extensionAllowance: 1,
-      summaryDetails:
-        '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
-                      "GPU": "RTX 3070ti 8G 150W", \
-                      "Memory": "DDR5 16GB 4800Hz Dual", \
-                      "SSD": "SAMSUNG PM9A1 512GB", \
-                      "Screen": "2.5K (2560*1600) 16:10 165Hz", \
-                      "Power": "300W", \
-                      "WIFI": "AX211"}',
-      available: "7",
-    },
-  ];
+  const {deviceName} = route.params;
 
-  const available = "7";
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
+  const [device, setDevice] = useState("");
+  const fetchDeviceData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/details/${deviceName}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });      
+      console.log("Received data from API:", response.data);
+      setDevice(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchDeviceData();
+  }, []);
+
 
   const timeSlot = [
     "Monday: 10:00 - 12:00",
