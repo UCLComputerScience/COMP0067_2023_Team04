@@ -58,6 +58,23 @@ const AllDevices = () => {
   const [device, setDevice] = useState(null);
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
+
+
   const [listData, setListData] = useState([]);
 
   const getListData = async () => {
@@ -75,6 +92,26 @@ const AllDevices = () => {
       }
     } catch (error) {
       console.log("error = ", error);
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/nameAvailabilityUser`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+      setDevice([
+        {
+          id: response.data.id,
+          name: response.data.name,
+          launchYr: response.data.launchYr,
+          num_available: response.data.num_available,
+          category: response.data.category,
+        },
+      ]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
