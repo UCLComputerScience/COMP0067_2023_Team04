@@ -69,6 +69,22 @@ const calculateChartData = (data) => {
   ];
 };
 
+async function getJwtToken() {
+  try {
+    const jwtToken = await SecureStore.getItemAsync("jwtToken");
+    if (jwtToken) {
+      console.log("JWT token 获取成功:", jwtToken);
+      return jwtToken;
+    } else {
+      console.log("未找到 JWT token");
+      return null;
+    }
+  } catch (error) {
+    console.log("JWT token 获取失败:", error);
+    return null;
+  }
+}
+
 export default function AdminSettingsScreen() {
   const [currentData, setCurrentData] = useState(null);
   const [yearlyData, setYearlyData] = useState(null);
@@ -78,12 +94,16 @@ export default function AdminSettingsScreen() {
     const fetchData = async () => {
       try {
         const currentResponse = await axios.get(
-          `${API_BASE_URL}/stats/current`
+          `${API_BASE_URL}/stats/current`, {
+            headers: { Authorization: `Bearer ${jwtToken}` },
+          }
         );
         setCurrentData(currentResponse.data);
 
         const yearlyResponse = await axios.get(
-          `${API_BASE_URL}/stats/yearly`
+          `${API_BASE_URL}/stats/yearly`, {
+            headers: { Authorization: `Bearer ${jwtToken}` },
+          }
         );
         setYearlyData(yearlyResponse.data);
       } catch (error) {
