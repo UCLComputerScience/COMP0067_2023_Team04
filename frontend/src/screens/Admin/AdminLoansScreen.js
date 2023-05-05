@@ -69,13 +69,11 @@ const AdminLoans = () => {
 
   const filterData = (tab) => {
     const filtered = loanTable.filter((item) => {
-      const returnedDate = new Date(item.returnedDate);
+      const dueDate = new Date(item.dueDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (tab === "Overdue") {
-        return (
-          item.state === "Loan" && returnedDate.getTime() < today.getTime()
-        );
+        return item.state === "Loan" && dueDate.getTime() < today.getTime();
       } else {
         return true;
       }
@@ -147,7 +145,7 @@ const AdminLoans = () => {
                     <Text
                       style={[styles.date, { flex: 1.4, textAlign: "center" }]}
                     >
-                      {item.returnedDate}
+                      {item.dueDate}
                     </Text>
                   </View>
                   <View style={styles.separator} />
@@ -159,13 +157,12 @@ const AdminLoans = () => {
           <FlatList
             data={filteredData}
             renderItem={({ item }) => {
-              const returnedDate = new Date(item.returnedDate);
+              const dueDate = new Date(item.dueDate);
               const today = new Date();
               today.setHours(0, 0, 0, 0);
 
               const isOverdue =
-                item.state === "Loan" &&
-                returnedDate.getTime() < today.getTime();
+                item.state === "Loan" && dueDate.getTime() < today.getTime();
               return (
                 <TouchableOpacity
                   onPress={() => {

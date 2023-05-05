@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
+import * as SecureStore from "expo-secure-store";
 
 const chartConfig = {
   backgroundColor: "#e26a00",
@@ -71,7 +72,6 @@ const calculateChartData = (data) => {
 
 async function getJwtToken() {
   try {
-    
     const jwtToken = await SecureStore.getItemAsync("jwtToken");
     if (jwtToken) {
       console.log("JWT token 获取成功:", jwtToken);
@@ -96,17 +96,16 @@ export default function AdminSettingsScreen() {
       try {
         const jwtToken = await getJwtToken();
         const currentResponse = await axios.get(
-          `${API_BASE_URL}/stats/current`, {
+          `${API_BASE_URL}/stats/current`,
+          {
             headers: { Authorization: `Bearer ${jwtToken}` },
           }
         );
         setCurrentData(currentResponse.data);
 
-        const yearlyResponse = await axios.get(
-          `${API_BASE_URL}/stats/yearly`, {
-            headers: { Authorization: `Bearer ${jwtToken}` },
-          }
-        );
+        const yearlyResponse = await axios.get(`${API_BASE_URL}/stats/yearly`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
         setYearlyData(yearlyResponse.data);
       } catch (error) {
         console.error("获取数据时出错:", error);
@@ -125,177 +124,176 @@ export default function AdminSettingsScreen() {
   }, [currentData]);
 
   const yearlyChartData = useMemo(() => {
-  if (yearlyData) {
-  return calculateYearlyChartData(yearlyData);
-  } else {
-  return [];
-  }
+    if (yearlyData) {
+      return calculateYearlyChartData(yearlyData);
+    } else {
+      return [];
+    }
   }, [yearlyData]);
-  
+
   const handleTabPress = (tab) => {
-  setCurrentTab(tab);
+    setCurrentTab(tab);
   };
-  
+
   return (
-  <View style={styles.container}>
-    <View style={styles.tabBar}>
-      <TouchableOpacity
-        style={[
-          styles.tabButton,
-          currentTab === "Current" && styles.activeTabButton,
-        ]}
+    <View style={styles.container}>
+      <View style={styles.tabBar}>
+        <TouchableOpacity
+          style={[
+            styles.tabButton,
+            currentTab === "Current" && styles.activeTabButton,
+          ]}
           onPress={() => handleTabPress("Current")}
         >
-        <Text
+          <Text
+            style={[
+              styles.tabButtonText,
+              { color: currentTab === "Current" ? "#000" : "#ccc" },
+            ]}
+          >
+            Current
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
           style={[
-          styles.tabButtonText,
-          { color: currentTab === "Current" ? "#000" : "#ccc" },
+            styles.tabButton,
+            currentTab === "Yearly" && styles.activeTabButton,
           ]}
+          onPress={() => handleTabPress("Yearly")}
         >
-        Current
-        </Text>
-      </TouchableOpacity>
-  <TouchableOpacity
-      style={[
-        styles.tabButton,
-        currentTab === "Yearly" && styles.activeTabButton,
-      ]}
-      onPress={() => handleTabPress("Yearly")}
-    >
-      <Text
-        style={[
-          styles.tabButtonText,
-          { color: currentTab === "Yearly" ? "#000" : "#ccc" },
-        ]}
-      >
-        Yearly
-      </Text>
-    </TouchableOpacity>
-  </View>
+          <Text
+            style={[
+              styles.tabButtonText,
+              { color: currentTab === "Yearly" ? "#000" : "#ccc" },
+            ]}
+          >
+            Yearly
+          </Text>
+        </TouchableOpacity>
+      </View>
 
-  {currentTab === "Current" && currentData && (
-    <ScrollView contentContainerStyle={styles.scrollView}>
-      <View style={styles.contentContainer}>
-        <View style={styles.container}>
-          <PieChart
-            data={chartData}
-            width={350}
-            height={200}
-            chartConfig={chartConfig}
-            accessor="population"
-            backgroundColor="transparent"
-            paddingLeft="0"
-          />
-          <View key="current" style={styles.listItem}>
-            <View style={styles.leftColumn}>
-              <Text style={styles.textBold}>Total Devices:</Text>
-              <Text style={styles.textBold}>Out:</Text>
-              <Text style={styles.textBold}>Available:</Text>
-              <Text style={styles.textBold}>Overdue:</Text>
-            </View>
-            <View style={styles.rightColumn}>
-              <Text style={styles.textBold}>{currentData.total}</Text>
-              <Text style={styles.textBold}>
-                {currentData.total - currentData.Available}
-              </Text>
-              <Text style={styles.textBold}>{currentData.Available}</Text>
-              <Text style={styles.textBold}>{currentData.overdue}</Text>
+      {currentTab === "Current" && currentData && (
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={styles.contentContainer}>
+            <View style={styles.container}>
+              <PieChart
+                data={chartData}
+                width={350}
+                height={200}
+                chartConfig={chartConfig}
+                accessor="population"
+                backgroundColor="transparent"
+                paddingLeft="0"
+              />
+              <View key="current" style={styles.listItem}>
+                <View style={styles.leftColumn}>
+                  <Text style={styles.textBold}>Total Devices:</Text>
+                  <Text style={styles.textBold}>Out:</Text>
+                  <Text style={styles.textBold}>Available:</Text>
+                  <Text style={styles.textBold}>Overdue:</Text>
+                </View>
+                <View style={styles.rightColumn}>
+                  <Text style={styles.textBold}>{currentData.total}</Text>
+                  <Text style={styles.textBold}>
+                    {currentData.total - currentData.Available}
+                  </Text>
+                  <Text style={styles.textBold}>{currentData.Available}</Text>
+                  <Text style={styles.textBold}>{currentData.overdue}</Text>
+                </View>
+              </View>
             </View>
           </View>
-        </View>
-      </View>
-    </ScrollView>
-  )}
+        </ScrollView>
+      )}
 
-  {currentTab === "Yearly" && yearlyData && (
-    <ScrollView contentContainerStyle={styles.scrollView}>
-      <View style={styles.contentContainer}>
-        <View style={styles.container}>
-          <PieChart
-            data={yearlyChartData}
-            width={350}
-            height={200}
-            chartConfig={chartConfig}
-            accessor="population"
-            backgroundColor="transparent"
-            paddingLeft="0"
-          />
-          <View key="yearly" style={styles.listItem}>
-            <View style={styles.leftColumn}>
-              <Text style={styles.textBold}>Expenditure:</Text>
-              <Text style={styles.textBold}>Loans:</Text>
-              <Text style={styles.textBold}>On Time:</Text>
-              <Text style={styles.textBold}>Overdue:</Text>
-              <Text style={styles.textBold}>Most Popular:</Text>
-            </View>
-            <View style={styles.rightColumn}>
-              <Text style={styles.textBold}>{yearlyData.expenditure}</Text>
-              <Text style={styles.textBold}>{yearlyData.totalLoans}</Text>
-              <Text style={styles.textBold}>{yearlyData.onTime}</Text>
-              <Text style={styles.textBold}>{yearlyData.late}</Text>
-              <Text style={styles.textBold}>{yearlyData.mostPopular}</Text>
+      {currentTab === "Yearly" && yearlyData && (
+        <ScrollView contentContainerStyle={styles.scrollView}>
+          <View style={styles.contentContainer}>
+            <View style={styles.container}>
+              <PieChart
+                data={yearlyChartData}
+                width={350}
+                height={200}
+                chartConfig={chartConfig}
+                accessor="population"
+                backgroundColor="transparent"
+                paddingLeft="0"
+              />
+              <View key="yearly" style={styles.listItem}>
+                <View style={styles.leftColumn}>
+                  <Text style={styles.textBold}>Expenditure:</Text>
+                  <Text style={styles.textBold}>Loans:</Text>
+                  <Text style={styles.textBold}>On Time:</Text>
+                  <Text style={styles.textBold}>Overdue:</Text>
+                  <Text style={styles.textBold}>Most Popular:</Text>
+                </View>
+                <View style={styles.rightColumn}>
+                  <Text style={styles.textBold}>{yearlyData.expenditure}</Text>
+                  <Text style={styles.textBold}>{yearlyData.totalLoans}</Text>
+                  <Text style={styles.textBold}>{yearlyData.onTime}</Text>
+                  <Text style={styles.textBold}>{yearlyData.late}</Text>
+                  <Text style={styles.textBold}>{yearlyData.mostPopular}</Text>
+                </View>
+              </View>
             </View>
           </View>
-        </View>
-      </View>
-  </ScrollView>
-    )}
-</View>
-);
+        </ScrollView>
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-scrollView: {
-flexGrow: 1,
-},
-container: {
-justifyContent: "flex-start",
-alignItems: "center",
-paddingTop: 20,
-},
-listItem: {
-flexDirection: "row",
-backgroundColor: "#f0f0f0",
-padding: 10,
-marginBottom: 10,
-borderRadius: 5,
-},
-leftColumn: {
-flex: 1,
-},
-rightColumn: {
-flex: 1,
-},
-textBold: {
-fontSize: 18,
-fontWeight: "bold",
-},
-container: {
-flex: 1,
-backgroundColor: "#fff",
-padding: 20,
-},
+  scrollView: {
+    flexGrow: 1,
+  },
+  container: {
+    justifyContent: "flex-start",
+    alignItems: "center",
+    paddingTop: 20,
+  },
+  listItem: {
+    flexDirection: "row",
+    backgroundColor: "#f0f0f0",
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 5,
+  },
+  leftColumn: {
+    flex: 1,
+  },
+  rightColumn: {
+    flex: 1,
+  },
+  textBold: {
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    padding: 20,
+  },
 
-tabBar: {
-flexDirection: "row",
-justifyContent: "space-between",
-marginBottom: 5,
-marginTop: -5,
-},
+  tabBar: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 5,
+    marginTop: -5,
+  },
 
-tabButton: {
-paddingHorizontal: 60,
-paddingVertical: 5,
-},
+  tabButton: {
+    paddingHorizontal: 60,
+    paddingVertical: 5,
+  },
 
-activeTabButton: {},
+  activeTabButton: {},
 
-tabButtonText: {
-fontSize: 17,
-},
+  tabButtonText: {
+    fontSize: 17,
+  },
 
-scrollView: {
-flexGrow: 1,
-},
+  scrollView: {
+    flexGrow: 1,
+  },
 });
-
