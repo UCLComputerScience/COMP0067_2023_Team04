@@ -71,6 +71,7 @@ const calculateChartData = (data) => {
 
 async function getJwtToken() {
   try {
+    
     const jwtToken = await SecureStore.getItemAsync("jwtToken");
     if (jwtToken) {
       console.log("JWT token 获取成功:", jwtToken);
@@ -93,6 +94,7 @@ export default function AdminSettingsScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const jwtToken = await getJwtToken();
         const currentResponse = await axios.get(
           `${API_BASE_URL}/stats/current`, {
             headers: { Authorization: `Bearer ${jwtToken}` },
