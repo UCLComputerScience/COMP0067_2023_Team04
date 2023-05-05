@@ -191,7 +191,7 @@ const AdminLoans = () => {
                         },
                       ]}
                     >
-                      {item.returnedDate}
+                      {item.dueDate}
                     </Text>
                   </View>
                   <View style={styles.separator} />
