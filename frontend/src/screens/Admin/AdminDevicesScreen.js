@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -20,7 +20,6 @@ import axios from "axios";
 import * as SecureStore from "expo-secure-store";
 
 const AllDevices = () => {
-
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
   const navigation = useNavigation();
@@ -49,7 +48,6 @@ const AllDevices = () => {
     }
   }
 
-
   const processData = (data) => {
     return data.map((item) => ({
       name: item.name,
@@ -58,7 +56,7 @@ const AllDevices = () => {
       available: item.num_available,
     }));
   };
-  
+
   const fetchData = async () => {
     try {
       const jwtToken = await getJwtToken();
@@ -67,13 +65,13 @@ const AllDevices = () => {
         const response = await axios.get(`${API_BASE_URL}/nameAvailability`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
-  
+
         if (response) {
           console.log("成功获取数据:", response.data);
         } else {
           console.log("请求成功，但没有返回数据");
         }
-  
+
         setDevices(processData(response.data));
       } else {
         console.log("由于缺少 JWT token，未能发送请求");
@@ -86,16 +84,13 @@ const AllDevices = () => {
       }
     }
   };
-  
-  
+
   useEffect(() => {
     fetchData();
   }, []);
-  
 
-  
   const [input, setInput] = useState("");
-  const [devices, setDevices] = useState([]);  
+  const [devices, setDevices] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
   const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
   const [availableSortOrder, setAvailableSortOrder] = useState("asc");
@@ -398,17 +393,33 @@ const Stack = createStackNavigator();
 const AdminDevicesScreen = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Devices" component={AllDevices} />
+      <Stack.Screen
+        name="Devices"
+        options={{ headerShown: false }}
+        component={AllDevices}
+      />
       <Stack.Screen
         name={"GeneralDeviceAdmin"}
         component={GeneralDeviceAdmin}
-        options={{ headerTitle: "Device Details" }}
+        options={{ headerTitle: "Device Details", headerShown: false }}
         //options={({ route }) => ({ title: route.params.deviceName })}
         //options={({ route }) => ({ title: "Device details" })}
       />
-      <Stack.Screen name="Statistics" component={StatisticsAdmin} />
-      <Stack.Screen name="AddDevice" component={RegisterDeviceScreen} />
-      <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
+      <Stack.Screen
+        name="Statistics"
+        options={{ headerShown: false }}
+        component={StatisticsAdmin}
+      />
+      <Stack.Screen
+        name="AddDevice"
+        options={{ headerShown: false }}
+        component={RegisterDeviceScreen}
+      />
+      <Stack.Screen
+        name="Detail"
+        options={{ headerShown: false }}
+        component={DetailDeviceAdmin}
+      />
     </Stack.Navigator>
   );
 };

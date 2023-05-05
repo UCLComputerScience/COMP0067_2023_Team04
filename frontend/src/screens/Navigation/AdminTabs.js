@@ -56,7 +56,8 @@ const Tabs = () => {
         name="AdminSchedule"
         component={AdminScheduleScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Schedule",
           tabBarIcon: ({ focused }) => (
             <View
               style={{
@@ -88,7 +89,7 @@ const Tabs = () => {
         name="Loans"
         component={AdminLoansScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ focused }) => (
             <View
               style={{
@@ -139,7 +140,8 @@ const Tabs = () => {
         name="AdminDevices"
         component={AdminDevicesScreen}
         options={{
-          headerShown: false,
+          headerShown: true,
+          headerTitle: "Devices",
           tabBarIcon: ({ focused }) => (
             <View
               style={{

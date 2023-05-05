@@ -52,7 +52,7 @@ const CollapsibleList = () => {
       const response = await axios.get(`${API_BASE_URL}/schedule`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-  
+
       setLoanTable(
         response.data.map((loan) => ({
           id: loan.deviceId,
@@ -60,12 +60,12 @@ const CollapsibleList = () => {
           state: getLoanState(loan.state),
         }))
       );
-      console.log('API Response:', response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+    console.log("API Response:", response.data);
   };
-  
+
   const getLoanState = (loanState) => {
     switch (loanState) {
       case "Loaned":
@@ -76,7 +76,6 @@ const CollapsibleList = () => {
         return loanState;
     }
   };
-  
 
   useEffect(() => {
     const fetchDataWithJwtToken = async () => {
@@ -88,10 +87,9 @@ const CollapsibleList = () => {
   }, []);
 
   const handleRowPress = (item) => {
+    console.log("Selected device ID:", item.id);
     navigation.navigate("Detail", {
-      id: item.id,
-      state: item.state,
-      startDate: item.startDate,
+      deviceID: item.id,
     });
   };
 
@@ -112,25 +110,25 @@ const CollapsibleList = () => {
             </Text>
             <Text
               style={[styles.stateText, { flex: 0.7, textAlign: "center" }]}
-              >
-                {item.state}
-              </Text>
-            </TouchableOpacity>
-          )}
-        />
-      </View>
-     );
-    };
-    
+            >
+              {item.state}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
     padding: 20,
   },
-  
+
   dataContainer: {},
-  
+
   dataRow: {
     paddingHorizontal: 25,
     flexDirection: "row",
@@ -139,14 +137,14 @@ const styles = StyleSheet.create({
     borderBottomColor: "#ccc",
     alignItems: "flex-start",
   },
-  
+
   deviceText: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#000",
     flex: 1,
   },
-  
+
   userText: {
     fontSize: 16,
     fontWeight: "bold",
@@ -154,7 +152,7 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: "right",
   },
-  
+
   stateText: {
     fontSize: 16,
     fontWeight: "bold",
@@ -163,14 +161,22 @@ const styles = StyleSheet.create({
     textAlign: "right",
   },
 });
-  
+
 const AdminScheduleScreen = () => {
   return (
     <Stack.Navigator>
-    <Stack.Screen name="Schedule" component={CollapsibleList} />
-    <Stack.Screen name="Detail" component={DetailDeviceAdmin} />
+      <Stack.Screen
+        name="Schedule"
+        options={{ headerShown: false }}
+        component={CollapsibleList}
+      />
+      <Stack.Screen
+        name="Detail"
+        options={{ headerShown: false }}
+        component={DetailDeviceAdmin}
+      />
     </Stack.Navigator>
   );
 };
-    
-export default AdminScheduleScreen; 
+
+export default AdminScheduleScreen;

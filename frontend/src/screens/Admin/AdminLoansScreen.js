@@ -14,7 +14,6 @@ import * as SecureStore from "expo-secure-store";
 
 const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
-
 const AdminLoans = () => {
   const [loanTable, setLoanTable] = useState([]);
   const [currentTab, setCurrentTab] = useState("Overdue");
@@ -42,6 +41,7 @@ const AdminLoans = () => {
       const response = await axios.get(`${API_BASE_URL}/loans`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
+      console.log("data:", response.data);
       setLoanTable(
         response.data.map((loan) => ({
           id: loan.deviceId,
@@ -52,7 +52,9 @@ const AdminLoans = () => {
           userId: loan.userId,
           loanId: loan.loanId,
           exten: loan.exten,
-          returnedDate: loan.returnedDate ? loan.returnedDate.substring(0, 10) : null,
+          returnedDate: loan.returnedDate
+            ? loan.returnedDate.substring(0, 10)
+            : null,
           state: loan.returnedDate ? "Returned" : "Loan",
         }))
       );
@@ -67,11 +69,13 @@ const AdminLoans = () => {
 
   const filterData = (tab) => {
     const filtered = loanTable.filter((item) => {
-      const returnDate = new Date(item.returnDate);
+      const returnedDate = new Date(item.returnedDate);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
       if (tab === "Overdue") {
-        return item.state === "Loan" && returnDate.getTime() < today.getTime();
+        return (
+          item.state === "Loan" && returnedDate.getTime() < today.getTime()
+        );
       } else {
         return true;
       }
@@ -143,7 +147,7 @@ const AdminLoans = () => {
                     <Text
                       style={[styles.date, { flex: 1.4, textAlign: "center" }]}
                     >
-                      {item.returnDate}
+                      {item.returnedDate}
                     </Text>
                   </View>
                   <View style={styles.separator} />
@@ -155,12 +159,13 @@ const AdminLoans = () => {
           <FlatList
             data={filteredData}
             renderItem={({ item }) => {
-              const returnDate = new Date(item.returnDate);
+              const returnedDate = new Date(item.returnedDate);
               const today = new Date();
               today.setHours(0, 0, 0, 0);
 
               const isOverdue =
-                item.state === "Loan" && returnDate.getTime() < today.getTime();
+                item.state === "Loan" &&
+                returnedDate.getTime() < today.getTime();
               return (
                 <TouchableOpacity
                   onPress={() => {
@@ -186,7 +191,7 @@ const AdminLoans = () => {
                         },
                       ]}
                     >
-                      {item.returnDate}
+                      {item.returnedDate}
                     </Text>
                   </View>
                   <View style={styles.separator} />
@@ -255,12 +260,12 @@ const AdminLoansScreen = () => {
       <Stack.Screen
         name="AdminLoans"
         component={AdminLoans}
-        options={{ headerTitle: "Loans" }}
+        options={{ headerTitle: "Loans", headerShown: false }}
       />
       <Stack.Screen
         name="Detail"
         component={DetailDeviceAdmin}
-        options={{ headerTitle: "Device Details" }}
+        options={{ headerTitle: "Device Details", headerShown: false }}
       />
     </Stack.Navigator>
   );

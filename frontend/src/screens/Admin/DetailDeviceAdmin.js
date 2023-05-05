@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState, useRef , useEffect } from "react";
+import React, { useLayoutEffect, useState, useRef, useEffect } from "react";
 import {
   ScrollView,
   View,
@@ -50,32 +50,29 @@ const DetailDeviceAdmin = () => {
       const response = await axios.get(`${API_BASE_URL}/devices/${deviceID}`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      console.log("Received data from API:", response.data);
-      setDeviceInfo(response.data.deviceInfo);
+      console.log("Received data from API for device info:", response.data);
+      setDeviceInfo(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchDeviceData();
   }, []);
 
-
-
   const navigation = useNavigation();
 
-  useLayoutEffect(() => {
+  /*useLayoutEffect(() => {
     if (deviceInfo && deviceInfo.deviceName) {
       navigation.setOptions({ title: deviceInfo.deviceName });
     }
-  }, [navigation, deviceInfo]);
-  
+  }, [navigation, deviceInfo]);*/
 
   const getButtonInfo = () => {
     if (deviceInfo.state === "Reserved") {
       return { title: "Loan", newState: "Loan" };
-    } else if (deviceInfo.state === "Loan") {
+    } else if (deviceInfo.state === "Loaned") {
       return { title: "Return", newState: "Available" };
     } else if (deviceInfo.state === "Maintenance") {
       return { title: "Turn Available", newState: "Available" };
@@ -231,7 +228,7 @@ const DetailDeviceAdmin = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.deviceName}>{deviceInfo.deviceName}</Text>
+        <Text style={styles.deviceName}>{deviceInfo.name}</Text>
         <View style={styles.separator} />
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Device ID:</Text>
@@ -239,21 +236,21 @@ const DetailDeviceAdmin = () => {
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Standard Loan Duration:</Text>
-          <Text style={styles.text}>
-            {deviceInfo.standardLoanDuration} days
-          </Text>
+          <Text style={styles.text}>{deviceInfo.ruleDur} days</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Extension Allowane:</Text>
-          <Text style={styles.text}>{deviceInfo.extensionAllowance} times</Text>
+          <Text style={styles.text}>{deviceInfo.ruleExt} times</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Storage Location:</Text>
-          <Text style={styles.text}>{deviceInfo.storageLocation}</Text>
+          <Text style={styles.text}>{deviceInfo.storage}</Text>
         </View>
         <View style={[styles.row, { marginTop: 15 }]}>
           <Text style={styles.label}>QR code:</Text>
-          <Text style={styles.text}>{deviceInfo.QRCode}</Text>
+          <Text style={styles.text}>
+            Current QR code is in line with Device ID
+          </Text>
         </View>
 
         <View style={{ alignItems: "flex-end", marginRight: 30 }}>
@@ -289,7 +286,7 @@ const DetailDeviceAdmin = () => {
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Device State:</Text>
-          <Text style={styles.text}>{deviceInfo.deviceState}</Text>
+          <Text style={styles.text}>{deviceInfo.state}</Text>
         </View>
 
         <View
