@@ -18,6 +18,8 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import QRCode from "react-native-qrcode-svg";
 import * as MediaLibrary from "expo-media-library";
 import * as FileSystem from "expo-file-system";
+import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 const DetailDeviceAdmin = () => {
   const route = useRoute();
@@ -41,19 +43,20 @@ const DetailDeviceAdmin = () => {
     }
   }
 
-  const [device, setDevice] = useState("");
+  const [deviceInfo, setDeviceInfo] = useState("");
   const fetchDeviceData = async () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/devices/${deviceID}`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
-      });      
+      });
       console.log("Received data from API:", response.data);
-      setDevice(response.data);
+      setDeviceInfo(response.data.deviceInfo);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+  
   useEffect(() => {
     fetchDeviceData();
   }, []);
@@ -62,16 +65,19 @@ const DetailDeviceAdmin = () => {
 
   const navigation = useNavigation();
 
-  /*useLayoutEffect(() => {
-    navigation.setOptions({ title: deviceInfo.deviceName });
-  }, [navigation, deviceInfo.deviceName]);*/
+  useLayoutEffect(() => {
+    if (deviceInfo && deviceInfo.deviceName) {
+      navigation.setOptions({ title: deviceInfo.deviceName });
+    }
+  }, [navigation, deviceInfo]);
+  
 
   const getButtonInfo = () => {
-    if (loanDetails.deviceState === "Reserved") {
+    if (deviceInfo.state === "Reserved") {
       return { title: "Loan", newState: "Loan" };
-    } else if (loanDetails.deviceState === "Loan") {
+    } else if (deviceInfo.state === "Loan") {
       return { title: "Return", newState: "Available" };
-    } else if (loanDetails.deviceState === "Maintenance") {
+    } else if (deviceInfo.state === "Maintenance") {
       return { title: "Turn Available", newState: "Available" };
     } else {
       return { title: "Not Applicable", newState: null };
@@ -275,15 +281,15 @@ const DetailDeviceAdmin = () => {
         <View style={[styles.separator, { marginTop: 10 }]} />
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Loan date:</Text>
-          <Text style={styles.text}>{loanDetails.loanDate}</Text>
+          <Text style={styles.text}>{deviceInfo.loanDate}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Last user ID:</Text>
-          <Text style={styles.text}>{loanDetails.userID}</Text>
+          <Text style={styles.text}>{deviceInfo.userID}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Device State:</Text>
-          <Text style={styles.text}>{loanDetails.deviceState}</Text>
+          <Text style={styles.text}>{deviceInfo.deviceState}</Text>
         </View>
 
         <View
