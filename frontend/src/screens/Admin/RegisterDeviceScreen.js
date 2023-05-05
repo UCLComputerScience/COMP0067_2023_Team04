@@ -11,7 +11,9 @@ import {
   TextInput,
   Switch,
 } from "react-native";
-import DropDownPicker from "react-native-dropdown-picker";
+import { Alert } from "react-native";
+import * as SecureStore from "expo-secure-store";
+
 
 const RegisterDeviceScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -35,6 +37,22 @@ const RegisterDeviceScreen = () => {
     { label: "GPU", value: "GPU" },
     { label: "Other", value: "Other" },
   ];
+
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
 
   const handleSubmit = () => {
     if (
@@ -63,6 +81,47 @@ const RegisterDeviceScreen = () => {
   const toggleSwitch = () => {
     setRuleExt((prevValue) => (prevValue === 0 ? 1 : 0));
   };
+
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
+
+
+  const submitDevice = async () => {
+    const deviceData = {
+      deviceName,
+      deviceDetails,
+      storageLocation,
+      category: selectedCategory,
+      ruleExt,
+      ruleDur,
+      launchYr,
+      cost,
+    };
+
+
+  
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/addDevice`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        },
+        body: JSON.stringify(deviceData),
+      });
+  
+      const responseData = await response.json();
+  
+      if (!response.ok) {
+        throw new Error(responseData.message || "Failed to add device.");
+      }
+  
+      Alert.alert("Success", "Device added successfully.");
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+  };
+  
 
   return (
     <View style={styles.background}>
@@ -167,7 +226,7 @@ const RegisterDeviceScreen = () => {
             onValueChange={toggleSwitch}
             value={ruleExt === 1}
           />
-          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <TouchableOpacity style={styles.button} onPress={submitDevice}>
             <Text style={styles.buttonText}>Register Device</Text>
           </TouchableOpacity>
         </View>
@@ -183,7 +242,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flexGrow: 1,
-    justifyContent: "top",
+    justifyContent: "felx-start",
     marginTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 300, // Add paddingBottom to increase the scrollable space
