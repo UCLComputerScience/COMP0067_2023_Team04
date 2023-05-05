@@ -61,13 +61,42 @@ const DetailDeviceAdmin = () => {
     fetchDeviceData();
   }, []);
 
+  const returnDevice = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.post(`${API_BASE_URL}/return/${deviceID}`,{
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
+      console.log("Received data from API for device info:", response.data);
+      setDeviceInfo(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const createLoan = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.post(`${API_BASE_URL}/createLoan/${deviceID}`,{
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
+      console.log("Received data from API for device info:", response.data);
+      setDeviceInfo(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+
+
+
+
+
+
   const navigation = useNavigation();
 
-  /*useLayoutEffect(() => {
-    if (deviceInfo && deviceInfo.deviceName) {
-      navigation.setOptions({ title: deviceInfo.deviceName });
-    }
-  }, [navigation, deviceInfo]);*/
 
   const getButtonInfo = () => {
     if (deviceInfo.state === "Reserved") {
@@ -314,21 +343,31 @@ const DetailDeviceAdmin = () => {
 
         <View style={{ paddingTop: 80 }}>
           <View style={{ alignItems: "center" }}>
-            <TouchableOpacity
-              style={styles.buttonBig}
-              onPress={() => Alert.alert("Success")}
-              disabled={!buttonInfo.newState}
+          <TouchableOpacity
+            style={styles.buttonBig}
+            onPress={() => {
+              if (deviceInfo.state === 'Loaned') {
+                returnDevice();
+                Alert.alert('Success');
+              } else if (deviceInfo.state === 'Reserved') {
+                createLoan();
+                Alert.alert('Success');
+              } else {
+                Alert.alert('Error', 'Action not applicable for this device state');
+              }
+            }}
+            disabled={!buttonInfo.newState}
+          >
+            <Text
+              style={{
+                color: buttonInfo.newState ? '#AC145A' : '#ccc',
+                fontSize: 20,
+                fontWeight: 600,
+              }}
             >
-              <Text
-                style={{
-                  color: buttonInfo.newState ? "#AC145A" : "#ccc",
-                  fontSize: 20,
-                  fontWeight: 600,
-                }}
-              >
-                {buttonInfo.title}
-              </Text>
-            </TouchableOpacity>
+              {buttonInfo.title}
+            </Text>
+          </TouchableOpacity>
           </View>
         </View>
       </View>
