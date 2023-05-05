@@ -7,6 +7,8 @@ import {
   Alert,
   Modal,
   TextInput,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -136,42 +138,44 @@ const AdminSettingsScreen = () => {
           setContactModalVisible(false);
         }}
       >
-        <View style={styles.centeredView}>
-          <View style={styles.modalViewQR}>
-            <Text style={{ fontSize: 18, marginBottom: 20 }}>
-              Edit Personal Contact
-            </Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalViewQR}>
+              <Text style={{ fontSize: 18, marginBottom: 20 }}>
+                Edit Personal Contact
+              </Text>
 
-            <TextInput
-              style={{
-                height: 200,
-                width: "100%",
-                marginBottom: 20,
-                paddingLeft: 10,
-                backgroundColor: "#ECECEC",
-                borderRadius: 15,
-              }}
-              multiline={true}
-              onChangeText={(text) => setEditContact(text)}
-              value={editContact}
-            />
+              <TextInput
+                style={{
+                  height: 200,
+                  width: "100%",
+                  marginBottom: 20,
+                  paddingLeft: 10,
+                  backgroundColor: "#ECECEC",
+                  borderRadius: 15,
+                }}
+                multiline={true}
+                onChangeText={(text) => setEditContact(text)}
+                value={editContact}
+              />
 
-            <Button
-              title="Save Changes"
-              onPress={() => {
-                // Save changes to the database here
-                //setPreviousAnnouncement(editedAnnouncement);
-                setContactModalVisible(false);
-              }}
-            />
-            <Button
-              title="Cancel"
-              onPress={() => {
-                setContactModalVisible(false);
-              }}
-            />
+              <Button
+                title="Save Changes"
+                onPress={() => {
+                  // Save changes to the database here
+                  //setPreviousAnnouncement(editedAnnouncement);
+                  setContactModalVisible(false);
+                }}
+              />
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setContactModalVisible(false);
+                }}
+              />
+            </View>
           </View>
-        </View>
+        </TouchableWithoutFeedback>
       </Modal>
     </View>
   );
