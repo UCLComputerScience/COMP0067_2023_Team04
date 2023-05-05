@@ -63,6 +63,7 @@ const GeneralDeviceAdminScreen = () => {
   const [devices, setDevices] = useState({});
   const fetchDevicesData = async () => {
     try {
+      const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/idByName/${deviceName}`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
@@ -79,6 +80,7 @@ const GeneralDeviceAdminScreen = () => {
   const [history, setHistory] = useState({});
   const fetchHistoryData = async () => {
     try {
+      const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/loansHistoryByName/${deviceName}`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
