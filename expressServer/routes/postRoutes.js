@@ -50,7 +50,7 @@ router.get("/reservedUser", verifyToken, postControllers.getReservedByUser); // 
 router.get("/loansCurrent", verifyToken, postControllers.getCurrentLoans); // for UserLoansScreen.js (returns all current loans for a specific user)
 
 // User POST methods
-router.post('/createLoan/deviceId', verifyToken, postControllers.createLoan); // create a new loan (with state 'Reserved')
+router.post('/createLoan/:deviceId', verifyToken, postControllers.createLoan); // create a new loan (with state 'Reserved')
 
 // User PUT methods
 router.put('/cancelReservation/:id', verifyToken, postControllers.cancelReservation); // **--------** id is loanId
