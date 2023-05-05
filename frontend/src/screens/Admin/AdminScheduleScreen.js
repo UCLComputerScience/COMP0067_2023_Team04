@@ -52,7 +52,7 @@ const CollapsibleList = () => {
       const response = await axios.get(`${API_BASE_URL}/schedule`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-
+  
       setLoanTable(
         response.data.map((loan) => ({
           id: loan.deviceId,
@@ -60,12 +60,12 @@ const CollapsibleList = () => {
           state: getLoanState(loan.state),
         }))
       );
+      console.log('API Response:', response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
-    };
-    console.log('API Response:', response.data);
+    }
   };
-
+  
   const getLoanState = (loanState) => {
     switch (loanState) {
       case "Loaned":
