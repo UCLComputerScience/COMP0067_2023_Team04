@@ -14,12 +14,11 @@ import {
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
 
-
 const RegisterDeviceScreen = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
-  const [deviceName, setDeviceName] = useState("");
-  const [deviceDetails, setDeviceDetails] = useState("");
-  const [storageLocation, setStorageLocation] = useState("");
+  const [name, setName] = useState("");
+  const [details, setDetails] = useState("");
+  const [storage, setStorage] = useState("");
   const [category, setCategory] = useState(null);
   const [open, setOpen] = useState(false);
   const [ruleExt, setRuleExt] = useState(0);
@@ -56,9 +55,9 @@ const RegisterDeviceScreen = () => {
 
   const handleSubmit = () => {
     if (
-      !deviceName ||
-      !deviceDetails ||
-      !storageLocation ||
+      !name ||
+      !details ||
+      !storage ||
       !category ||
       !ruleDur ||
       !launchYr ||
@@ -68,9 +67,9 @@ const RegisterDeviceScreen = () => {
       return;
     }
 
-    console.log("Device Name:", deviceName);
-    console.log("Device Details:", deviceDetails);
-    console.log("Storage Location:", storageLocation);
+    console.log("Device Name:", name);
+    console.log("Device Details:", details);
+    console.log("Storage Location:", storage);
     console.log("Category:", category);
     console.log("Allow to extent?:", ruleExt === 1 ? "Yes" : "No");
     console.log("Loan Duration:", ruleDur);
@@ -84,44 +83,41 @@ const RegisterDeviceScreen = () => {
 
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
-
   const submitDevice = async () => {
     const deviceData = {
-      deviceName,
-      deviceDetails,
-      storageLocation,
+      name,
+      details,
+      storage,
       category: selectedCategory,
       ruleExt,
       ruleDur,
       launchYr,
       cost,
+      state: "Available",
     };
 
-
-  
     try {
       const jwtToken = await getJwtToken();
       const response = await fetch(`${API_BASE_URL}/addDevice`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          headers: { Authorization: `Bearer ${jwtToken}` },
+          Authorization: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify(deviceData),
       });
-  
+
       const responseData = await response.json();
-  
+
       if (!response.ok) {
         throw new Error(responseData.message || "Failed to add device.");
       }
-  
+
       Alert.alert("Success", "Device added successfully.");
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }
   };
-  
 
   return (
     <View style={styles.background}>
@@ -175,15 +171,15 @@ const RegisterDeviceScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Enter Device Name"
-            onChangeText={setDeviceName}
-            value={deviceName}
+            onChangeText={setName}
+            value={name}
           />
           <Text style={styles.label}>Device Details</Text>
           <TextInput
             style={styles.input}
             placeholder="Enter Device Details"
-            onChangeText={setDeviceDetails}
-            value={deviceDetails}
+            onChangeText={setDetails}
+            value={details}
             multiline={true}
             numberOfLines={4}
           />
@@ -191,8 +187,8 @@ const RegisterDeviceScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Enter Storage Location"
-            onChangeText={setStorageLocation}
-            value={storageLocation}
+            onChangeText={setStorage}
+            value={storage}
           />
           <Text style={styles.label}>Loan Duration</Text>
           <TextInput
@@ -256,8 +252,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     fontSize: 16,
     marginBottom: 12,
-    backgroundColor: 'lightgray',
-    color: 'gray'
+    backgroundColor: "lightgray",
+    color: "gray",
   },
   label: {
     fontSize: 16,
