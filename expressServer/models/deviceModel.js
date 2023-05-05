@@ -76,6 +76,13 @@ class Device {
     return result.affectedRows > 0;
   }
 
+  // reports an issue with a device based on content in JSON object
+  static async reportIssue(deviceId, content) {
+    let sql = 'UPDATE device SET issues = ? WHERE deviceId = ?';
+    const [result] = await db.execute(sql, [content, deviceId]);
+    return result.affectedRows > 0;
+  }
+
   // inserts database entry based on JSON object
   static async addDevice(device) {
     const sql = `INSERT INTO device 

@@ -126,6 +126,18 @@ exports.getLoanHistoryByName = async (req, res, next) => {
   }
 };
 
+// returns information on the latest loan (NOT reservation) of a device give device ID
+exports.getLatestLoan = async (req, res, next) => {
+  try {
+    const deviceId = req.params.deviceId;
+    const loanInfo = await loanModel.getLatestLoan(deviceId);
+    res.status(200).json(loanInfo);
+  } catch (error) {
+    console.error("Error:", error); // Add this line to log the error to the console
+    res.status(500).json({message: 'Error getting information on latest loan for the given device.', error})
+  }
+};
+
 // for PastDeviceScreen.js (returns all loan history for a specific user)
 exports.getLoanHistoryByUser = async (req, res, next) => {
   try {
@@ -183,6 +195,19 @@ exports.updateDeviceState = async (req, res) => {
   }
 };
 
+exports.reportIssue = async (req, res) => {
+  const deviceId = req.params.deviceId
+  const content = req.body.content
+  try {
+    const result = await deviceModel.reportIssue(deviceId, content);
+    console.log(result);
+    res.status(201).json({message: 'Issue reported...', deviceId: deviceId, content: content})
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred when reporting an issue with the device.'})
+  }
+};
+
 exports.addDevice = async (req, res) => {
   let device = req.body;
   device.deviceId = uuidv4(); // generate a UUID
@@ -206,8 +231,8 @@ exports.createLoan = async (req, res) => {
     const deviceId = req.params.deviceId;
     const loan = { userId, userEmail, deviceId };
 
-    // check if device is available
-    if (!isDeviceAvailable(deviceId)){
+    const isAvailable = await deviceModel.isDeviceAvailable(deviceId);
+    if (!isAvailable){
       return res.status(403).json({message: 'Device is not available.'})
     }
 

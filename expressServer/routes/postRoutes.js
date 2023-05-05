@@ -19,6 +19,7 @@ router.get("/schedule", verifyAdmin, postControllers.getSchedule); //for AdminSc
 router.get("/details/:name", verifyAdmin, postControllers.getDetailsByDeviceName); // for GeneralDeviceAdmin.js (given name of device, find its details)
 router.get("/idByName/:name", verifyAdmin, postControllers.getIdByName); // for GeneralDeviceAdmin.js (given name of device, get all device IDs and associated states)
 router.get("/loansHistoryByName/:name", verifyAdmin, postControllers.getLoanHistoryByName); // for GeneralDeviceAdmin.js (given name of a device, find all associated loan history)
+router.get("/latestLoan/:deviceId", verifyAdmin, postControllers.getLatestLoan); //gets the latest loan for a device given its ID; returns empty array if no "latest loan"
 
 // Admin GET stats methods
 router.get('/stats/current', verifyAdmin, postControllers.getCurrentStats);
@@ -26,6 +27,7 @@ router.get('/stats/yearly', verifyAdmin, postControllers.getYearlyStats);
 
 // Admin PUT methods
 router.put('/changeState/:id', verifyAdmin, postControllers.updateDeviceState); // **--------** changes device state to state specified in JSON object, id is deviceId
+router.put('/reportIssue/:deviceId', verifyAdmin, postControllers.reportIssue); // **--------** for the admin to input a string describing an issue for a particular device ID
 
 // Admin POST methods
 router.post('/addDevice/', verifyAdmin, postControllers.addDevice); //**--------** enter new device into database
