@@ -43,6 +43,9 @@ const GeneralDeviceUserScreen = () => {
 
   //Devices list from DB, successful
   const [device, setDevice] = useState("");
+  const [standardLoanDuration, setStandardLoanDuration] = useState(0);
+  const [extensionAllowance, setExtensionAllowance] = useState(0);
+
   const fetchDeviceData = async () => {
     try {
       console.log("Fetching device data for:", deviceName);
@@ -56,7 +59,9 @@ const GeneralDeviceUserScreen = () => {
       if (response.data && response.data.ruleDur) {
         setStandardLoanDuration(response.data.ruleDur);
       }
-  
+      if (response.data && response.data.ruleExt) {
+        setExtensionAllowance(response.data.ruleExt);
+      }  
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -253,9 +258,9 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                   Extension Allowance:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {parseInt(device[0].extensionAllowance) > 1
-                    ? device[0].extensionAllowance + " Times"
-                    : device[0].extensionAllowance + " Time"}
+                  {parseInt(extensionAllowance) > 1
+                    ? extensionAllowance + " Times"
+                    : extensionAllowance + " Time"}
                 </Text>
               </View>
             </View>
