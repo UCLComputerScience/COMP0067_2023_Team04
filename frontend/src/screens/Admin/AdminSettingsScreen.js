@@ -84,7 +84,7 @@ const AdminSettingsScreen = () => {
   const fetchTermData = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/readAdminContactInfo`, {
+      const response = await axios.get(`${API_BASE_URL}/readUserTerms`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
       console.log("Received data from API:", response.data);
@@ -293,8 +293,8 @@ const AdminSettingsScreen = () => {
 
               <TextInput
                 style={{
-                  height: 200,
-                  width: "100%",
+                  width: "90%",
+                  maxWidth: "100%",
                   marginBottom: 20,
                   paddingLeft: 10,
                   backgroundColor: "#ECECEC",
@@ -303,6 +303,7 @@ const AdminSettingsScreen = () => {
                 multiline={true}
                 onChangeText={(text) => setEditTerm(text)}
                 value={editTerm}
+                horizontal = {true}
               />
 
               <Button
@@ -352,6 +353,7 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
+    padding: 35,
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
