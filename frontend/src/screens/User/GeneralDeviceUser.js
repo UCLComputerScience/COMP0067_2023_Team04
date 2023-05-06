@@ -45,6 +45,7 @@ const GeneralDeviceUserScreen = () => {
   const [device, setDevice] = useState("");
   const fetchDeviceData = async () => {
     try {
+      console.log("Fetching device data for:", deviceName);
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/details/${deviceName}`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
@@ -62,13 +63,15 @@ const GeneralDeviceUserScreen = () => {
   const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
 
   const [devices, setDevices] = useState({});
+
   const fetchDevicesData = async () => {
     try {
+      console.log("Fetching devices data for:", deviceName);
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/idByName/${deviceName}`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
-      //console.log("Received data from API:", response.data);
+      console.log("Received data from API:", response.data);
       setDevices(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -299,7 +302,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {available} Available
+                  {devices.available} Available
                 </Text>
               </View>
             </View>

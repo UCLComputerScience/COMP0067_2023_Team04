@@ -62,7 +62,7 @@ const UserLoans = () => {
       console.log("error = ", error);
     }
   };
-  
+
   useEffect(() => {
     getListData();
   }, [currentTab]);
