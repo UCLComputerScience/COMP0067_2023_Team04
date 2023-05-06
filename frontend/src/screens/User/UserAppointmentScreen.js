@@ -14,6 +14,7 @@ import GeneralDeviceUserScreen from "./GeneralDeviceUser";
 import * as Linking from "expo-linking";
 import moment from "moment";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 
 // This screen needs to read the reservation status of the user, it needs the name, status and due date of the device that the user has reserved, the status is only two cases, loan or has been returned
@@ -26,7 +27,7 @@ const UserAppointmentScreen = () => {
   console.log("Current Screen URL:", currentScreenUrl);
   const [devices, setDevice] = useState([]);
 
-  const API_BASE_URL = "http://0067team4app.azurewebsites.net/posts";
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
   async function getJwtToken() {
     try {
@@ -52,7 +53,6 @@ const UserAppointmentScreen = () => {
       });
       setDevice([
         {
-          id: response.data.deviceId,
           name: response.data.name,
           state: response.data.state === "Reserved" ? "Pick up" : "Return",
         },
