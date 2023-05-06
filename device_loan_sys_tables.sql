@@ -93,21 +93,21 @@ COMMIT;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 -- note that startDate = start of reservation
 -- exten refers to how many times a loan has been extended
-INSERT INTO `loan` (`loanId`, `userId`, `userEmail`, `startDate`, `dueDate`, `deviceId`, `exten`)
+INSERT INTO `loan` (`loanId`, `userId`, `userEmail`, `startDate`, `dueDate`, `deviceId`, `exten`, `returnedDate`)
 VALUES
-(1, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-01-01', '2023-05-06', 'fb73ee46-e7ac-11ed-93d2-6045bdd1583d', 0),
-(2, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-02-05', '2024-02-20', 'dab4de3d-e7ac-11ed-93d2-6045bdd1583d', 1),
-(3, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-03-10', '2024-03-25', 'efbe9ea8-e7ab-11ed-93d2-6045bdd1583d', 0),
-(4, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-04-01', '2024-04-16', '051d4e1a-e7ac-11ed-93d2-6045bdd1583d', 0),
-(5, 'zliul37', 'ucabz36@ucl.ac.uk', CURRENT_DATE(), '2024-05-16', '09a5423b-e7ac-11ed-93d2-6045bdd1583d', 1),
-(6, 'tchaa15', 'ucabtc5@ucl.ac.uk', CURRENT_DATE(), '2024-06-16', 'a411ce8b-e7ac-11ed-93d2-6045bdd1583d', 0),
-(7, 'jhudx92', 'ucabj38@ucl.ac.uk', '2023-05-08', '2024-07-16', 'aad7cc2c-e7ac-11ed-93d2-6045bdd1583d', 0),
-(8, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-06-01', '2024-08-16', 'aea90655-e7ac-11ed-93d2-6045bdd1583d', 1),
-(9, 'jhudx92', 'ucabj38@ucl.ac.uk', '2023-07-01', '2024-09-16', 'b397e028-e7ac-11ed-93d2-6045bdd1583d', 0),
-(10,'jhudx92', 'ucabj38@ucl.ac.uk', '2023-08-01', '2024-10-16', 'bacf5a3c-e7ac-11ed-93d2-6045bdd1583d', 0),
-(11,'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-09-01', '2024-11-16', 'c3ce447d-e7ac-11ed-93d2-6045bdd1583d', 1),
-(12,'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-10-01', '2024-12-16', 'cdf8c212-e7ac-11ed-93d2-6045bdd1583d', 0),
-(13,'jhudx92', 'ucabj38@ucl.ac.uk', '2023-11-01', '2025-01-16', 'dff5d4ba-e7ac-11ed-93d2-6045bdd1583d', 0);
+(1, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-01-01', '2023-05-09', 'fb73ee46-e7ac-11ed-93d2-6045bdd1583d', 0 , NULL),
+(2, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-02-05', '2024-02-20', 'dab4de3d-e7ac-11ed-93d2-6045bdd1583d', 1 , NULL),
+(3, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-03-10', '2023-05-10', 'efbe9ea8-e7ab-11ed-93d2-6045bdd1583d', 0 , NULL),
+(4, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-04-01', '2023-05-08', '051d4e1a-e7ac-11ed-93d2-6045bdd1583d', 0 , NULL),
+(5, 'zliul37', 'ucabz36@ucl.ac.uk', CURRENT_DATE(), '2024-05-16', '09a5423b-e7ac-11ed-93d2-6045bdd1583d', 1 , NULL),
+(6, 'tchaa15', 'ucabtc5@ucl.ac.uk', CURRENT_DATE(), '2024-06-16', 'a411ce8b-e7ac-11ed-93d2-6045bdd1583d', 0 , NULL),
+(7, 'jhudx92', 'ucabj38@ucl.ac.uk', '2023-05-01', '2023-05-02', 'aad7cc2c-e7ac-11ed-93d2-6045bdd1583d', 0 , NULL),
+(8, 'zliul37', 'ucabz36@ucl.ac.uk', '2023-06-01', '2024-08-16', 'aea90655-e7ac-11ed-93d2-6045bdd1583d', 1 , NULL),
+(9, 'jhudx92', 'ucabj38@ucl.ac.uk', '2023-01-01', '2024-09-16', 'b397e028-e7ac-11ed-93d2-6045bdd1583d', 0 , NULL),
+(10,'jhudx92', 'ucabj38@ucl.ac.uk', '2023-01-01', '2024-10-16', 'bacf5a3c-e7ac-11ed-93d2-6045bdd1583d', 0 , '2023-05-02'),
+(11,'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-01-01', '2024-11-16', 'c3ce447d-e7ac-11ed-93d2-6045bdd1583d', 1 , NULL),
+(12,'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-10-01', '2024-12-16', 'cdf8c212-e7ac-11ed-93d2-6045bdd1583d', 0 , NULL),
+(13,'jhudx92', 'ucabj38@ucl.ac.uk', '2023-01-01', '2025-01-16', 'dff5d4ba-e7ac-11ed-93d2-6045bdd1583d', 0 , NULL);
 
 -- CALLED AT THE END OF EACH WEEK TO CLEAR RESERVATIONS
 DROP EVENT IF EXISTS `clear_reservations`;
