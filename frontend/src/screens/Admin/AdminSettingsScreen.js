@@ -58,6 +58,39 @@ const AdminSettingsScreen = () => {
     fetchContactData();
   }, []);
 
+  const submitContact = async () => {
+    const contact = {
+      content: editContact,
+    };
+
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/writeAdminContactInfo`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify(contact),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.message || "Failed to change contact information."
+        );
+      }
+
+      Alert.alert(
+        "Success",
+        "Contact information edited succesfully successfully."
+      );
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+  };
+
   const [availabilityModalVisible, setAvailabilityModalVisible] =
     useState(false);
   const [recievedAvailability, setRecievedAvailability] = useState("");
@@ -212,8 +245,7 @@ const AdminSettingsScreen = () => {
               <Button
                 title="Save Changes"
                 onPress={() => {
-                  // Save changes to the database here
-                  //setPreviousAnnouncement(editedAnnouncement);
+                  submitContact;
                   setContactModalVisible(false);
                 }}
               />
@@ -303,7 +335,7 @@ const AdminSettingsScreen = () => {
                 multiline={true}
                 onChangeText={(text) => setEditTerm(text)}
                 value={editTerm}
-                horizontal = {true}
+                horizontal={true}
               />
 
               <Button
