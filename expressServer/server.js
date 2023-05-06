@@ -7,6 +7,7 @@ const oauthRouter = require('./oauth/index.js');
 const verifyToken = require('./oauth/verifyToken').verifyToken;
 const fs = require('fs');
 const cors = require("cors");
+const { scheduleJobs } = require('./emailScheduler'); //scheduled emails
 
 // Middleware
 const app = express();
@@ -24,16 +25,6 @@ app.use((req, res, next) => {
   next();
 });
 
-/*
-app.use(function(req, res, next){
-  console.log('request', req.url, req.body, req.method);
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-token, Authorization");
-  next();
-})
-*/
-
 // Set up session middleware
 app.use(
   session({
@@ -44,11 +35,8 @@ app.use(
   })
 );
 
-// app.use(cors());
 // Redirect requests to endpoint starting with /posts to postRoutes.js
 app.use("/posts", require("./routes/postRoutes"));
-// Use the OAuth router
-// app.use('/connect/uclapi', oauthRouter);
 
 app.use('/oauth', oauthRouter);
 console.log("Began use of /oauth");
@@ -92,6 +80,8 @@ app.get('/getEmail', verifyToken, (req, res) => {
   res.json({ email });
 });
 
+scheduleJobs();
+
 // Listen on pc port
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 8080; //env variable not actually used
 app.listen(8080, () => console.log(`Server running on PORT 8080`)); //${PORT}
