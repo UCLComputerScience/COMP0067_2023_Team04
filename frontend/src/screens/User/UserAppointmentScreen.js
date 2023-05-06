@@ -51,16 +51,17 @@ const UserAppointmentScreen = () => {
       const response = await axios.get(`${API_BASE_URL}/reservedUser`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      setDevice([
-        {
-          name: response.data.name,
-          state: response.data.state === "Reserved" ? "Pick up" : "Return",
-        },
-      ]);
+      const devicesData = response.data.map((device) => ({
+        key: device.deviceId,
+        name: device.name,
+        state: device.state === "Reserved" ? "Pick up" : "Return",
+      }));
+      setDevice(devicesData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+  
   
   
 
@@ -122,7 +123,7 @@ const UserAppointmentScreen = () => {
               <TouchableOpacity onPress={handleCanel}>
                 <View style={styles.line}>
                   <Text
-                    style={[styles.devices, { flex: 2, textAlign: "left" }]}
+                    style={[styles.devices, { flex: 1.3, textAlign: "left" }]}
                   >
                     {item.name}
                   </Text>
