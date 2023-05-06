@@ -20,11 +20,6 @@ import axios from "axios";
 const AdminSettingsScreen = () => {
   const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
-  const [availabilityModalVisible, setAvailabilityModalVisible] = useState(false);
-  const [editAvailability, setEditAvailability] = useState("");
-  const [userTermModalVisible, setUserTermModalVisible] = useState(false);
-  const [editUserTerm, setEditUserTerm] = useState("");
-
 
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
@@ -47,7 +42,7 @@ const AdminSettingsScreen = () => {
   const [contactModalVisible, setContactModalVisible] = useState(false);
   const [recievedContact, setRecievedContact] = useState("");
   const [editContact, setEditContact] = useState("");
-  const fetchDeviceData = async () => {
+  const fetchContactData = async () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/readAdminContactInfo`, {
@@ -60,9 +55,49 @@ const AdminSettingsScreen = () => {
     }
   };
   useEffect(() => {
-    fetchDeviceData();
+    fetchContactData();
   }, []);
 
+  const [availabilityModalVisible, setAvailabilityModalVisible] =
+    useState(false);
+  const [recievedAvailability, setRecievedAvailability] = useState("");
+  const [editAvailability, setEditAvailability] = useState("");
+  const fetchAvailabilityData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/readManagerSchedule`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+      console.log("Received data from API:", response.data);
+      setRecievedAvailability(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchAvailabilityData();
+  }, []);
+
+  const [termModalVisible, setTermModalVisible] = useState(false);
+  const [recievedTerm, setRecievedTerm] = useState("");
+  const [editTerm, setEditTerm] = useState("");
+  const fetchTermData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/readAdminContactInfo`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+      console.log("Received data from API:", response.data);
+      setRecievedTerm(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchTermData();
+  }, []);
+
+  //logout
   const Logout = async () => {
     await SecureStore.deleteItemAsync("jwtToken");
     navigation.navigate("LoginTabScreen");
@@ -103,9 +138,10 @@ const AdminSettingsScreen = () => {
       <Text style={styles.title}>User interactions</Text>
       <TouchableOpacity
         onPress={() => {
-          setEditAvailability(/* Set initial value if needed */);
+          setEditAvailability(recievedAvailability);
           setAvailabilityModalVisible(true);
-        }}>
+        }}
+      >
         <View style={styles.buttonRow}>
           <Text style={styles.buttonText}>Weekly availability</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="#ccc" />
@@ -114,9 +150,10 @@ const AdminSettingsScreen = () => {
       <View style={styles.separator} />
       <TouchableOpacity
         onPress={() => {
-          setEditUserTerm(/* Set initial value if needed */);
-          setUserTermModalVisible(true);
-        }}>
+          setEditTerm(recievedTerm);
+          setTermModalVisible(true);
+        }}
+      >
         <View style={styles.buttonRow}>
           <Text style={styles.buttonText}>Edit user term</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="#ccc" />
@@ -190,7 +227,7 @@ const AdminSettingsScreen = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
-      {/* Weekly Availability Modal */}
+
       <Modal
         animationType="fade"
         transparent={true}
@@ -203,15 +240,28 @@ const AdminSettingsScreen = () => {
           <View style={styles.centeredView}>
             <View style={styles.modalViewQR}>
               <Text style={{ fontSize: 18, marginBottom: 20 }}>
-                Edit Weekly Availability
+                Edit Weekly availability
               </Text>
 
-              {/* Add the necessary inputs and UI elements here */}
+              <TextInput
+                style={{
+                  height: 200,
+                  width: "100%",
+                  marginBottom: 20,
+                  paddingLeft: 10,
+                  backgroundColor: "#ECECEC",
+                  borderRadius: 15,
+                }}
+                multiline={true}
+                onChangeText={(text) => setEditAvailability(text)}
+                value={editAvailability}
+              />
 
               <Button
                 title="Save Changes"
                 onPress={() => {
                   // Save changes to the database here
+                  //setPreviousAnnouncement(editedAnnouncement);
                   setAvailabilityModalVisible(false);
                 }}
               />
@@ -226,13 +276,12 @@ const AdminSettingsScreen = () => {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* Edit User Term Modal */}
       <Modal
         animationType="fade"
         transparent={true}
-        visible={userTermModalVisible}
+        visible={termModalVisible}
         onRequestClose={() => {
-          setUserTermModalVisible(false);
+          setTermModalVisible(false);
         }}
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -242,19 +291,32 @@ const AdminSettingsScreen = () => {
                 Edit User Term
               </Text>
 
-              {/* Add the necessary inputs and UI elements here */}
+              <TextInput
+                style={{
+                  height: 200,
+                  width: "100%",
+                  marginBottom: 20,
+                  paddingLeft: 10,
+                  backgroundColor: "#ECECEC",
+                  borderRadius: 15,
+                }}
+                multiline={true}
+                onChangeText={(text) => setEditTerm(text)}
+                value={editTerm}
+              />
 
               <Button
                 title="Save Changes"
                 onPress={() => {
                   // Save changes to the database here
-                  setUserTermModalVisible(false);
+                  //setPreviousAnnouncement(editedAnnouncement);
+                  setTermModalVisible(false);
                 }}
               />
               <Button
                 title="Cancel"
                 onPress={() => {
-                  setUserTermModalVisible(false);
+                  setTermModalVisible(false);
                 }}
               />
             </View>
