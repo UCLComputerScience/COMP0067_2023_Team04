@@ -64,10 +64,9 @@ const DetailDeviceAdmin = () => {
   const returnDevice = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.post(`${API_BASE_URL}/return/${deviceID}`,{
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        }
-      );
+      const response = await axios.post(`${API_BASE_URL}/return/${deviceID}`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
       console.log("Received data from API for device info:", response.data);
       setDeviceInfo(response.data);
     } catch (error) {
@@ -78,7 +77,9 @@ const DetailDeviceAdmin = () => {
   const changeState = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.post(`${API_BASE_URL}/changeState/${deviceID}`,{
+      const response = await axios.post(
+        `${API_BASE_URL}/changeState/${deviceID}`,
+        {
           headers: { Authorization: `Bearer ${jwtToken}` },
         }
       );
@@ -109,9 +110,73 @@ const DetailDeviceAdmin = () => {
     fetchDeviceLoanData();
   }, []);
 
+  const submitIssue = async () => {
+    const Issue = {
+      content: inputText,
+    };
+
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/reportIssue/${deviceID}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify(Issue),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.message || "Failed to change contact information."
+        );
+      }
+
+      Alert.alert(
+        "Success",
+        "Contact information edited succesfully successfully."
+      );
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+  };
+
+  const submitIssueState = async () => {
+    const IssueState = {
+      newState: selectState,
+    };
+
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/changeState/${deviceID}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify(IssueState),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.message || "Failed to change contact information."
+        );
+      }
+
+      Alert.alert(
+        "Success",
+        "Contact information edited succesfully successfully."
+      );
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+  };
 
   const navigation = useNavigation();
-
 
   const getButtonInfo = () => {
     if (deviceInfo.state === "Reserved") {
@@ -126,32 +191,6 @@ const DetailDeviceAdmin = () => {
   };
 
   const buttonInfo = getButtonInfo();
-  /*
-  const updateDeviceState = async () => {
-    try {
-      // Backend
-      const response = await fetch("https://yourapi.com/updateDeviceState", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          deviceID,
-          newState: "",
-        }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        Alert.alert("Success", "Device state updated successfully.");
-      } else {
-        Alert.alert("Error", "Failed to update device state.");
-      }
-    } catch (error) {
-      console.error("Error updating device state:", error);
-    }
-  };*/
 
   //modal
   const [modalVisible, setModalVisible] = useState(false);
@@ -182,7 +221,8 @@ const DetailDeviceAdmin = () => {
             if (modalVisible) {
               console.log("Input Text:", inputText);
               console.log("New State:", selectedState);
-
+              submitIssue();
+              submitIssueState();
               setInputText("");
               setSelectedState(null);
             }
@@ -322,7 +362,9 @@ const DetailDeviceAdmin = () => {
         <View style={[styles.separator, { marginTop: 10 }]} />
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Loan date:</Text>
-          <Text style={styles.text}>{deviceLoan[0].startDate.substring(0,10)}</Text>
+          <Text style={styles.text}>
+            {deviceLoan[0].startDate.substring(0, 10)}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Last user ID:</Text>
@@ -332,6 +374,12 @@ const DetailDeviceAdmin = () => {
           <Text style={styles.label}>Device State:</Text>
           <Text style={styles.text}>{deviceInfo.state}</Text>
         </View>
+        {deviceInfo.issues ? (
+          <View style={styles.row}>
+            <Text style={styles.label}>Issue:</Text>
+            <Text style={styles.text}>{deviceInfo.issues}</Text>
+          </View>
+        ) : null}
 
         <View
           style={{ alignItems: "flex-end", marginRight: 30, paddingRight: 10 }}
@@ -358,31 +406,34 @@ const DetailDeviceAdmin = () => {
 
         <View style={{ paddingTop: 80 }}>
           <View style={{ alignItems: "center" }}>
-          <TouchableOpacity
-            style={styles.buttonBig}
-            onPress={() => {
-              if (deviceInfo.state === 'Loaned') {
-                returnDevice();
-                Alert.alert('Success');
-              } else if (deviceInfo.state === 'Reserved') {
-                changeState();
-                Alert.alert('Success');
-              } else {
-                Alert.alert('Error', 'Action not applicable for this device state');
-              }
-            }}
-            disabled={!buttonInfo.newState}
-          >
-            <Text
-              style={{
-                color: buttonInfo.newState ? '#AC145A' : '#ccc',
-                fontSize: 20,
-                fontWeight: 600,
+            <TouchableOpacity
+              style={styles.buttonBig}
+              onPress={() => {
+                if (deviceInfo.state === "Loaned") {
+                  returnDevice();
+                  Alert.alert("Success");
+                } else if (deviceInfo.state === "Reserved") {
+                  changeState();
+                  Alert.alert("Success");
+                } else {
+                  Alert.alert(
+                    "Error",
+                    "Action not applicable for this device state"
+                  );
+                }
               }}
+              disabled={!buttonInfo.newState}
             >
-              {buttonInfo.title}
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={{
+                  color: buttonInfo.newState ? "#AC145A" : "#ccc",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
+              >
+                {buttonInfo.title}
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
