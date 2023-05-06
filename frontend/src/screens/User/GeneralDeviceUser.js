@@ -4,24 +4,25 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Button,
   Dimensions,
   Modal,
-  Alert,
 } from "react-native";
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { createStackNavigator } from "@react-navigation/stack";
-
-//This interface is connected to three interfaces, when entering from the UserDevice interface, he needs to get the summary details of one of the devices, and then reserve, go to the next interface.
-//The next interface is Userterm, when the user clicks I agree, the database will return the time of the user's appointment and set the status to On hold, and also return to this interface to read this reserve time, in line 169
-//When you enter from the Appointment interface, you need to read the summary details and status of the device and the appointment time, the status of Loan should be On hold, and the status of Return should be Available.
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
 
 const GeneralDeviceUserScreen = () => {
+  //!!! replace :name with variables when dubug finished by Dr. Fu
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
   const navigation = useNavigation();
   const route = useRoute();
-  const {deviceName} = route.params;
+  const deviceName = route.params?.deviceName;
+
+  console.log("route.params:", route.params);
+  console.log("deviceName:", deviceName);
 
   async function getJwtToken() {
     try {
@@ -39,6 +40,8 @@ const GeneralDeviceUserScreen = () => {
     }
   }
 
+
+  //Devices list from DB, successful
   const [device, setDevice] = useState("");
   const fetchDeviceData = async () => {
     try {
@@ -56,6 +59,24 @@ const GeneralDeviceUserScreen = () => {
     fetchDeviceData();
   }, []);
 
+  const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
+
+  const [devices, setDevices] = useState({});
+  const fetchDevicesData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/idByName/${deviceName}`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
+      //console.log("Received data from API:", response.data);
+      setDevices(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchDevicesData();
+  }, []);
 
   const timeSlot = [
     "Monday: 10:00 - 12:00",
@@ -78,8 +99,6 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
   ];
 
   const loanDevie = () => {};
-
-  const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
