@@ -20,6 +20,11 @@ import axios from "axios";
 const AdminSettingsScreen = () => {
   const { logout } = useContext(AuthContext);
   const navigation = useNavigation();
+  const [availabilityModalVisible, setAvailabilityModalVisible] = useState(false);
+  const [editAvailability, setEditAvailability] = useState("");
+  const [userTermModalVisible, setUserTermModalVisible] = useState(false);
+  const [editUserTerm, setEditUserTerm] = useState("");
+
 
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
@@ -96,14 +101,22 @@ const AdminSettingsScreen = () => {
       </TouchableOpacity>
       <View style={styles.separator} />
       <Text style={styles.title}>User interactions</Text>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setEditAvailability(/* Set initial value if needed */);
+          setAvailabilityModalVisible(true);
+        }}>
         <View style={styles.buttonRow}>
           <Text style={styles.buttonText}>Weekly availability</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="#ccc" />
         </View>
       </TouchableOpacity>
       <View style={styles.separator} />
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setEditUserTerm(/* Set initial value if needed */);
+          setUserTermModalVisible(true);
+        }}>
         <View style={styles.buttonRow}>
           <Text style={styles.buttonText}>Edit user term</Text>
           <Ionicons name="chevron-forward-outline" size={20} color="#ccc" />
@@ -171,6 +184,77 @@ const AdminSettingsScreen = () => {
                 title="Cancel"
                 onPress={() => {
                   setContactModalVisible(false);
+                }}
+              />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+      {/* Weekly Availability Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={availabilityModalVisible}
+        onRequestClose={() => {
+          setAvailabilityModalVisible(false);
+        }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalViewQR}>
+              <Text style={{ fontSize: 18, marginBottom: 20 }}>
+                Edit Weekly Availability
+              </Text>
+
+              {/* Add the necessary inputs and UI elements here */}
+
+              <Button
+                title="Save Changes"
+                onPress={() => {
+                  // Save changes to the database here
+                  setAvailabilityModalVisible(false);
+                }}
+              />
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setAvailabilityModalVisible(false);
+                }}
+              />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+
+      {/* Edit User Term Modal */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={userTermModalVisible}
+        onRequestClose={() => {
+          setUserTermModalVisible(false);
+        }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalViewQR}>
+              <Text style={{ fontSize: 18, marginBottom: 20 }}>
+                Edit User Term
+              </Text>
+
+              {/* Add the necessary inputs and UI elements here */}
+
+              <Button
+                title="Save Changes"
+                onPress={() => {
+                  // Save changes to the database here
+                  setUserTermModalVisible(false);
+                }}
+              />
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setUserTermModalVisible(false);
                 }}
               />
             </View>
