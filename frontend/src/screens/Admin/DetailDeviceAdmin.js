@@ -400,11 +400,11 @@ const DetailDeviceAdmin = () => {
         <View style={[styles.separator, { marginTop: 10 }]} />
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Loan date:</Text>
-          <Text style={styles.text}>0</Text>
+          <Text style={styles.text}>{deviceLoan.startDate ? deviceLoan.startDate.substring(0,10) : ""}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Last user ID:</Text>
-          <Text style={styles.text}>0</Text>
+          <Text style={styles.text}>{deviceLoan.userId ? deviceLoan.userId : ""}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Device State:</Text>
