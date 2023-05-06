@@ -74,6 +74,29 @@ const DetailDeviceAdmin = () => {
     }
   };*/
 
+  const loanDevice = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/beginLoan/${deviceID}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "Failed to loan device.");
+      }
+
+      Alert.alert("Success", "Device Loaned successfully.");
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+    fetchDeviceData();
+  };
+
   const returnDevice = async () => {
     try {
       const jwtToken = await getJwtToken();
@@ -87,12 +110,10 @@ const DetailDeviceAdmin = () => {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          responseData.message || "Failed to change contact information."
-        );
+        throw new Error(responseData.message || "Failed to return device.");
       }
 
-      Alert.alert("Success", "Issue submitted successfully.");
+      Alert.alert("Success", "Device returned successfully.");
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }
@@ -426,10 +447,8 @@ const DetailDeviceAdmin = () => {
               onPress={() => {
                 if (deviceInfo.state === "Loaned") {
                   returnDevice();
-                  Alert.alert("Success");
                 } else if (deviceInfo.state === "Reserved") {
-                  changeState();
-                  Alert.alert("Success");
+                  loanDevice();
                 } else {
                   Alert.alert(
                     "Error",
