@@ -103,14 +103,16 @@ const GeneralDeviceUserScreen = () => {
     "Friday: 13:00 - 14:00",
   ];
 
-  const userTerm = async () => {
+  const [userTerm, setUserTerm] = useState({});
+
+  const userTerms = async () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/readUserTerms`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
       //console.log("Received data from API:", response.data);
-      setDevices(response.data);
+      setUserTerm(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -206,7 +208,7 @@ const GeneralDeviceUserScreen = () => {
               </TouchableOpacity>
             </View>
             <ScrollView style={styles.userTermsContent}>
-              <Text>{userTerm()}</Text>
+              <Text>{userTerm}</Text>
             </ScrollView>
             <TouchableOpacity
               style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
