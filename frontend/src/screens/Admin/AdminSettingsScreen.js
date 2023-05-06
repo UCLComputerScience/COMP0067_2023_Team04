@@ -114,6 +114,42 @@ const AdminSettingsScreen = () => {
     fetchAvailabilityData();
   }, []);
 
+  const submitAvailability = async () => {
+    const availability = {
+      content: editAvailability,
+    };
+
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/writeManagerSchedule`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify(availability),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.message || "Failed to change contact information."
+        );
+      }
+
+      // Update receivedContact with the latest information
+      fetchAvailabilityData();
+
+      Alert.alert(
+        "Success",
+        "Weekly availability edited succesfully successfully."
+      );
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+  };
+
   const [termModalVisible, setTermModalVisible] = useState(false);
   const [recievedTerm, setRecievedTerm] = useState("");
   const [editTerm, setEditTerm] = useState("");
@@ -132,6 +168,42 @@ const AdminSettingsScreen = () => {
   useEffect(() => {
     fetchTermData();
   }, []);
+
+  const submitTerm = async () => {
+    const term = {
+      content: editTerm,
+    };
+
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/writeUserTerms`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify(term),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.message || "Failed to change contact information."
+        );
+      }
+
+      // Update receivedContact with the latest information
+      fetchTermData();
+
+      Alert.alert(
+        "Success",
+        "Weekly availability edited succesfully successfully."
+      );
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+  };
 
   //logout
   const Logout = async () => {
@@ -295,8 +367,7 @@ const AdminSettingsScreen = () => {
               <Button
                 title="Save Changes"
                 onPress={() => {
-                  // Save changes to the database here
-                  //setPreviousAnnouncement(editedAnnouncement);
+                  submitAvailability();
                   setAvailabilityModalVisible(false);
                 }}
               />
@@ -344,8 +415,7 @@ const AdminSettingsScreen = () => {
               <Button
                 title="Save Changes"
                 onPress={() => {
-                  // Save changes to the database here
-                  //setPreviousAnnouncement(editedAnnouncement);
+                  submitTerm();
                   setTermModalVisible(false);
                 }}
               />
