@@ -32,6 +32,7 @@ router.put('/reportIssue/:deviceId', verifyAdmin, postControllers.reportIssue); 
 // Admin POST methods
 router.post('/addDevice/', verifyAdmin, postControllers.addDevice); //**--------** enter new device into database
 router.post('/return/:deviceId', verifyAdmin, postControllers.returnDevice); //**--------** used when physically returning a device, by its ID
+router.post('/beginLoan/:deviceId', verifyAdmin, postControllers.beginLoan); 
 
 // Admin POST file writing methods
 router.post("/writeUserTerms", verifyAdmin, postControllers.writeUserTerms); //**--------**

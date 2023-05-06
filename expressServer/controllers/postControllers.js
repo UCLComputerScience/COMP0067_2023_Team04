@@ -131,7 +131,7 @@ exports.getLatestLoan = async (req, res, next) => {
   try {
     const deviceId = req.params.deviceId;
     const loanInfo = await loanModel.getLatestLoan(deviceId);
-    res.status(200).json(loanInfo);
+    res.status(200).json(loanInfo[0]);
   } catch (error) {
     console.error("Error:", error); // Add this line to log the error to the console
     res.status(500).json({message: 'Error getting information on latest loan for the given device.', error})
@@ -222,7 +222,6 @@ exports.addDevice = async (req, res) => {
   }
 };
 
-
 // creates a new loan
 exports.createLoan = async (req, res) => {
   try {
@@ -237,9 +236,13 @@ exports.createLoan = async (req, res) => {
     }
 
     const loanId = await loanModel.createLoan(loan);
-
     if (loanId) {
-      res.status(201).json({ message: 'Loan created successfully', loanId });
+      const result = await deviceModel.updateState(deviceId, 'Reserved');
+      if (result) {
+        res.status(201).json({ message: 'Loan created successfully', loanId });
+      } else {
+        res.status(400).json({message: 'Unable to update state to reserved'});
+      }
     } else {
       res.status(400).json({ message: 'Could not create loan' });
     }
@@ -399,6 +402,26 @@ exports.returnDevice = async (req, res) => {
     }
   } catch (error) {
     res.status(500).send({ message: "An error occurred", error });
+  }
+};
+
+// Begin the loan of the reserved device when the user physically picks it up.
+exports.beginLoan = async (req, res) => {
+  let deviceId = req.params.deviceId
+  try {
+    const loanBegun = await loanModel.beginLoan(deviceId);
+    if (loanBegun) {
+      const deviceStateUpdated = await deviceModel.updateState(deviceId, 'Loaned');
+      if (deviceStateUpdated) {
+        res.status(200).json({message: 'Loan period started'});
+      } else {
+        res.status(403).json({message: 'Error when updating device state'})
+      }
+    } else {
+      res.status(403).json({message: 'Error when inputting dueDate'})
+    }
+  } catch (error) {
+    res.status(500).send({message: "An error occurred", error});
   }
 };
 

@@ -165,6 +165,30 @@ class Loan {
     const [result] = await db.execute(sql, [deviceId]);
     return result.affectedRows > 0;
   }
+
+  // Begin the loan after device is picked up by user
+  static async beginLoan(deviceId) {
+    const sql = `
+      UPDATE loan
+      SET dueDate = (
+        SELECT CURRENT_DATE() + INTERVAL ruleDur DAY
+        FROM device
+        WHERE deviceId = ?
+      )
+      WHERE loanId = (
+        SELECT loanId
+        FROM (
+          SELECT loanId
+          FROM loan
+          WHERE deviceId = ?
+          ORDER BY loanId DESC
+          LIMIT 1
+        ) AS tmp
+      )
+    `;
+    const [result] = await db.execute(sql, [deviceId, deviceId]);
+    return result.affectedRows > 0;
+  }
 }
 
 module.exports = Loan;
