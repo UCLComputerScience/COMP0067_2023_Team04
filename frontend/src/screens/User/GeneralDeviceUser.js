@@ -74,26 +74,26 @@ const GeneralDeviceUserScreen = () => {
     fetchDeviceData();
   }, []);
 
-  const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
-
-  const [devices, setDevices] = useState({});
-
-  const fetchDevicesData = async () => {
+  const reserveDevice = async () => {
     try {
-      console.log("Fetching devices data for:", deviceName);
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/deviceByName/${deviceName}`, {
+      const response = await axios.post(`${API_BASE_URL}/createLoan/${deviceID}`,{
           headers: { Authorization: `Bearer ${jwtToken}` },
-        });
-      console.log("Received data from API:", response.data);
-      setDevices(response.data);
+        }
+      );
+      console.log("Received data from API for device info:", response.data);
+      setDeviceInfo(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  useEffect(() => {
-    fetchDevicesData();
-  }, []);
+        
+
+
+
+  const [devices, setDevices] = useState({});
+
+  const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
 
   const timeSlot = [
     "Monday: 10:00 - 12:00",
@@ -109,7 +109,7 @@ const GeneralDeviceUserScreen = () => {
       const response = await axios.get(`${API_BASE_URL}/readUserTerms`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
-      console.log("Received data from API:", response.data);
+      //console.log("Received data from API:", response.data);
       setDevices(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
