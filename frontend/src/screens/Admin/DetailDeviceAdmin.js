@@ -118,7 +118,7 @@ const DetailDeviceAdmin = () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await fetch(`${API_BASE_URL}/reportIssue/${deviceID}`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwtToken}`,
@@ -136,7 +136,7 @@ const DetailDeviceAdmin = () => {
 
       Alert.alert(
         "Success",
-        "Contact information edited succesfully successfully."
+        "Issue submitted successfully."
       );
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
@@ -145,13 +145,13 @@ const DetailDeviceAdmin = () => {
 
   const submitIssueState = async () => {
     const IssueState = {
-      newState: selectState,
+      state: selectedState,
     };
 
     try {
       const jwtToken = await getJwtToken();
       const response = await fetch(`${API_BASE_URL}/changeState/${deviceID}`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwtToken}`,
@@ -163,13 +163,13 @@ const DetailDeviceAdmin = () => {
 
       if (!response.ok) {
         throw new Error(
-          responseData.message || "Failed to change contact information."
+          responseData.message || "Failed to change state."
         );
       }
 
       Alert.alert(
         "Success",
-        "Contact information edited succesfully successfully."
+        "State chenged successfully."
       );
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
@@ -363,12 +363,12 @@ const DetailDeviceAdmin = () => {
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Loan date:</Text>
           <Text style={styles.text}>
-            {deviceLoan[0].startDate.substring(0, 10)}
+            0
           </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Last user ID:</Text>
-          <Text style={styles.text}>{deviceLoan[0].userId}</Text>
+          <Text style={styles.text}>0</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Device State:</Text>
