@@ -20,6 +20,7 @@ const GeneralDeviceUserScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const deviceName = route.params?.deviceName;
+  const Available = route.params?.Available;
 
   console.log("route.params:", route.params);
   console.log("deviceName:", deviceName);
@@ -80,7 +81,7 @@ const GeneralDeviceUserScreen = () => {
     try {
       console.log("Fetching devices data for:", deviceName);
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/idByName/${deviceName}`, {
+      const response = await axios.get(`${API_BASE_URL}/deviceByName/${deviceName}`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
       console.log("Received data from API:", response.data);
@@ -315,7 +316,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                   Available
+                   {Available} Available
                 </Text>
               </View>
             </View>
@@ -336,7 +337,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                 justifyContent: "center",
               }}
               onPress={showAvailableDatesAlert}
-              disabled={'false'}
+              disabled={Available === 0 || Available === "0"}
             >
               <Text
                 style={{
