@@ -109,14 +109,21 @@ const GeneralDeviceUserScreen = () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/readUserTerms`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
       //console.log("Received data from API:", response.data);
-      setUserTerm(response.data);
+      setUserTerm(JSON.stringify(response.data));
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+
+  useEffect(() => {
+  fetchDeviceData();
+  userTerms(); 
+}, []);
+
+  
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
@@ -214,7 +221,7 @@ const GeneralDeviceUserScreen = () => {
               style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
               onPress={() => {
                 setUserTermsModalVisible(false);
-                loanDevie;
+                loanDevice;
                 Alert.alert(
                   "Success",
                   "You have successfully reserve a device"
