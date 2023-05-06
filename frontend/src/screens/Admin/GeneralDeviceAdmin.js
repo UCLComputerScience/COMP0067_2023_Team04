@@ -60,25 +60,7 @@ const GeneralDeviceAdminScreen = () => {
     fetchDeviceData();
   }, []);
 
-  const [deviceLoan, setDeviceLoan] = useState("");
-  const fetchDeviceLoanData = async () => {
-    try {
-      const jwtToken = await getJwtToken();
-      const response = await axios.get(
-        `${API_BASE_URL}/latestLoan/${deviceName}`,
-        {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        }
-      );
-      console.log("Received data from API:", response.data);
-      setDeviceLoan(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-  useEffect(() => {
-    fetchDeviceLoanData();
-  }, []);
+
 
   const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
 
