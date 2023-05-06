@@ -82,6 +82,9 @@ const AdminSettingsScreen = () => {
         );
       }
 
+      // Update receivedContact with the latest information
+      fetchContactData();
+
       Alert.alert(
         "Success",
         "Contact information edited succesfully successfully."
@@ -245,7 +248,7 @@ const AdminSettingsScreen = () => {
               <Button
                 title="Save Changes"
                 onPress={() => {
-                  submitContact;
+                  submitContact();
                   setContactModalVisible(false);
                 }}
               />
