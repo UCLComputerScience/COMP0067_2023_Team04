@@ -47,15 +47,22 @@ const GeneralDeviceUserScreen = () => {
     try {
       console.log("Fetching device data for:", deviceName);
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/details/${deviceName}`, {
+      const response = await axios.get(`${API_BASE_URL}/deviceByName/${deviceName}`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });      
       console.log("Received data from API:", response.data);
       setDevice(response.data);
+  
+      if (response.data && response.data.ruleDur) {
+        setStandardLoanDuration(response.data.ruleDur);
+      }
+  
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
+  
+  
   useEffect(() => {
     fetchDeviceData();
   }, []);
@@ -139,6 +146,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
       { cancelable: false }
     );
   };
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -237,7 +245,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                   Standard Loan Duration:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {device[0].standardLoanDuration} Days
+                  {standardLoanDuration} Days
                 </Text>
               </View>
               <View style={styles.detailRowLayout}>
@@ -302,7 +310,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {devices.available} Available
+                   Available
                 </Text>
               </View>
             </View>
@@ -323,7 +331,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
                 justifyContent: "center",
               }}
               onPress={showAvailableDatesAlert}
-              disabled={available === 0 || available === "0"}
+              disabled={'false'}
             >
               <Text
                 style={{
