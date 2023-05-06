@@ -89,6 +89,26 @@ const DetailDeviceAdmin = () => {
     }
   };
 
+  const [deviceLoan, setDeviceLoan] = useState("");
+  const fetchDeviceLoanData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(
+        `${API_BASE_URL}/latestLoan/${deviceID}`,
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
+      console.log("Received data from API:", response.data);
+      setDeviceLoan(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchDeviceLoanData();
+  }, []);
+
 
   const navigation = useNavigation();
 
@@ -302,11 +322,11 @@ const DetailDeviceAdmin = () => {
         <View style={[styles.separator, { marginTop: 10 }]} />
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Loan date:</Text>
-          <Text style={styles.text}>{deviceInfo.loanDate}</Text>
+          <Text style={styles.text}>{deviceLoan[0].startDate.substring(0,10)}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Last user ID:</Text>
-          <Text style={styles.text}>{deviceInfo.userID}</Text>
+          <Text style={styles.text}>{deviceLoan[0].userId}</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Device State:</Text>
