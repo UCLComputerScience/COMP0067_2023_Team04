@@ -16,11 +16,12 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceUser from "./GeneralDeviceUser";
 import * as Linking from "expo-linking";
 import axios from "axios";
+import * as SecureStore from "expo-secure-store";
 
 //This screen needs to read the model number, shelf date, number of available rentals, and name of all available rental devices
 //Note! The number of devices available in the database is 0 should not appear!
 
-const AllDevices = () => {
+const AvailableDevices = () => {
   const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState("All");
 
@@ -54,6 +55,8 @@ const AllDevices = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
   const [availableSortOrder, setAvailableSortOrder] = useState("asc");
+  const [initialDevices, setInitialDevices] = useState([]);
+
 
   const [device, setDevice] = useState(null);
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
@@ -74,61 +77,43 @@ const AllDevices = () => {
     }
   }
 
-
-  const [listData, setListData] = useState([]);
-
-  const getListData = async () => {
-    const userId = 1;
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}/devices/nameAvailabilityUser`
-      );
-      console.log("Received data from API:", response.data);
-      setDevices(response.data);
-        
-      if (response.data) {
-        setListData(response.data);
-        setInitialDevices(response.data); // Add this line
-      }
-    } catch (error) {
-      console.log("error = ", error);
-    }
-  };
-
-  const fetchData = async () => {
+  useEffect(() => {
+    getAvailableDevices();
+  }, []);
+  
+  const getAvailableDevices = async () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/nameAvailabilityUser`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      setDevice([
-        {
-          id: response.data.id,
-          name: response.data.name,
-          launchYr: response.data.launchYr,
-          num_available: response.data.num_available,
-          category: response.data.category,
-        },
-      ]);
+      setDevices(
+        response.data
+          .filter((device) => device.num_available > 0)
+          .map((device) => ({
+            name: device.name,
+            launchYr: device.launchYr,
+            num_available: device.num_available,
+            category: device.category,
+          }))
+      );
+      setInitialDevices(
+        response.data
+          .filter((device) => device.num_available > 0)
+          .map((device) => ({
+            name: device.name,
+            launchYr: device.launchYr,
+            num_available: device.num_available,
+            category: device.category,
+          }))
+      );
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.log("获取可用设备失败:", error);
     }
   };
-
-  const [initialDevices, setInitialDevices] = useState([]);
-
   
-
-  useEffect(() => {
-    if (input === "") {
-      setDevices(initialDevices);
-    } else {
-      const filteredDevices = initialDevices.filter((device) =>
-        device.name.toLowerCase().includes(input.toLowerCase())
-      );
-      setDevices(filteredDevices);
-    }
-  }, [input]);
+  
+  
   
 
   const sortDevicesByLoaned = (order) => {
@@ -302,7 +287,7 @@ const AllDevices = () => {
               >
                 <View style={styles.line}>
                   <Text
-                    style={[styles.devices, { flex: 2.4, textAlign: "left" }]}
+                    style={[styles.devices, { flex: 2.2, textAlign: "left" }]}
                   >
                     {item.name}
                   </Text>
@@ -320,13 +305,13 @@ const AllDevices = () => {
                       { marginRight: -5, flex: 0.9, textAlign: "center" },
                     ]}
                   >
-                    {item.state}
+                    {item.num_available}
                   </Text>
                 </View>
               </TouchableOpacity>
             );
           }}
-          keyExtractor={(item) => item.id.toString()}
+          keyExtractor={(item) => item.name}
           contentContainerStyle={{ paddingBottom: 170 }}
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
@@ -418,7 +403,7 @@ const UserDevicesScreen = () => {
     <Stack.Navigator>
       <Stack.Screen
         name="userDevices"
-        component={AllDevices}
+        component={AvailableDevices}
         options={{ headerShown: false }}
       />
       <Stack.Screen
