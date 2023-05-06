@@ -48,7 +48,7 @@ const UserLoans = () => {
       const response = await axios.get(`${API_BASE_URL}/loansCurrent`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
-      console.log("Received data from API:", response.data);
+      console.log("Received loan:", response.data);
   
       if (response.data) {
         const mappedData = response.data.map((item) => {
