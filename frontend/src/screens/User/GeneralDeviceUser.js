@@ -64,6 +64,9 @@ const GeneralDeviceUserScreen = () => {
       if (response.data && response.data.ruleExt) {
         setExtensionAllowance(response.data.ruleExt);
       }  
+      if (response.data && response.data.deviceId) {
+        setDeviceId(response.data.deviceId);
+      }      
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -74,10 +77,14 @@ const GeneralDeviceUserScreen = () => {
     fetchDeviceData();
   }, []);
 
-  const reserveDevice = async () => {
+  const [deviceId, setDeviceId] = useState(null);
+
+  const reserveDevice = async (deviceId) => {
+    const deviceId = deviceId; 
+
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.post(`${API_BASE_URL}/createLoan/${deviceID}`,{
+      const response = await axios.post(`${API_BASE_URL}/createLoan/${deviceId}`,{
           headers: { Authorization: `Bearer ${jwtToken}` },
         }
       );
@@ -86,10 +93,7 @@ const GeneralDeviceUserScreen = () => {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
-        
-
-
+  };  
 
   const [devices, setDevices] = useState({});
 
@@ -219,13 +223,11 @@ const GeneralDeviceUserScreen = () => {
             </ScrollView>
             <TouchableOpacity
               style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
-              onPress={() => {
+              onPress={async () => {
                 setUserTermsModalVisible(false);
-                loanDevice;
-                Alert.alert(
-                  "Success",
-                  "You have successfully reserve a device"
-                );
+                const deviceId = response.data.deviceId; // Get deviceId from response.data
+                await reserveDevice(deviceId); // Call reserveDevice function with deviceId
+                Alert.alert("Success", "You have successfully reserve a device");
               }}
             >
               <Text style={styles.modalCancelButtonText}>I agree</Text>
