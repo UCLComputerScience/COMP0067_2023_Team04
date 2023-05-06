@@ -61,6 +61,20 @@ const UserAppointmentScreen = () => {
       console.error("Error fetching data:", error);
     }
   };
+
+  const cancelLoan = async (deviceId) => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.delete(`${API_BASE_URL}/loans/${deviceId}`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
+      console.log("Received data from API:", response.data);
+      } catch (error) {
+      console.log("error = ", error);
+    }
+  };
+
+
   
   
   
@@ -82,6 +96,7 @@ const UserAppointmentScreen = () => {
         {
           text: "Yes",
           onPress: () => {
+            cancelLoan();
             Alert.alert("Success", "The reservation is successfully cancelled");
           },
         },
