@@ -13,6 +13,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import { createStackNavigator } from "@react-navigation/stack";
 import * as SecureStore from "expo-secure-store";
 import axios from "axios";
+import { Alert } from "react-native";
 
 const GeneralDeviceUserScreen = () => {
   //!!! replace :name with variables when dubug finished by Dr. Fu
@@ -102,19 +103,18 @@ const GeneralDeviceUserScreen = () => {
     "Friday: 13:00 - 14:00",
   ];
 
-  const userTerm = [
-    "By borrowing a device from this lending system, I agree to the following terms:\n\n\
-1. I will use the device solely for its intended purpose and will not use it for any illegal or unauthorized activity.\n\
-2. I will not modify, tamper with, or attempt to repair the device in any way.\n\
-3. I will take reasonable care of the device and protect it from damage or theft.\n\
-4. I will return the device by the agreed-upon date and time in the same condition as when I borrowed it.\n\
-5. I will be responsible for any loss, damage, or theft that occurs while the device is in my possession.\n\
-6. I will not share the device with others or lend it to anyone else without permission from the lending system.\n\
-7. I understand that failure to comply with these terms may result in a revocation of my borrowing privileges and may also result in legal action.\n\n\
-By agreeing to these terms, I acknowledge that I have read and understand them, and I agree to abide by them while borrowing a device from this lending system.",
-  ];
-
-  const loanDevie = () => {};
+  const userTerm = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/readUserTerms`, {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        });
+      console.log("Received data from API:", response.data);
+      setDevices(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
@@ -206,7 +206,7 @@ By agreeing to these terms, I acknowledge that I have read and understand them, 
               </TouchableOpacity>
             </View>
             <ScrollView style={styles.userTermsContent}>
-              <Text>{userTerm}</Text>
+              <Text>{userTerm()}</Text>
             </ScrollView>
             <TouchableOpacity
               style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
