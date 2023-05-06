@@ -281,7 +281,7 @@ const AvailableDevices = () => {
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("General Details", {
-                    deviceName: item.name,
+                    deviceName: item.name, Available: item.num_available
                   })
                 }
               >
