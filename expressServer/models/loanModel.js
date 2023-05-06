@@ -1,5 +1,4 @@
 const db = require('../config/db');
-const deviceModel = require('./deviceModel');
 
 class Loan {
   constructor(loanId, userId, userEmail, startDate, dueDate, deviceId, exten, returnDate) {
@@ -15,17 +14,19 @@ class Loan {
   //for AdminScheduleScreen.js (loads devices reserved & overdue/due this week) ****TODO****
   static async getSchedule() {
     const sql = `
-    SELECT loanId, userId, userEmail, startDate, dueDate, deviceId, exten, returnedDate
+    SELECT loan.loanId, loan.userId, loan.userEmail, loan.startDate, loan.dueDate, 
+    loan.deviceId, loan.exten, loan.returnedDate, device.state
     FROM loan
-    WHERE (WEEK(startDate) = WEEK(CURRENT_DATE) AND YEAR(startDate) = YEAR(CURRENT_DATE)) OR
-    ((dueDate <= CURRENT_DATE + INTERVAL (7 - DAYOFWEEK(CURRENT_DATE)) DAY) AND returnedDate IS NULL)
-    ORDER BY startDate;
+    INNER JOIN device ON loan.deviceId = device.deviceId
+    WHERE (WEEK(loan.startDate) = WEEK(CURRENT_DATE) AND YEAR(loan.startDate) = YEAR(CURRENT_DATE)) OR
+    ((loan.dueDate <= CURRENT_DATE + INTERVAL (7 - DAYOFWEEK(CURRENT_DATE)) DAY) AND loan.returnedDate IS NULL)
+    ORDER BY loan.startDate;
     `;
-
+  
     const [rows] = await db.execute(sql);
     return rows;
   }
-
+  
   // Misc
   static async getAllLoans() {
     let sql = 'SELECT * FROM loan';
@@ -48,6 +49,14 @@ class Loan {
                JOIN device d ON l.deviceId = d.deviceId
                WHERE d.name = ?`;
     const [rows] = await db.execute(sql, [name]);
+    return rows;
+  }
+
+  // returns information on the latest loan (NOT reservation) of a device give device ID
+  static async getLatestLoan(deviceId) {
+    let sql = `SELECT * FROM loan WHERE deviceId = ? AND startDate IS NOT NULL AND dueDate IS NOT NULL 
+               ORDER BY loanId DESC LIMIT 1`;
+    const [rows] = await db.execute(sql, [deviceId]);
     return rows;
   }
 
@@ -95,20 +104,14 @@ class Loan {
 
   // Create a new loan
   static async createLoan(loan) {
-    const isAvailable = await deviceModel.isDeviceAvailable(loan.deviceId);
+    const sql = 'INSERT INTO loan (userId, userEmail, deviceId, startDate) VALUES (?, ?, ?, CURRENT_DATE())';
+    const [result] = await db.execute(sql, [loan.userId, loan.userEmail, loan.deviceId]);
 
-    if (isAvailable) {
-      const sql = 'INSERT INTO loan SET ?';
-      const [result] = await db.query(sql, loan);
-
-      if (result.affectedRows > 0) {
-        return result.insertId;
-      }
+    if (result.affectedRows > 0) {
+      return result.insertId;
     } else {
-      throw new Error(`Device with ID ${loan.deviceId} is not available for loan.`);
+      throw new Error(`Could not create loan for device with ID ${loan.deviceId}.`);
     }
-
-    return null;
   }
 
   // Cancel Reservations

@@ -7,13 +7,5 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD
 })
-/*
-let sql = "SELECT * FROM device;";
 
-pool.execute(sql, function(err, result){
-    if (err) throw err;
-
-    console.log(result);
-})
-*/
 module.exports = pool.promise();
