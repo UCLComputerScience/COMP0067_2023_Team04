@@ -47,7 +47,8 @@ const GeneralDeviceUserScreen = () => {
   const [device, setDevice] = useState("");
   const [standardLoanDuration, setStandardLoanDuration] = useState(0);
   const [extensionAllowance, setExtensionAllowance] = useState(0);
-
+  const [deviceId, setDeviceId] = useState(null);
+  
   const fetchDeviceData = async () => {
     try {
       console.log("Fetching device data for:", deviceName);
@@ -72,28 +73,34 @@ const GeneralDeviceUserScreen = () => {
     }
   };
   
-  
   useEffect(() => {
     fetchDeviceData();
   }, []);
 
-  const [deviceId, setDeviceId] = useState(null);
-
-  const reserveDevice = async (deviceId) => {
-    const deviceId = deviceId; 
-
+  const reserveDevice = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.post(`${API_BASE_URL}/createLoan/${deviceId}`,{
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        }
-      );
-      console.log("Received data from API for device info:", response.data);
-      setDeviceInfo(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
+      const response = await fetch(`${API_BASE_URL}/createLoan/${deviceId}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.message || "Failed to change contact information."
+        );
+      }
+
+      Alert.alert("Success", "Issue submitted successfully.");
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
     }
-  };  
+    fetchDeviceData();
+  };
 
   const [devices, setDevices] = useState({});
 
@@ -223,12 +230,7 @@ const GeneralDeviceUserScreen = () => {
             </ScrollView>
             <TouchableOpacity
               style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
-              onPress={async () => {
-                setUserTermsModalVisible(false);
-                const deviceId = response.data.deviceId; // Get deviceId from response.data
-                await reserveDevice(deviceId); // Call reserveDevice function with deviceId
-                Alert.alert("Success", "You have successfully reserve a device");
-              }}
+              onPress={reserveDevice}
             >
               <Text style={styles.modalCancelButtonText}>I agree</Text>
             </TouchableOpacity>
