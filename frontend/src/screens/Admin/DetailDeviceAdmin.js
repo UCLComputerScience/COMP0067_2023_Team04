@@ -96,6 +96,7 @@ const DetailDeviceAdmin = () => {
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }
+    fetchDeviceData();
   };
 
   const changeState = async () => {
