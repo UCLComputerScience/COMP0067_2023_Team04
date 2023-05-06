@@ -45,7 +45,7 @@ const UserLoans = () => {
   const getListData = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/loans/loansCurrent`, {
+      const response = await axios.get(`${API_BASE_URL}/loansCurrent`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
       console.log("Received data from API:", response.data);
