@@ -39,15 +39,17 @@ const GeneralDeviceAdminScreen = () => {
     }
   }
 
-
   //Devices list from DB, successful
   const [device, setDevice] = useState("");
   const fetchDeviceData = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/details/${deviceName}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });      
+      const response = await axios.get(
+        `${API_BASE_URL}/details/${deviceName}`,
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
       console.log("Received data from API:", response.data);
       setDevice(response.data);
     } catch (error) {
@@ -58,15 +60,38 @@ const GeneralDeviceAdminScreen = () => {
     fetchDeviceData();
   }, []);
 
+  const [deviceLoan, setDeviceLoan] = useState("");
+  const fetchDeviceLoanData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(
+        `${API_BASE_URL}/latestLoan/${deviceName}`,
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
+      console.log("Received data from API:", response.data);
+      setDeviceLoan(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchDeviceLoanData();
+  }, []);
+
   const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
 
   const [devices, setDevices] = useState({});
   const fetchDevicesData = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/idByName/${deviceName}`, {
+      const response = await axios.get(
+        `${API_BASE_URL}/idByName/${deviceName}`,
+        {
           headers: { Authorization: `Bearer ${jwtToken}` },
-        });
+        }
+      );
       //console.log("Received data from API:", response.data);
       setDevices(response.data);
     } catch (error) {
@@ -81,9 +106,12 @@ const GeneralDeviceAdminScreen = () => {
   const fetchHistoryData = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/loansHistoryByName/${deviceName}`, {
+      const response = await axios.get(
+        `${API_BASE_URL}/loansHistoryByName/${deviceName}`,
+        {
           headers: { Authorization: `Bearer ${jwtToken}` },
-        });
+        }
+      );
       //console.log("Received data from API:", response.data);
       setHistory(response.data);
     } catch (error) {
