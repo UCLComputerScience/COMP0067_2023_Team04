@@ -61,7 +61,7 @@ const DetailDeviceAdmin = () => {
     fetchDeviceData();
   }, []);
 
-  const returnDevice = async () => {
+  /*const returnDevice = async () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.post(`${API_BASE_URL}/return/${deviceID}`, {
@@ -71,6 +71,30 @@ const DetailDeviceAdmin = () => {
       setDeviceInfo(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
+    }
+  };*/
+
+  const returnDevice = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/return/${deviceID}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          responseData.message || "Failed to change contact information."
+        );
+      }
+
+      Alert.alert("Success", "Issue submitted successfully.");
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
     }
   };
 
@@ -134,10 +158,7 @@ const DetailDeviceAdmin = () => {
         );
       }
 
-      Alert.alert(
-        "Success",
-        "Issue submitted successfully."
-      );
+      Alert.alert("Success", "Issue submitted successfully.");
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }
@@ -162,15 +183,10 @@ const DetailDeviceAdmin = () => {
       const responseData = await response.json();
 
       if (!response.ok) {
-        throw new Error(
-          responseData.message || "Failed to change state."
-        );
+        throw new Error(responseData.message || "Failed to change state.");
       }
 
-      Alert.alert(
-        "Success",
-        "State chenged successfully."
-      );
+      Alert.alert("Success", "State chenged successfully.");
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }
@@ -362,9 +378,7 @@ const DetailDeviceAdmin = () => {
         <View style={[styles.separator, { marginTop: 10 }]} />
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Loan date:</Text>
-          <Text style={styles.text}>
-            0
-          </Text>
+          <Text style={styles.text}>0</Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Last user ID:</Text>
