@@ -46,7 +46,6 @@ const AdminLoans = () => {
         response.data.map((loan) => ({
           id: loan.deviceId,
           name: `Device ${loan.deviceId}`,
-          startDate: loan.startDate.substring(0, 10),
           dueDate: loan.dueDate.substring(0, 10),
           userEmail: loan.userEmail,
           userId: loan.userId,
