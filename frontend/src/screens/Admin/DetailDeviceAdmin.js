@@ -75,10 +75,10 @@ const DetailDeviceAdmin = () => {
     }
   };
 
-  const createLoan = async () => {
+  const changeState = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.post(`${API_BASE_URL}/createLoan/${deviceID}`,{
+      const response = await axios.post(`${API_BASE_URL}/changeState/${deviceID}`,{
           headers: { Authorization: `Bearer ${jwtToken}` },
         }
       );
@@ -88,11 +88,6 @@ const DetailDeviceAdmin = () => {
       console.error("Error fetching data:", error);
     }
   };
-
-
-
-
-
 
 
   const navigation = useNavigation();
@@ -350,7 +345,7 @@ const DetailDeviceAdmin = () => {
                 returnDevice();
                 Alert.alert('Success');
               } else if (deviceInfo.state === 'Reserved') {
-                createLoan();
+                changeState();
                 Alert.alert('Success');
               } else {
                 Alert.alert('Error', 'Action not applicable for this device state');
