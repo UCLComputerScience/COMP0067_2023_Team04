@@ -45,7 +45,7 @@ const UserLoans = () => {
   const getListData = async () => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/loansCurrent`, {
+      const response = await axios.get(`${API_BASE_URL}/loansUser`, {
           headers: { Authorization: `Bearer ${jwtToken}` },
         });
       console.log("Received loan:", response.data);
@@ -74,9 +74,9 @@ const UserLoans = () => {
   const filterData = (tab) => {
     const filtered = listData.filter((item) => {
       if (tab === "ongoing") {
-        return item.returnDate === null;
+        return item.returnedDate === null;
       } else {
-        return item.returnDate !== null;
+        return item.returnedDate !== null;
       }
     });
     setFilteredData(filtered);
