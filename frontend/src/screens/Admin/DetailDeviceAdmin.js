@@ -120,9 +120,39 @@ const DetailDeviceAdmin = () => {
     fetchDeviceData();
   };
 
+  const turnAvailable = async () => {
+    const newState = "Available";
+    const state = {
+      state: newState,
+    };
+
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/changeState/${deviceID}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify(state),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "Failed to change state.");
+      }
+
+      Alert.alert("Success", "State changed successfully.");
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+    fetchDeviceData();
+  };
+
   const changeState = async () => {
     const newState = {
-      newState: "Available",
+      state: "Available",
     };
     try {
       const jwtToken = await getJwtToken();
@@ -217,7 +247,7 @@ const DetailDeviceAdmin = () => {
         throw new Error(responseData.message || "Failed to change state.");
       }
 
-      Alert.alert("Success", "State chenged successfully.");
+      Alert.alert("Success", "State changed successfully.");
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }
@@ -463,7 +493,7 @@ const DetailDeviceAdmin = () => {
                 } else if (deviceInfo.state === "Reserved") {
                   loanDevice();
                 } else if (deviceInfo.state === "Maintenance") {
-                  changeState();
+                  turnAvailable();
                 } else {
                   Alert.alert(
                     "Error",

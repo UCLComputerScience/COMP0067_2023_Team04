@@ -9,7 +9,11 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceAdmin from "./GeneralDeviceAdmin";
@@ -24,7 +28,15 @@ const AllDevices = () => {
 
   const navigation = useNavigation();
 
-  async function getJwtToken() {
+  const [input, setInput] = useState("");
+  const [devices, setDevices] = useState([]);
+  const [filteredDevices, setFilteredDevices] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
+  const [availableSortOrder, setAvailableSortOrder] = useState("asc");
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [initialDevices, setInitialDevices] = useState([]);
+  /*async function getJwtToken() {
     try {
       const jwtToken = await SecureStore.getItemAsync("jwtToken");
       if (jwtToken) {
@@ -38,7 +50,7 @@ const AllDevices = () => {
       console.log("JWT token 获取失败:", error);
       return null;
     }
-  }
+  }*/
 
   const processData = (data) => {
     return data.map((item) => ({
@@ -49,7 +61,57 @@ const AllDevices = () => {
     }));
   };
 
-  const fetchData = async () => {
+  useFocusEffect(
+    React.useCallback(() => {
+      const getAvailableDevices = async () => {
+        async function getJwtToken() {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          try {
+            const jwtToken = await SecureStore.getItemAsync("jwtToken");
+            if (jwtToken) {
+              console.log("JWT token 获取成功:", jwtToken);
+              return jwtToken;
+            } else {
+              console.log("未找到 JWT token");
+              return null;
+            }
+          } catch (error) {
+            console.log("JWT token 获取失败:", error);
+            return null;
+          }
+        }
+        try {
+          const jwtToken = await getJwtToken();
+          const response = await axios.get(`${API_BASE_URL}/nameAvailability`, {
+            headers: { Authorization: `Bearer ${jwtToken}` },
+          });
+          setDevices(
+            response.data.map((device) => ({
+              name: device.name,
+              launchYr: device.launchYr,
+              num_available: device.num_available,
+              num_loaned: device.num_loaned,
+              category: device.category,
+            }))
+          );
+          setInitialDevices(
+            response.data.map((device) => ({
+              name: device.name,
+              launchYr: device.launchYr,
+              num_available: device.num_available,
+              num_loaned: device.num_loaned,
+              category: device.category,
+            }))
+          );
+        } catch (error) {
+          console.log("获取可用设备失败:", error);
+        }
+      };
+      getAvailableDevices();
+    }, [])
+  );
+
+  /*const fetchData = async () => {
     try {
       const jwtToken = await getJwtToken();
       if (jwtToken) {
@@ -67,7 +129,7 @@ const AllDevices = () => {
         setDevices(processData(response.data));
         setFilteredDevices(processData(response.data));
       } else {
-        console.log("由于缺少 JWT token，未能发送请求");
+        console.log("由于缺少 JWT token,未能发送请求");
       }
     } catch (error) {
       console.error("获取数据时出错:", error);
@@ -80,33 +142,15 @@ const AllDevices = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  const [input, setInput] = useState("");
-  const [devices, setDevices] = useState([]);
-  const [filteredDevices, setFilteredDevices] = useState([]);
-  const [sortOrder, setSortOrder] = useState("asc");
-  const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
-  const [availableSortOrder, setAvailableSortOrder] = useState("asc");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-
-  const sortDevices = (order) => {
-    const sortedDevices = [...devices].sort((a, b) => {
-      if (order === "asc") {
-        return a.name.localeCompare(b.name);
-      } else {
-        return b.name.localeCompare(a.name);
-      }
-    });
-    setDevices(sortedDevices);
-  };
+    filterDevicesByCategory(selectedCategory);
+  }, []);*/
 
   const sortDevicesByLoaned = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
       if (order === "asc") {
-        return a.loaned - b.loaned;
+        return a.num_loaned - b.num_loaned;
       } else {
-        return b.loaned - a.loaned;
+        return b.num_loaned - a.num_loaned;
       }
     });
     setDevices(sortedDevices);
@@ -115,9 +159,9 @@ const AllDevices = () => {
   const sortDevicesByAvailable = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
       if (order === "asc") {
-        return a.available - b.available;
+        return a.num_available - b.num_available;
       } else {
-        return b.available - a.available;
+        return b.num_available - a.num_available;
       }
     });
     setDevices(sortedDevices);
@@ -137,18 +181,14 @@ const AllDevices = () => {
 
   const filterDevicesByCategory = (category) => {
     if (category === "All") {
-      setFilteredDevices(devices);
+      setFilteredDevices(initialDevices);
     } else {
-      const filteredDevices = devices.filter(
+      const filteredDevices = initialDevices.filter(
         (devices) => devices.category === category
       );
       setFilteredDevices(filteredDevices);
     }
   };
-
-  useEffect(() => {
-    filterDevicesByCategory();
-  }, []);
 
   const handleCategoryTabPress = (category) => {
     setSelectedCategory(category);
@@ -269,7 +309,7 @@ const AllDevices = () => {
 
         <View style={{ paddingBottom: 80 }}>
           <FlatList
-            data={filteredDevices}
+            data={devices}
             renderItem={({ item }) => {
               if (
                 input === "" ||
@@ -298,7 +338,7 @@ const AllDevices = () => {
                           { flex: 1, textAlign: "center" },
                         ]}
                       >
-                        {item.loaned}
+                        {item.num_loaned}
                       </Text>
                       <Text
                         style={[
@@ -306,7 +346,7 @@ const AllDevices = () => {
                           { flex: 1, textAlign: "center" },
                         ]}
                       >
-                        {item.available}
+                        {item.num_available}
                       </Text>
                     </View>
                     <View style={styles.separator} />

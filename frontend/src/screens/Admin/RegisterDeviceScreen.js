@@ -13,8 +13,10 @@ import {
 } from "react-native";
 import { Alert } from "react-native";
 import * as SecureStore from "expo-secure-store";
+import { useNavigation } from "@react-navigation/native";
 
 const RegisterDeviceScreen = () => {
+  const navigation = useNavigation();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [name, setName] = useState("");
   const [details, setDetails] = useState("");
@@ -84,6 +86,19 @@ const RegisterDeviceScreen = () => {
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
   const submitDevice = async () => {
+    if (
+      !name ||
+      !details ||
+      !storage ||
+      !selectedCategory ||
+      !ruleDur ||
+      !launchYr ||
+      !cost
+    ) {
+      Alert.alert("Error", "All fields are required");
+      return;
+    }
+
     const deviceData = {
       name,
       details,
@@ -95,28 +110,60 @@ const RegisterDeviceScreen = () => {
       cost,
       state: "Available",
     };
-
-    try {
-      const jwtToken = await getJwtToken();
-      const response = await fetch(`${API_BASE_URL}/addDevice`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify(deviceData),
-      });
-
-      const responseData = await response.json();
-
-      if (!response.ok) {
-        throw new Error(responseData.message || "Failed to add device.");
+    const confirmAddingDevice = async () => {
+      const isValidJSON = (string) => {
+        try {
+          JSON.parse(string);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      };
+      if (!isValidJSON(details)) {
+        Alert.alert("Error", "Details must be a valid JSON format.");
+        return;
       }
 
-      Alert.alert("Success", "Device added successfully.");
-    } catch (err) {
-      Alert.alert("Error", err.message || "An error occurred.");
-    }
+      try {
+        const jwtToken = await getJwtToken();
+        const response = await fetch(`${API_BASE_URL}/addDevice`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify(deviceData),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message || "Failed to add device.");
+        }
+
+        Alert.alert("Success", "Device added successfully.", [
+          {
+            text: "OK",
+            onPress: () => {
+              navigation.navigate("Devices");
+            },
+          },
+        ]);
+      } catch (err) {
+        Alert.alert("Error", err.message || "An error occurred.");
+      }
+    };
+
+    Alert.alert("Confirmation", "Are you sure you want to add this device?", [
+      {
+        text: "Yes",
+        onPress: confirmAddingDevice,
+      },
+      {
+        text: "No",
+        style: "cancel",
+      },
+    ]);
   };
 
   return (
@@ -222,6 +269,7 @@ const RegisterDeviceScreen = () => {
             onValueChange={toggleSwitch}
             value={ruleExt === 1}
           />
+          <View style={{ height: 20 }}></View>
           <TouchableOpacity style={styles.button} onPress={submitDevice}>
             <Text style={styles.buttonText}>Register Device</Text>
           </TouchableOpacity>
@@ -247,13 +295,13 @@ const styles = StyleSheet.create({
   input: {
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 4,
+    borderRadius: 15,
     paddingHorizontal: 12,
     paddingVertical: 8,
     fontSize: 16,
     marginBottom: 12,
-    backgroundColor: "lightgray",
-    color: "gray",
+    backgroundColor: "#ECECEC",
+    color: "black",
   },
   label: {
     fontSize: 16,
@@ -282,7 +330,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#AC145A",
-    borderRadius: 4,
+    borderRadius: 15,
     paddingVertical: 12,
     alignItems: "center",
   },
@@ -296,9 +344,9 @@ const styles = StyleSheet.create({
     zIndex: 1000, // Add this line
   },
   dropdownTrigger: {
-    borderWidth: 1,
+    borderWidth: 0.5,
     borderColor: "#999",
-    borderRadius: 4,
+    borderRadius: 15,
     paddingHorizontal: 12,
     paddingVertical: 8,
     marginBottom: 12,

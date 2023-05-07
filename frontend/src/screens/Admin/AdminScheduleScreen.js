@@ -8,7 +8,11 @@ import {
   FlatList,
 } from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import * as Linking from "expo-linking";
@@ -51,45 +55,47 @@ const CollapsibleList = () => {
     getJwtToken();
   }, []);
 
-  const fetchData = async () => {
-    async function getJwtToken() {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      try {
-        const jwtToken = await SecureStore.getItemAsync("jwtToken");
-        if (jwtToken) {
-          console.log("JWT token 获取成功:", jwtToken);
-          return jwtToken;
-        } else {
-          console.log("未找到 JWT token");
-          return null;
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        async function getJwtToken() {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          try {
+            const jwtToken = await SecureStore.getItemAsync("jwtToken");
+            if (jwtToken) {
+              console.log("JWT token 获取成功:", jwtToken);
+              return jwtToken;
+            } else {
+              console.log("未找到 JWT token");
+              return null;
+            }
+          } catch (error) {
+            console.log("JWT token 获取失败:", error);
+            return null;
+          }
         }
-      } catch (error) {
-        console.log("JWT token 获取失败:", error);
-        return null;
-      }
-    }
-    try {
-      const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/schedule`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
+        try {
+          const jwtToken = await getJwtToken();
+          const response = await axios.get(`${API_BASE_URL}/schedule`, {
+            headers: { Authorization: `Bearer ${jwtToken}` },
+          });
 
-      setLoanTable(
-        response.data.map((loan) => ({
-          id: loan.deviceId,
-          user: loan.userId,
-          state: getLoanState(loan.state),
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-    console.log("API Response:", response.data);
-  };
+          setLoanTable(
+            response.data.map((loan) => ({
+              id: loan.deviceId,
+              user: loan.userId,
+              state: getLoanState(loan.state),
+            }))
+          );
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+        console.log("API Response:", response.data);
+      };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+      fetchData();
+    }, [])
+  );
 
   const getLoanState = (loanState) => {
     switch (loanState) {

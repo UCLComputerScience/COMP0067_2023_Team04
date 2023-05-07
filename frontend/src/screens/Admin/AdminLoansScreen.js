@@ -6,7 +6,7 @@ import {
   FlatList,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import axios from "axios";
@@ -35,37 +35,41 @@ const AdminLoans = () => {
     }
   }
 
-  const fetchData = async () => {
-    try {
-      const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/loans`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
-      console.log("data:", response.data);
-      setLoanTable(
-        response.data.map((loan) => ({
-          id: loan.deviceId,
-          name: `Device ${loan.deviceId}`,
-          startDate: loan.startDate ? loan.startDate.substring(0, 10) : "N/A",
-          dueDate: loan.dueDate ? loan.dueDate.substring(0, 10) : "N/A",
-          userEmail: loan.userEmail,
-          userId: loan.userId,
-          loanId: loan.loanId,
-          exten: loan.exten,
-          returnedDate: loan.returnedDate
-            ? loan.returnedDate.substring(0, 10)
-            : null,
-          state: loan.returnedDate ? "Returned" : "Loan",
-        }))
-      );
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        try {
+          const jwtToken = await getJwtToken();
+          const response = await axios.get(`${API_BASE_URL}/loans`, {
+            headers: { Authorization: `Bearer ${jwtToken}` },
+          });
+          console.log("data:", response.data);
+          setLoanTable(
+            response.data.map((loan) => ({
+              id: loan.deviceId,
+              name: `Device ${loan.deviceId}`,
+              startDate: loan.startDate
+                ? loan.startDate.substring(0, 10)
+                : "N/A",
+              dueDate: loan.dueDate ? loan.dueDate.substring(0, 10) : "N/A",
+              userEmail: loan.userEmail,
+              userId: loan.userId,
+              loanId: loan.loanId,
+              exten: loan.exten,
+              returnedDate: loan.returnedDate
+                ? loan.returnedDate.substring(0, 10)
+                : null,
+              state: loan.returnedDate ? "Returned" : "Loan",
+            }))
+          );
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+      fetchData();
+    }, [])
+  );
 
   const filterData = (tab) => {
     const filtered = loanTable.filter((item) => {
