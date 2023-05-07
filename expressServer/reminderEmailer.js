@@ -44,8 +44,6 @@ module.exports = async function sendReminderEmails() {
   }
 
   console.log("Done sending reminder emails.");
-  // Close the database connection
-  await db.end();
 }
 /*
 sendReminderEmails().catch(error => {

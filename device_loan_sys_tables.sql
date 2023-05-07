@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `device` (
   `storage` varchar(255) DEFAULT NULL,
   `launchYr` int(11) DEFAULT NULL,
   `cost` double(10,2) DEFAULT NULL,
-  `issues` varchar(255) DEFAULT NULL,
+  `issues` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`deviceId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
