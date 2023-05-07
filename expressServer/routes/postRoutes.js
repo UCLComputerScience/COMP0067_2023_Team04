@@ -52,6 +52,8 @@ router.get("/loansUser", verifyToken, postControllers.getLoanHistoryByUser); // 
 router.get("/reservedUser", verifyToken, postControllers.getReservedByUser); // for UserAppointmentScreen.js (selects loans where the the state is reserved and userID is userID)
 router.get("/loansCurrent", verifyToken, postControllers.getCurrentLoans); // for UserLoansScreen.js (returns all current loans for a specific user)
 
+router.get("/deviceByLoan/:loanId", verifyToken, postControllers.getDeviceByLoan); //gets device information by a specific loan ID
+
 // User POST methods
 router.post('/createLoan/:deviceId', verifyToken, postControllers.createLoan); // create a new loan (with state 'Reserved')
 

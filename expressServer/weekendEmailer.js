@@ -9,7 +9,7 @@ async function sendOverdueEmails() {
   const overdueLoansQuery = `
     SELECT DISTINCT userEmail
     FROM loan
-    WHERE dueDate <= CURDATE() AND returnedDate IS NULL
+    WHERE dueDate < CURDATE() AND returnedDate IS NULL
   `;
   const [overdueLoans] = await db.query(overdueLoansQuery);
 

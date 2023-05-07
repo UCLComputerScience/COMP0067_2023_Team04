@@ -1,7 +1,7 @@
 // emailScheduler.js
 const cron = require('node-cron');
 const sendReminderEmails = require('./reminderEmailer');
-const sendOverdueEmails = require('./overdueEmailer');
+const sendOverdueEmails = require('./weekendEmailer');
 
 module.exports = {
   scheduleJobs: function() {

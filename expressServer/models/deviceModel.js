@@ -66,7 +66,19 @@ class Device {
   // for GeneralDeviceUser.js (given name of device, returns details of first available device specified by ID)
   static async getDevicebyName(name) {
     const [rows] = await db.execute('SELECT * FROM `device` WHERE `name` = ? AND `state` = "Available" LIMIT 1', [name]);
+    if (rows.length === 0) {
+      return null;
+    }
     return rows[0];
+  }
+
+  // gets all device details by a loan ID
+  static async getDeviceByLoan(loanId, userId) {
+    const [rows] = await db.execute('SELECT * FROM `loan` JOIN `device` ON `loan`.`deviceId` = `device`.`deviceId` WHERE `loan`.`loanId` = ? AND `loan`.`userId` = ?', [loanId, userId]);
+    if (rows.length === 0) {
+      return null;
+    }
+    return rows;
   }
 
   // updates state of the device based on JSON object //for returning, borrowing devices, changing device state to maintanence or scrapped

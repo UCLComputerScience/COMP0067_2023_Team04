@@ -62,7 +62,10 @@ class Loan {
 
   // for PastDeviceScreen.js (returns all loan history for a specific user)
   static async getLoanHistoryByUser(userId) {
-    let sql = 'SELECT * FROM loan WHERE userId = ?';
+    let sql = `SELECT * 
+               FROM loan 
+               INNER JOIN device ON loan.deviceId = device.deviceId
+               WHERE userId = ?`;
     const [rows] = await db.execute(sql, [userId]);
     return rows;
   }  

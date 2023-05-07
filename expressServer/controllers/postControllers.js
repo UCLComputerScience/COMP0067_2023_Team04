@@ -75,7 +75,12 @@ exports.getDevicebyName = async (req, res, next) => {
   try {
     const deviceName = req.params.name;
     const device = await deviceModel.getDevicebyName(deviceName);
-    res.status(200).json(device);
+
+    if (!device) {
+      res.status(200).json({ deviceId: null });
+    } else {
+      res.status(200).json(device);
+    }
   } catch (error) {
     res.status(500).json({ message: 'Error fetching device by name', error });
   }
@@ -168,6 +173,24 @@ exports.getCurrentLoans = async (req, res, next) => {
     res.status(200).json(currentLoans);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching current loans by user', error });
+  }
+};
+
+//gets device information by a specific loan ID
+exports.getDeviceByLoan = async (req, res, next) => {
+  try {
+    const loanId = req.params.loanId;
+    const userId = req.authData.upi;
+    console.log(loanId, userId)
+    const device = await deviceModel.getDeviceByLoan(loanId, userId);
+
+    if (!device) {
+      res.status(200).json({ deviceId: null });
+    } else {
+      res.status(200).json(device);
+    }
+  } catch (error) {
+    res.status(500).json({message: 'Error getting device information by a specific loan ID', error: error.message})
   }
 };
 
@@ -319,6 +342,9 @@ exports.cancelReservation = async (req, res) => {
     const userId = await loanModel.getUserIdByLoan(loanId);
     // check userId = req.authData.upi
     if (userId !== req.authData.upi){
+      console.log("User is not associated with loan.");
+      console.log("userId:", userId);
+      console.log("req.authData.upi:", req.authData.upi);
       console.log("User is not associated with loan.")
       return res.status(403).send({ message: "User is not associated with loan." });
     }
