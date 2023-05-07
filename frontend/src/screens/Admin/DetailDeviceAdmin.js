@@ -121,12 +121,20 @@ const DetailDeviceAdmin = () => {
   };
 
   const changeState = async () => {
+    const newState = {
+      newState: "Available",
+    };
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.post(
         `${API_BASE_URL}/changeState/${deviceID}`,
         {
-          headers: { Authorization: `Bearer ${jwtToken}` },
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify(newState),
         }
       );
       console.log("Received data from API for device info:", response.data);
@@ -184,6 +192,7 @@ const DetailDeviceAdmin = () => {
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }
+    fetchDeviceData();
   };
 
   const submitIssueState = async () => {
@@ -400,11 +409,15 @@ const DetailDeviceAdmin = () => {
         <View style={[styles.separator, { marginTop: 10 }]} />
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Loan date:</Text>
-          <Text style={styles.text}>{deviceLoan.startDate ? deviceLoan.startDate.substring(0,10) : ""}</Text>
+          <Text style={styles.text}>
+            {deviceLoan.startDate ? deviceLoan.startDate.substring(0, 10) : ""}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Last user ID:</Text>
-          <Text style={styles.text}>{deviceLoan.userId ? deviceLoan.userId : ""}</Text>
+          <Text style={styles.text}>
+            {deviceLoan.userId ? deviceLoan.userId : ""}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Device State:</Text>
@@ -449,6 +462,8 @@ const DetailDeviceAdmin = () => {
                   returnDevice();
                 } else if (deviceInfo.state === "Reserved") {
                   loanDevice();
+                } else if (deviceInfo.state === "Maintenance") {
+                  changeState();
                 } else {
                   Alert.alert(
                     "Error",

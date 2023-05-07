@@ -32,6 +32,7 @@ const CollapsibleList = () => {
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
   async function getJwtToken() {
+    await new Promise((resolve) => setTimeout(resolve, 300));
     try {
       const jwtToken = await SecureStore.getItemAsync("jwtToken");
       if (jwtToken) {
@@ -46,9 +47,29 @@ const CollapsibleList = () => {
       return null;
     }
   }
+  useEffect(() => {
+    getJwtToken();
+  }, []);
 
-  const fetchData = async (jwtToken) => {
+  const fetchData = async () => {
+    async function getJwtToken() {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        const jwtToken = await SecureStore.getItemAsync("jwtToken");
+        if (jwtToken) {
+          console.log("JWT token 获取成功:", jwtToken);
+          return jwtToken;
+        } else {
+          console.log("未找到 JWT token");
+          return null;
+        }
+      } catch (error) {
+        console.log("JWT token 获取失败:", error);
+        return null;
+      }
+    }
     try {
+      const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/schedule`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
@@ -65,6 +86,10 @@ const CollapsibleList = () => {
     }
     console.log("API Response:", response.data);
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const getLoanState = (loanState) => {
     switch (loanState) {

@@ -8,9 +8,13 @@ import {
   Alert,
   ScrollView,
 } from "react-native";
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import GeneralDeviceUser from "./GeneralDeviceUser";
@@ -30,8 +34,6 @@ const AvailableDevices = () => {
   const currentScreenUrl = Linking.createURL(currentScreenPath);
 
   console.log("Current Screen URL:", currentScreenUrl);
-  
-
 
   const handleicon = () => {
     Alert.alert(
@@ -57,11 +59,11 @@ const AvailableDevices = () => {
   const [availableSortOrder, setAvailableSortOrder] = useState("asc");
   const [initialDevices, setInitialDevices] = useState([]);
 
-
   const [device, setDevice] = useState(null);
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
   async function getJwtToken() {
+    await new Promise((resolve) => setTimeout(resolve, 300));
     try {
       const jwtToken = await SecureStore.getItemAsync("jwtToken");
       if (jwtToken) {
@@ -76,12 +78,27 @@ const AvailableDevices = () => {
       return null;
     }
   }
-
   useEffect(() => {
-    getAvailableDevices();
+    getJwtToken();
   }, []);
-  
+
   const getAvailableDevices = async () => {
+    async function getJwtToken() {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      try {
+        const jwtToken = await SecureStore.getItemAsync("jwtToken");
+        if (jwtToken) {
+          console.log("JWT token 获取成功:", jwtToken);
+          return jwtToken;
+        } else {
+          console.log("未找到 JWT token");
+          return null;
+        }
+      } catch (error) {
+        console.log("JWT token 获取失败:", error);
+        return null;
+      }
+    }
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/nameAvailabilityUser`, {
@@ -111,10 +128,9 @@ const AvailableDevices = () => {
       console.log("获取可用设备失败:", error);
     }
   };
-  
-  
-  
-  
+  useEffect(() => {
+    getAvailableDevices();
+  }, []);
 
   const sortDevicesByLoaned = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
@@ -281,7 +297,8 @@ const AvailableDevices = () => {
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("General Details", {
-                    deviceName: item.name, Available: item.num_available
+                    deviceName: item.name,
+                    Available: item.num_available,
                   })
                 }
               >

@@ -4,95 +4,125 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  Button,
   Dimensions,
   Modal,
-  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import { addDays, format } from "date-fns";
-
 import { createStackNavigator } from "@react-navigation/stack";
-
+import * as SecureStore from "expo-secure-store";
+import axios from "axios";
+import { Alert } from "react-native";
 
 const GeneralDeviceExtendScreen = () => {
+  //!!! replace :name with variables when dubug finished by Dr. Fu
+  const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
   const navigation = useNavigation();
-
   const route = useRoute();
-  const deviceId = route.params.deviceId;
+  const deviceName = route.params?.deviceName;
+  const Available = route.params?.Available;
+  const loanId = route.params?.loanId;
 
-  // Add a new state for the deviceName
-  const [deviceName, setDeviceName] = useState("Device");
+  console.log("route.params:", route.params);
+  console.log("deviceName:", deviceName);
 
-  const [isExtendButtonDisabled, setIsExtendButtonDisabled] = useState(false);
-  const [isReturnButtonDisabled, setIsReturnButtonDisabled] = useState(false);
-  const [returnDateLabel, setReturnDateLabel] = useState("Due date");
-  const [dueDate, setDueDate] = useState("2023-01-01");
-  const [selectedCollectTime, setSelectedCollectTime] = useState("");
-  const [deviceList, setDeviceList] = useState("");
+  async function getJwtToken() {
+    try {
+      const jwtToken = await SecureStore.getItemAsync("jwtToken");
+      if (jwtToken) {
+        console.log("JWT token 获取成功:", jwtToken);
+        return jwtToken;
+      } else {
+        console.log("未找到 JWT token");
+        return null;
+      }
+    } catch (error) {
+      console.log("JWT token 获取失败:", error);
+      return null;
+    }
+  }
 
-  const [modalVisible, setModalVisible] = useState(false);
-  const [status, setStatus] = useState("Loaned");
-  const [device, setDevice] = useState([
-    {
-      standardLoanDuration: 14,
-      extensionAllowance: 1,
-      summaryDetails:
-        '{"CPU": "Intel Core i9-12900H Octo-core 20 threads", \
-                      "GPU": "RTX 3070ti 8G 150W", \
-                      "Memory": "DDR5 16GB 4800Hz Dual", \
-                      "SSD": "SAMSUNG PM9A1 512GB", \
-                      "Screen": "2.5K (2560*1600) 16:10 165Hz", \
-                      "Power": "300W", \
-                      "WIFI": "AX211"}',
-    },
-  ]);
+  //Devices list from DB, successful
+  const [device, setDevice] = useState("");
+  const [standardLoanDuration, setStandardLoanDuration] = useState(0);
+  const [extensionAllowance, setExtensionAllowance] = useState(0);
 
-  // Update the deviceName when setting the device state
-  useEffect(() => {
-    setDeviceName(`Device ${deviceName}`);
-  }, [deviceName]);
-
-  const parseDateStringToTimestamp = (dateString) => {
-    const [day, time] = dateString.split(": ");
-    const [start, end] = time.split(" - ");
-    const date = new Date();
-    const [startHour, startMinute] = start.split(":");
-    date.setHours(parseInt(startHour, 10), parseInt(startMinute, 10), 0, 0);
-    return date.getTime();
-  };
-
-  const extendDevice = () => {
-    if (device[0].extensionAllowance > 0) {
-      const newDueDate = addDays(new Date(dueDate), 7);
-      const formattedNewDueDate = format(newDueDate, "yyyy-MM-dd");
-
-      setIsExtendButtonDisabled(true);
-      Alert.alert(
-        "Extension successful",
-        "You have successfully extended your loan.",
-        [
-          {
-            text: "YES",
-            onPress: () => {
-              setDueDate(formattedNewDueDate);
-              setDevice((prevState) => [
-                {
-                  ...prevState[0],
-                  
-                },
-              ]);
-            },
-          },
-        ],
-        { cancelable: false }
+  const fetchDeviceData = async () => {
+    try {
+      console.log("Fetching device data for:", deviceName);
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(
+        `${API_BASE_URL}/deviceByLoan/${loanId}`,
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
       );
+      console.log("Received data from API:", response.data);
+      setDevice(response.data[0]);
+
+      if (response.data[0] && response.data[0].ruleDur) {
+        setStandardLoanDuration(response.data[0].ruleDur);
+      }
+      if (response.data[0] && response.data[0].ruleExt) {
+        setExtensionAllowance(response.data[0].ruleExt);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
   };
 
-  const summaryDetailsUnpacked = JSON.parse(device[0].summaryDetails);
+  useEffect(() => {
+    fetchDeviceData();
+  }, []);
+
+  const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
+
+  const [extensionTimes, setExtensionTimes] = useState(0);
+  const fetchExtensionTimes = async () => {
+    try {
+      console.log("Fetching device data for:", deviceName);
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(
+        `${API_BASE_URL}/remainingRenewals/${loanId}`,
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
+      console.log("Received data from API:", response.data);
+      setExtensionTimes(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchExtensionTimes();
+  }, []);
+
+  const ExtendDevice = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await fetch(`${API_BASE_URL}/renew/${loanId}`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${jwtToken}`,
+        },
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "Failed to extend.");
+      }
+
+      Alert.alert("Success", "Extension successfully.");
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
+    }
+    fetchDeviceData();
+    fetchExtensionTimes();
+  };
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
@@ -108,96 +138,8 @@ const GeneralDeviceExtendScreen = () => {
     setDevicesIDExpanded(!devicesIDExpanded);
   };
 
-  const showAlert = (timeString) => {
-    const timestamp = parseDateStringToTimestamp(timeString);
-    Alert.alert(
-      "Return confirmation",
-      `Are you sure you want to return the device on ${timeString}?`,
-      [
-        {
-          text: "NO",
-          onPress: () => console.log("NO Pressed"),
-          style: "cancel",
-        },
-        {
-          text: "YES",
-          onPress: () => {
-            console.log("YES Pressed");
-            showSecondAlert(timestamp);
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-
-  const showSecondAlert = () => {
-    Alert.alert(
-      "Return Time selected",
-      "You have successfully selected a time slot. Please return the device during the selected time slot.",
-      [
-        {
-          text: "YES",
-          onPress: () => {
-            console.log("YES Pressed");
-          },
-        },
-      ],
-      { cancelable: false }
-    );
-  };
-
   return (
     <View style={{ flex: 1 }}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalTitle}>Select the collect time</Text>
-            <View style={styles.modalSection}>
-              {[
-                "Monday: 10:00 - 12:00",
-                "Tuesday: 09:00 - 12:30",
-                "Wednesday: 10:00 - 14:00",
-                "Thursday: 14:00 - 16:00",
-                "Friday: 13:00 - 14:00",
-              ].map((day, index) => (
-                <View key={index}>
-                  {index === 0 && <View style={styles.modalDivider} />}
-                  <TouchableOpacity
-                    style={styles.modalButton}
-                    onPress={() => {
-                      console.log("Selected day:", day);
-                      setSelectedCollectTime(day);
-                      setModalVisible(false);
-                      showAlert(day);
-                    }}
-                  >
-                    <Text style={styles.modalButtonText}>{day}</Text>
-                  </TouchableOpacity>
-                  {index === 4 && <View style={styles.modalDivider} />}
-                </View>
-              ))}
-            </View>
-            <View style={styles.modalDivider} />
-            <TouchableOpacity
-              style={[styles.modalButtonNoBorder, { marginTop: 2 }]}
-              onPress={() => {
-                setModalVisible(false);
-              }}
-            >
-              <Text style={styles.modalCancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
       <ScrollView style={styles.container} contentInset={{ bottom: 100 }}>
         <View style={styles.titleView}>
           <Text style={styles.title}>{deviceName}</Text>
@@ -224,7 +166,7 @@ const GeneralDeviceExtendScreen = () => {
                   Standard Loan Duration:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {device[0].standardLoanDuration} Days
+                  {standardLoanDuration} Days
                 </Text>
               </View>
               <View style={styles.detailRowLayout}>
@@ -232,7 +174,9 @@ const GeneralDeviceExtendScreen = () => {
                   Extension Allowance:
                 </Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                  {device[0].extensionAllowance}
+                  {parseInt(extensionAllowance) > 1
+                    ? extensionAllowance + " Times"
+                    : extensionAllowance + " Time"}
                 </Text>
               </View>
             </View>
@@ -285,60 +229,47 @@ const GeneralDeviceExtendScreen = () => {
           {devicesIDExpanded && (
             <View style={styles.detailRow}>
               <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
-                <Text style={{ fontWeight: "300", flex: 1 }}>{status}</Text>
-              </View>
-              <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>
-                  {returnDateLabel}:
+                  Extension allowed:
                 </Text>
-                <Text style={{ fontWeight: "300", flex: 1 }}>{dueDate}</Text>
-              </View>
-              <View style={styles.detailRowLayout}>
-                <Text style={{ fontWeight: "500", flex: 2 }}>Location:</Text>
-                <Text style={{ fontWeight: "300", flex: 1 }}>MPEB 4.20</Text>
+                <Text style={{ fontWeight: "300", flex: 1 }}>
+                  {extensionTimes.remainingRenewals} time
+                </Text>
               </View>
             </View>
           )}
         </View>
 
-        
         <View style={{ paddingTop: 80 }}>
           <View style={{ alignItems: "center" }}>
             <TouchableOpacity
-                style={[
-                  {
-                    
-                    backgroundColor: "#EEEEEF",
-                    paddingVertical: 10,
-                    paddingHorizontal: 20,
-                    borderRadius: 15,
-                    width: "70%",
-                    height: 50,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    
-                  },
-                  device[0].extensionAllowance === 0
-                    ? { backgroundColor: "#EEEEEF", opacity: 0.5 }
-                    : { backgroundColor: "#EEEEEF" },
-                ]}
-                onPress={extendDevice}
-                disabled={device[0].extensionAllowance === 0}
+              style={{
+                backgroundColor: "#EEEEEF",
+                paddingVertical: 10,
+                paddingHorizontal: 20,
+                borderRadius: 15,
+                width: "70%",
+                height: 50,
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              disabled={
+                extensionTimes.remainingRenewals === 0 ||
+                extensionTimes.remainingRenewals === "0"
+              }
+              onPress={ExtendDevice}
+            >
+              <Text
+                style={{
+                  color:
+                    extensionTimes.remainingRenewals === 0 ? "grey" : "#AC145A",
+                  fontSize: 20,
+                  fontWeight: 600,
+                }}
               >
-                <Text
-                  style={{
-                    color:
-                      device[0].extensionAllowance === 0
-                        ? "#A0A0A0"
-                        : "#AC145A",
-                    fontSize: 20,
-                    fontWeight: 600,
-                  }}
-                >
-                  Extend
-                </Text>
-              </TouchableOpacity>
+                Extend
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
       </ScrollView>
@@ -426,26 +357,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
     textAlign: "right",
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginBottom: 30,
-    marginTop: 250,
-  },
-  returnButtonWrapper: {
-    marginRight: 30,
-    backgroundColor: "#EBEDEF",
-    borderRadius: 10,
-    width: Dimensions.get("window").width * 0.35,
-    paddingVertical: 5,
-  },
-  extendButtonWrapper: {
-    marginLeft: 30,
-    backgroundColor: "#EBEDEF",
-    borderRadius: 10,
-    width: Dimensions.get("window").width * 0.35,
-    paddingVertical: 5,
-  },
+
   centeredView: {
     flex: 1,
     justifyContent: "center",
@@ -479,8 +391,9 @@ const styles = StyleSheet.create({
   },
   modalButtonText: {
     color: "#AC145A",
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: "normal",
+    padding: 5,
   },
   modalButtonNoBorder: {
     backgroundColor: "white",
@@ -499,11 +412,41 @@ const styles = StyleSheet.create({
   },
   modalCancelButtonText: {
     color: "#AC145A",
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: "normal",
-    marginBottom: -15,
-    marginTop: -10,
+    marginTop: -20,
+  },
+  buttonContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 10,
+    width: Dimensions.get("window").width * 0.6,
+    borderRadius: 10,
+    marginLeft: 60,
+    marginTop: 100,
+  },
+  reserveButton: {
+    alignItems: "center",
+    backgroundColor: "#EBEDEF",
+    borderRadius: 10,
+    padding: 10,
+    paddingVertical: 15,
+    paddingHorizontal: 15,
+    width: "80%",
+  },
+  reserveButtonDisabled: {
+    backgroundColor: "#D6D6D6",
+  },
+  reserveButtonText: {
+    color: "#AC145A",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  reserveButtonTextDisabled: {
+    color: "#8C8C8C",
   },
 });
+
+const Stack = createStackNavigator();
 
 export default GeneralDeviceExtendScreen;

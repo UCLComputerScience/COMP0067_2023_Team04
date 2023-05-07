@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
   FlatList,
-  ActivityIndicator
+  ActivityIndicator,
 } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -46,16 +46,16 @@ const UserLoans = () => {
     try {
       const jwtToken = await getJwtToken();
       const response = await axios.get(`${API_BASE_URL}/loansUser`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
       console.log("Received loan:", response.data);
-  
+
       if (response.data) {
         const mappedData = response.data.map((item) => {
           return { ...item, deviceName: item.name };
         });
         setListData(mappedData);
-        filterData(currentTab); 
+        filterData(currentTab);
         setLoading(false);
       }
     } catch (error) {
@@ -66,11 +66,11 @@ const UserLoans = () => {
   useEffect(() => {
     getListData();
   }, [currentTab]);
-  
+
   useEffect(() => {
     filterData(currentTab);
   }, [listData]);
-  
+
   const filterData = (tab) => {
     const filtered = listData.filter((item) => {
       if (tab === "ongoing") {
@@ -82,48 +82,8 @@ const UserLoans = () => {
     setFilteredData(filtered);
   };
 
-  const handleTabPress = (tab) => {
-    setCurrentTab(tab);
-  };
-
   return (
     <View style={styles.container}>
-      <View style={styles.tabBar}>
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            currentTab === "ongoing" && styles.activeTabButton,
-          ]}
-          onPress={() => handleTabPress("ongoing")}
-        >
-          <Text
-            style={[
-              styles.tabButtonText,
-              { color: currentTab === "ongoing" ? "#000" : "#ccc" },
-            ]}
-          >
-            Ongoing
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[
-            styles.tabButton,
-            currentTab === "history" && styles.activeTabButton,
-          ]}
-          onPress={() => handleTabPress("history")}
-        >
-          <Text
-            style={[
-              styles.tabButtonText,
-              { color:           currentTab === "history" ? "#000" : "#ccc" },
-            ]}
-          >
-            History
-          </Text>
-        </TouchableOpacity>
-      </View>
-    
       <FlatList
         data={filteredData}
         extraData={filteredData}
@@ -131,14 +91,15 @@ const UserLoans = () => {
           <TouchableOpacity
             style={styles.dataRow}
             onPress={() => {
-              if (item.returnDate !== null) {
+              if (item.returnedDate !== null) {
                 navigation.navigate("General Device", {
-                  deviceName: item.deviceName,
+                  deviceName: item.name,
                 });
               } else {
                 navigation.navigate("Device Extend", {
                   deviceId: item.deviceId,
-                  deviceName: item.deviceName,
+                  deviceName: item.name,
+                  loanId: item.loanId,
                 });
               }
             }}
@@ -164,9 +125,7 @@ const UserLoans = () => {
       />
     </View>
   );
-};  
-
-  
+};
 
 const styles = StyleSheet.create({
   container: {

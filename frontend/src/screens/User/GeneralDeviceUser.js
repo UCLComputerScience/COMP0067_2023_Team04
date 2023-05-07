@@ -42,37 +42,39 @@ const GeneralDeviceUserScreen = () => {
     }
   }
 
-
   //Devices list from DB, successful
   const [device, setDevice] = useState("");
   const [standardLoanDuration, setStandardLoanDuration] = useState(0);
   const [extensionAllowance, setExtensionAllowance] = useState(0);
   const [deviceId, setDeviceId] = useState(null);
-  
+
   const fetchDeviceData = async () => {
     try {
       console.log("Fetching device data for:", deviceName);
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/deviceByName/${deviceName}`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });      
+      const response = await axios.get(
+        `${API_BASE_URL}/deviceByName/${deviceName}`,
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
+        }
+      );
       console.log("Received data from API:", response.data);
       setDevice(response.data);
-  
+
       if (response.data && response.data.ruleDur) {
         setStandardLoanDuration(response.data.ruleDur);
       }
       if (response.data && response.data.ruleExt) {
         setExtensionAllowance(response.data.ruleExt);
-      }  
+      }
       if (response.data && response.data.deviceId) {
         setDeviceId(response.data.deviceId);
-      }      
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
+
   useEffect(() => {
     fetchDeviceData();
   }, []);
@@ -99,20 +101,35 @@ const GeneralDeviceUserScreen = () => {
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }
-    fetchDeviceData();
+    if (Available > 1) {
+      fetchDeviceData();
+    } else {
+      Alert.alert(
+        "Caution",
+        "This is the last device, the page will not be refreshed but you cannot reserve a same new device."
+      );
+    }
   };
-
-  const [devices, setDevices] = useState({});
 
   const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
 
-  const timeSlot = [
-    "Monday: 10:00 - 12:00",
-    "Tuesday: 09:00 - 12:30",
-    "Wednesday: 10:00 - 14:00",
-    "Thursday: 14:00 - 16:00",
-    "Friday: 13:00 - 14:00",
-  ];
+  const [timeSlot, setTimeSlot] = useState({});
+
+  const fetchAvailabilityData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(`${API_BASE_URL}/readManagerSchedule`, {
+        headers: { Authorization: `Bearer ${jwtToken}` },
+      });
+      console.log("Received data from API:", response.data);
+      setTimeSlot(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchAvailabilityData();
+  }, []);
 
   const [userTerm, setUserTerm] = useState({});
 
@@ -130,11 +147,9 @@ const GeneralDeviceUserScreen = () => {
   };
 
   useEffect(() => {
-  fetchDeviceData();
-  userTerms(); 
-}, []);
-
-  
+    fetchDeviceData();
+    userTerms();
+  }, []);
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
@@ -172,7 +187,6 @@ const GeneralDeviceUserScreen = () => {
       { cancelable: false }
     );
   };
-
 
   return (
     <View style={{ flex: 1 }}>
@@ -329,7 +343,7 @@ const GeneralDeviceUserScreen = () => {
               <View style={styles.detailRowLayout}>
                 <Text style={{ fontWeight: "500", flex: 2 }}>Status:</Text>
                 <Text style={{ fontWeight: "300", flex: 1 }}>
-                   {Available} Available
+                  {Available} Available
                 </Text>
               </View>
             </View>

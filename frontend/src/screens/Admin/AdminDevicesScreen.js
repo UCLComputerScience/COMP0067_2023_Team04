@@ -23,14 +23,6 @@ const AllDevices = () => {
   const API_BASE_URL = "https://0067team4app.azurewebsites.net/posts";
 
   const navigation = useNavigation();
-  /*const initialDevices = [
-    {
-      name: "Lenovo Legion Y9000P 2022 RTX 3070ti",
-      loaned: "10",
-      available: "5",
-      category: "Laptop",
-    },
-  ];*/
 
   async function getJwtToken() {
     try {
@@ -73,6 +65,7 @@ const AllDevices = () => {
         }
 
         setDevices(processData(response.data));
+        setFilteredDevices(processData(response.data));
       } else {
         console.log("由于缺少 JWT token，未能发送请求");
       }
@@ -91,6 +84,7 @@ const AllDevices = () => {
 
   const [input, setInput] = useState("");
   const [devices, setDevices] = useState([]);
+  const [filteredDevices, setFilteredDevices] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
   const [loanedSortOrder, setLoanedSortOrder] = useState("asc");
   const [availableSortOrder, setAvailableSortOrder] = useState("asc");
@@ -143,14 +137,18 @@ const AllDevices = () => {
 
   const filterDevicesByCategory = (category) => {
     if (category === "All") {
-      setDevices(fetchData);
+      setFilteredDevices(devices);
     } else {
-      const filteredDevices = fetchData.filter(
-        (device) => device.category === category
+      const filteredDevices = devices.filter(
+        (devices) => devices.category === category
       );
-      setDevices(filteredDevices);
+      setFilteredDevices(filteredDevices);
     }
   };
+
+  useEffect(() => {
+    filterDevicesByCategory();
+  }, []);
 
   const handleCategoryTabPress = (category) => {
     setSelectedCategory(category);
@@ -271,7 +269,7 @@ const AllDevices = () => {
 
         <View style={{ paddingBottom: 80 }}>
           <FlatList
-            data={devices}
+            data={filteredDevices}
             renderItem={({ item }) => {
               if (
                 input === "" ||

@@ -23,21 +23,6 @@ const getRedirectUri = () => {
   return redirectUri;
 };
 
-/*const getRedirectUri = async () => {
-  try {
-    const response = await axios.get(
-      `${API_BASE_URL}/details/Lenovo Legion Y9000P 2022 RTX 3070ti`
-    );
-    console.log("Received data from API:", response.data);
-    setDevice(response.data);
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
-};
-useEffect(() => {
-  fetchDeviceData();
-}, []);*/
-
 //onPress={() => WebBrowser.openBrowserAsync('https://expo.dev')
 const linking = {
   prefixes: [Linking.makeUrl("/")],

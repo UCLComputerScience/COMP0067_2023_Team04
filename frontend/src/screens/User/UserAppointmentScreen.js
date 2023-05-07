@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import React, { useState , useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import GeneralDeviceUserScreen from "./GeneralDeviceUser";
@@ -15,7 +15,6 @@ import * as Linking from "expo-linking";
 import moment from "moment";
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-
 
 // This screen needs to read the reservation status of the user, it needs the name, status and due date of the device that the user has reserved, the status is only two cases, loan or has been returned
 
@@ -55,6 +54,7 @@ const UserAppointmentScreen = () => {
         key: device.deviceId,
         name: device.name,
         state: device.state === "Reserved" ? "Pick up" : "Return",
+        loanId: device.loanId,
       }));
       setDevice(devicesData);
     } catch (error) {
@@ -62,29 +62,36 @@ const UserAppointmentScreen = () => {
     }
   };
 
-  const cancelLoan = async (deviceId) => {
+  const cancelLoan = async (loanId) => {
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.delete(`${API_BASE_URL}/loans/${deviceId}`, {
-          headers: { Authorization: `Bearer ${jwtToken}` },
-        });
-      console.log("Received data from API:", response.data);
-      } catch (error) {
-      console.log("error = ", error);
+      const response = await fetch(
+        `${API_BASE_URL}/cancelReservation/${loanId}`,
+        {
+          method: "PUT",
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+          },
+        }
+      );
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || "Failed to cancel.");
+      }
+
+      Alert.alert("Success", "Cancel successfully.");
+    } catch (err) {
+      Alert.alert("Error", err.message || "An error occurred.");
     }
   };
-
-
-  
-  
-  
 
   useEffect(() => {
     fetchData();
   }, []);
 
-
-  const handleCanel = () => {
+  const handleCanel = (loanId) => {
     Alert.alert(
       "Cancel Reservation",
       "Are you sure you want to cancel this reservation?",
@@ -96,7 +103,7 @@ const UserAppointmentScreen = () => {
         {
           text: "Yes",
           onPress: () => {
-            cancelLoan();
+            cancelLoan(loanId);
             Alert.alert("Success", "The reservation is successfully cancelled");
           },
         },
@@ -135,7 +142,7 @@ const UserAppointmentScreen = () => {
           data={devices}
           renderItem={({ item }) => {
             return (
-              <TouchableOpacity onPress={handleCanel}>
+              <TouchableOpacity onPress={() => handleCanel(item.loanId)}>
                 <View style={styles.line}>
                   <Text
                     style={[styles.devices, { flex: 1.3, textAlign: "left" }]}
