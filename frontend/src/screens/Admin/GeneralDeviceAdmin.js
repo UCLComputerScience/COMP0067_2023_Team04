@@ -4,6 +4,12 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Modal,
+  TouchableWithoutFeedback,
+  Keyboard,
+  TextInput,
+  Button,
+  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -51,6 +57,7 @@ const GeneralDeviceAdminScreen = () => {
         }
       );
       console.log("Received data from API:", response.data);
+      console.log("Received details from API:", response.data.details);
       setDevice(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -59,8 +66,6 @@ const GeneralDeviceAdminScreen = () => {
   useEffect(() => {
     fetchDeviceData();
   }, []);
-
-
 
   const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
 
@@ -103,6 +108,67 @@ const GeneralDeviceAdminScreen = () => {
   useEffect(() => {
     fetchHistoryData();
   }, []);
+
+  const [storageLocation, setStorageLocation] = useState("");
+  const [addModalVisible, setAddModalVisible] = useState(false);
+
+  const submitDevice = async () => {
+    if (typeof device !== "object" || device === null) {
+      // device 还未被设置或者不是一个对象，无法继续
+      console.error("Device is not available yet.");
+      return;
+    }
+    const deviceData = {
+      name: deviceName,
+      details: device.details,
+      storage: storageLocation,
+      category: device.category,
+      ruleExt: device.ruleExt,
+      ruleDur: device.ruleDur,
+      launchYr: device.launchYr,
+      cost: device.cost,
+      state: "Available",
+    };
+    const confirmAddingDevice = async () => {
+      try {
+        const jwtToken = await getJwtToken();
+        const response = await fetch(`${API_BASE_URL}/addDevice`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${jwtToken}`,
+          },
+          body: JSON.stringify(deviceData),
+        });
+
+        const responseData = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseData.message || "Failed to add device.");
+        }
+
+        Alert.alert("Success", "Device added successfully.", [
+          {
+            text: "OK",
+            onPress: () => fetchDevicesData(),
+          },
+        ]);
+      } catch (err) {
+        Alert.alert("Error", err.message || "An error occurred.");
+      }
+    };
+
+    Alert.alert("Confirmation", "Are you sure you want to add this device?", [
+      {
+        text: "Yes",
+        onPress: confirmAddingDevice,
+      },
+      {
+        text: "No",
+        style: "cancel",
+      },
+    ]);
+  };
 
   const [loanRuleExpanded, setLoanRuleExpanded] = useState(false);
   const [summaryDetailsExpanded, setSummaryDetailsExpanded] = useState(false);
@@ -225,7 +291,7 @@ const GeneralDeviceAdminScreen = () => {
               </View>
               <View style={styles.detailRowLayout}>
                 <View style={{ flex: 2 }}>
-                  {devices.map((device) => (
+                  {devices.map((device, index) => (
                     <TouchableOpacity
                       key={device.deviceId}
                       onPress={() =>
@@ -234,7 +300,9 @@ const GeneralDeviceAdminScreen = () => {
                         })
                       }
                     >
-                      <Text style={styles.deviceID}>{device.deviceId}</Text>
+                      <Text style={styles.deviceID}>{`${index + 1}.   ${
+                        device.deviceId
+                      }`}</Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -246,6 +314,28 @@ const GeneralDeviceAdminScreen = () => {
                   ))}
                 </View>
               </View>
+
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  paddingTop: 20,
+                  alignItems: "center",
+                }}
+                onPress={() => {
+                  setAddModalVisible(true);
+                }}
+              >
+                <Ionicons
+                  size={20}
+                  color={"#AC145A"}
+                  name="add-circle-outline"
+                ></Ionicons>
+                <Text
+                  style={{ color: "#AC145A", paddingLeft: 2, fontSize: 14 }}
+                >
+                  Add another device
+                </Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -299,6 +389,55 @@ const GeneralDeviceAdminScreen = () => {
           )}
         </View>
       </ScrollView>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={addModalVisible}
+        onRequestClose={() => {
+          setAddModalVisible(false);
+        }}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalViewQR}>
+              <Text style={{ fontSize: 18, marginBottom: 20 }}>
+                New storage location
+              </Text>
+
+              <TextInput
+                style={{
+                  width: "90%",
+                  maxWidth: "100%",
+                  marginBottom: 20,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  backgroundColor: "#ECECEC",
+                  borderRadius: 15,
+                }}
+                multiline={true}
+                onChangeText={(text) => setStorageLocation(text)}
+                value={storageLocation}
+                horizontal={true}
+              />
+
+              <Button
+                title="Submit"
+                onPress={() => {
+                  submitDevice();
+                  setAddModalVisible(false);
+                }}
+              />
+              <Button
+                title="Cancel"
+                onPress={() => {
+                  setAddModalVisible(false);
+                }}
+              />
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
@@ -387,6 +526,28 @@ const styles = StyleSheet.create({
     flex: 1,
     lineHeight: 20,
     textAlign: "right",
+  },
+  centeredView: {
+    flex: 1,
+    padding: 35,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalViewQR: {
+    backgroundColor: "white",
+    borderRadius: 20,
+    paddingHorizontal: 30,
+    paddingVertical: 20,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
 

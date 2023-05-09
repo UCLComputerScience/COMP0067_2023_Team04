@@ -103,6 +103,8 @@ const CollapsibleList = () => {
         return "Return";
       case "Reserved":
         return "Pick up";
+      case "Available" || "Loaned":
+        return "Finish";
       default:
         return loanState;
     }

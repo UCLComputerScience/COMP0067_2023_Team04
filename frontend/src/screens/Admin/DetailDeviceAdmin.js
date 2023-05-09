@@ -258,6 +258,52 @@ const DetailDeviceAdmin = () => {
     }
   };
 
+  const deleteDevice = async () => {
+    Alert.alert(
+      "Confirm Deletion",
+      "Are you sure you want to delete this device?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Deletion cancelled"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            try {
+              const jwtToken = await getJwtToken();
+              const response = await fetch(
+                `${API_BASE_URL}/deleteDevice/${deviceID}`,
+                {
+                  method: "DELETE",
+                  headers: {
+                    Authorization: `Bearer ${jwtToken}`,
+                  },
+                }
+              );
+              if (!response.ok) {
+                let errorMessage = "Failed to delete device";
+                try {
+                  const responseData = await response.json();
+                  errorMessage = responseData.message;
+                } catch (e) {
+                  console.error("Failed to parse response JSON:", e);
+                }
+                throw new Error(errorMessage);
+              }
+              Alert.alert("Success", "Device deleted successfully.");
+              navigation.goBack();
+            } catch (err) {
+              Alert.alert("Error", err.message || "An error occurred.");
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    );
+  };
+
   const navigation = useNavigation();
 
   const getButtonInfo = () => {
@@ -394,7 +440,20 @@ const DetailDeviceAdmin = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.textContainer}>
-        <Text style={styles.deviceName}>{deviceInfo.name}</Text>
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View style={{ flex: 0.1 }}></View>
+          <Text style={[styles.deviceName, { flex: 10 }]}>
+            {deviceInfo.name}
+          </Text>
+          <TouchableOpacity onPress={deleteDevice}>
+            <Ionicons
+              size={20}
+              color={"#AC145A"}
+              name="trash-outline"
+              style={{ flex: 0.1 }}
+            ></Ionicons>
+          </TouchableOpacity>
+        </View>
         <View style={styles.separator} />
         <View style={[styles.row, { marginTop: 10 }]}>
           <Text style={styles.label}>Device ID:</Text>
@@ -452,6 +511,12 @@ const DetailDeviceAdmin = () => {
           <Text style={styles.label}>Last user ID:</Text>
           <Text style={styles.text}>
             {deviceLoan.userId ? deviceLoan.userId : ""}
+          </Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Last user Email:</Text>
+          <Text style={styles.text}>
+            {deviceLoan.userEmail ? deviceLoan.userEmail : ""}
           </Text>
         </View>
         <View style={styles.row}>
