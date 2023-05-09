@@ -37,14 +37,14 @@ const GeneralDeviceAdminScreen = () => {
     try {
       const jwtToken = await SecureStore.getItemAsync("jwtToken");
       if (jwtToken) {
-        console.log("JWT token 获取成功:", jwtToken);
+        console.log("JWT token fetched:", jwtToken);
         return jwtToken;
       } else {
-        console.log("未找到 JWT token");
+        console.log("Cannot find JWT token");
         return null;
       }
     } catch (error) {
-      console.log("JWT token 获取失败:", error);
+      console.log("JWT token fetched failed:", error);
       return null;
     }
   }
@@ -121,7 +121,7 @@ const GeneralDeviceAdminScreen = () => {
 
   const submitDevice = async () => {
     if (typeof device !== "object" || device === null) {
-      // device 还未被设置或者不是一个对象，无法继续
+      // device should be json
       console.error("Device is not available yet.");
       return;
     }

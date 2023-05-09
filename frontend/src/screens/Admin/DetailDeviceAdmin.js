@@ -31,14 +31,14 @@ const DetailDeviceAdmin = () => {
     try {
       const jwtToken = await SecureStore.getItemAsync("jwtToken");
       if (jwtToken) {
-        console.log("JWT token 获取成功:", jwtToken);
+        console.log("JWT token fetched:", jwtToken);
         return jwtToken;
       } else {
-        console.log("未找到 JWT token");
+        console.log("Cannot find JWT token");
         return null;
       }
     } catch (error) {
-      console.log("JWT token 获取失败:", error);
+      console.log("JWT token fetched failed:", error);
       return null;
     }
   }
@@ -252,7 +252,7 @@ const DetailDeviceAdmin = () => {
         throw new Error(responseData.message || "Failed to change state.");
       }
 
-      Alert.alert("Success", "State changed successfully.");
+      //Alert.alert("Success", "State changed successfully.");
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
     }

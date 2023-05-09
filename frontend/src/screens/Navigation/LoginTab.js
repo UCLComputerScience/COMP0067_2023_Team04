@@ -64,13 +64,13 @@ const LoginTabScreen = () => {
           if (!existingToken) {
             try {
               await SecureStore.setItemAsync("jwtToken", jwtToken);
-              console.log("JWT token 存储成功");
+              console.log("JWT token stored");
             } catch (error) {
-              console.log("JWT token 存储失败:", error);
+              console.log("JWT token stored failed:", error);
             }
           } else {
-            console.log("JWT token 已存在，跳过存储");
-            return; // 如果 JWT 令牌已存在，则立即返回
+            console.log("JWT token existed");
+            return;
           }
         }
 

@@ -40,14 +40,14 @@ const CollapsibleList = () => {
     try {
       const jwtToken = await SecureStore.getItemAsync("jwtToken");
       if (jwtToken) {
-        console.log("JWT token 获取成功:", jwtToken);
+        console.log("JWT token fetched:", jwtToken);
         return jwtToken;
       } else {
-        console.log("未找到 JWT token");
+        console.log("Cannot find JWT token");
         return null;
       }
     } catch (error) {
-      console.log("JWT token 获取失败:", error);
+      console.log("JWT token fetched failed:", error);
       return null;
     }
   }
@@ -63,14 +63,14 @@ const CollapsibleList = () => {
           try {
             const jwtToken = await SecureStore.getItemAsync("jwtToken");
             if (jwtToken) {
-              console.log("JWT token 获取成功:", jwtToken);
+              console.log("JWT token fetched:", jwtToken);
               return jwtToken;
             } else {
-              console.log("未找到 JWT token");
+              console.log("Cannot find JWT token");
               return null;
             }
           } catch (error) {
-            console.log("JWT token 获取失败:", error);
+            console.log("JWT token fetched failed:", error);
             return null;
           }
         }
