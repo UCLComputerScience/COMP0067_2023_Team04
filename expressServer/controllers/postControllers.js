@@ -471,3 +471,21 @@ exports.getYearlyStats = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch yearly stats' });
   }
 };
+
+// ... other exports
+
+// deletes a device given its deviceId
+exports.deleteDevice = async (req, res, next) => {
+  try {
+    const deviceId = req.params.deviceId;
+    const deleted = await deviceModel.deleteDevice(deviceId);
+    if (deleted) {
+      res.status(200).json({ message: 'Device deleted successfully.' });
+    } else {
+      res.status(404).json({ message: 'Device not found.' });
+    }
+  } catch (error) {
+    console.error("Error:", error); // Add this line to log the error to the console
+    res.status(500).json({ message: 'Error deleting the device.', error });
+  }
+};

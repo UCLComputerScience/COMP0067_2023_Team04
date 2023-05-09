@@ -149,6 +149,13 @@ class Device {
     return result.affectedRows > 0;
   }
 
+  // deletes a device from the database based on the deviceId
+  static async deleteDevice(deviceId) {
+    let sql = 'DELETE FROM device WHERE deviceId = ?';
+    const [result] = await db.execute(sql, [deviceId]);
+    return result.affectedRows > 0;
+  }
+
 }
 
 module.exports = Device;

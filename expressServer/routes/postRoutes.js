@@ -39,6 +39,9 @@ router.post("/writeUserTerms", verifyAdmin, postControllers.writeUserTerms); //*
 router.post("/writeManagerSchedule", verifyAdmin, postControllers.writeManagerSchedule); //**--------**
 router.post("/writeAdminContactInfo", verifyAdmin, postControllers.writeAdminContactInfo); //**--------**
 
+// Admin DELETE method
+router.delete("/deleteDevice/:deviceId", verifyAdmin, postControllers.deleteDevice); //deletes a device given its device ID
+
 // Both GET file reading methods
 router.get("/readUserTerms", verifyToken, postControllers.readUserTerms); //both, UserTermScreen.js
 router.get("/readManagerSchedule", verifyToken, postControllers.readManagerSchedule); //both
