@@ -12,7 +12,11 @@ import {
   Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import {
+  useRoute,
+  useNavigation,
+  useFocusEffect,
+} from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import DetailDeviceAdmin from "./DetailDeviceAdmin";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -70,24 +74,27 @@ const GeneralDeviceAdminScreen = () => {
   const summaryDetailsUnpacked = device ? JSON.parse(device.details) : null;
 
   const [devices, setDevices] = useState({});
-  const fetchDevicesData = async () => {
-    try {
-      const jwtToken = await getJwtToken();
-      const response = await axios.get(
-        `${API_BASE_URL}/idByName/${deviceName}`,
-        {
-          headers: { Authorization: `Bearer ${jwtToken}` },
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchDevicesData = async () => {
+        try {
+          const jwtToken = await getJwtToken();
+          const response = await axios.get(
+            `${API_BASE_URL}/idByName/${deviceName}`,
+            {
+              headers: { Authorization: `Bearer ${jwtToken}` },
+            }
+          );
+          //console.log("Received data from API:", response.data);
+          setDevices(response.data);
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      );
-      //console.log("Received data from API:", response.data);
-      setDevices(response.data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-  useEffect(() => {
-    fetchDevicesData();
-  }, []);
+      };
+      fetchDevicesData();
+    }, [])
+  );
 
   const [history, setHistory] = useState({});
   const fetchHistoryData = async () => {
