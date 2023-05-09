@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from "react";
-import { View, Text, Button, SafeAreaView } from "react-native";
+import { View, Text, Button, SafeAreaView, Image } from "react-native";
 import {
   NavigationContainer,
   useNavigation,
@@ -109,10 +109,66 @@ const LoginTabScreen = () => {
     navigation.navigate("UserTabs");
   };
   return (
-    <SafeAreaView style={{ flex: 1, justifyContent: "center" }}>
-      <Button title="SSO Login" onPress={getRedirectUri} />
-      <Button title="Admin Login" onPress={loginAsAdmin} />
-      <Button title="User Login" onPress={loginAsUser} />
+    <SafeAreaView
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#F0F0F0",
+      }}
+    >
+      <Text
+        style={{
+          fontSize: 20,
+          fontWeight: "600",
+          textAlign: "center",
+        }}
+      >
+        Welcome to UCL Computer Science department device loan system
+      </Text>
+      <Image
+        source={require("../../components/icons/UCL.png")}
+        resizeMode="contain"
+        style={{
+          width: 150,
+          marginTop: -10,
+          marginBottom: 10,
+        }}
+      />
+      <Text
+        style={{
+          fontSize: 25,
+          fontWeight: "700",
+        }}
+      >
+        Sign in
+      </Text>
+
+      <View
+        style={{
+          width: "80%",
+        }}
+      >
+        <Button
+          title="Sign in with my UCL account"
+          onPress={getRedirectUri}
+          color="#AC145A"
+        />
+      </View>
+
+      <Text
+        style={{
+          marginTop: 10,
+          textAlign: "center",
+          paddingHorizontal: 20,
+          fontSize: 14,
+          fontWeight: "300",
+          color: "#666",
+        }}
+      >
+        By accessing your account, you agree to{"\n"}
+        the APP's Term & Conditions and Privacy Policy.
+      </Text>
     </SafeAreaView>
   );
 };

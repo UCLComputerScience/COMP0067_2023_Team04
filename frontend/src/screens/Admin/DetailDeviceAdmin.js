@@ -92,7 +92,12 @@ const DetailDeviceAdmin = () => {
 
       Alert.alert("Success", "Device Loaned successfully.");
     } catch (err) {
-      Alert.alert("Error", err.message || "An error occurred.");
+      Alert.alert(
+        "Error",
+        err.message ||
+          "An error occurred. This may caused by the device has been deleted."
+      );
+      navigation.goBack();
     }
     fetchDeviceData();
   };
