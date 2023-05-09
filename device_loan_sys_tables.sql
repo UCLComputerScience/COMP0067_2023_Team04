@@ -86,8 +86,8 @@ VALUES
 (6,'jhudx92', 'ucabj38@ucl.ac.uk', '2023-04-01', '2023-04-24', 'bacf5a3c-e7ac-11ed-93d2-6045bdd1583d', 0 , '2023-04-24'),
 (7, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-05-01', '2023-05-06', '051d4e1a-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
 (8, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-05-02', '2023-05-09', '09a5423b-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
-(9, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-05-03', '2023-05-10', 'a411ce8b-e7ac-11ed-93d2-6045bdd1583d', 0, NULL);
-(10, 'tchaa15', 'ucabtc5@ucl.ac.uk', NULL, NULL, 'aad7cc2c-e7ac-11ed-93d2-6045bdd1583d', 0, NULL);
+(9, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-05-03', '2023-05-10', 'a411ce8b-e7ac-11ed-93d2-6045bdd1583d', 0, NULL),
+(10, 'tchaa15', 'ucabtc5@ucl.ac.uk', '2023-05-03', NULL, 'aad7cc2c-e7ac-11ed-93d2-6045bdd1583d', 0, NULL);
 
 -- EVENT CALLED AT THE END OF EACH WEEK TO CLEAR RESERVATIONS
 DROP EVENT IF EXISTS `clear_reservations`;
