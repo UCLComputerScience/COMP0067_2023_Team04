@@ -150,7 +150,7 @@ const LoginTabScreen = () => {
         }}
       >
         <Button
-          title="Sign in with my UCL account"
+          title="Sign in with UCL account"
           onPress={getRedirectUri}
           color="#AC145A"
         />
