@@ -29,6 +29,9 @@ router.get('/stats/yearly', verifyAdmin, postControllers.getYearlyStats);
 router.put('/changeState/:id', verifyAdmin, postControllers.updateDeviceState); // **--------** changes device state to state specified in JSON object, id is deviceId
 router.put('/reportIssue/:deviceId', verifyAdmin, postControllers.reportIssue); // **--------** for the admin to input a string describing an issue for a particular device ID
 
+// Admin DELETE method
+router.delete("/deleteDevice/:deviceId", verifyAdmin, postControllers.deleteDevice); //deletes a device given its device ID
+
 // Admin POST methods
 router.post('/addDevice/', verifyAdmin, postControllers.addDevice); //**--------** enter new device into database
 router.post('/return/:deviceId', verifyAdmin, postControllers.returnDevice); //**--------** used when physically returning a device, by its ID
@@ -38,9 +41,6 @@ router.post('/beginLoan/:deviceId', verifyAdmin, postControllers.beginLoan);
 router.post("/writeUserTerms", verifyAdmin, postControllers.writeUserTerms); //**--------**
 router.post("/writeManagerSchedule", verifyAdmin, postControllers.writeManagerSchedule); //**--------**
 router.post("/writeAdminContactInfo", verifyAdmin, postControllers.writeAdminContactInfo); //**--------**
-
-// Admin DELETE method
-router.delete("/deleteDevice/:deviceId", verifyAdmin, postControllers.deleteDevice); //deletes a device given its device ID
 
 // Both GET file reading methods
 router.get("/readUserTerms", verifyToken, postControllers.readUserTerms); //both, UserTermScreen.js

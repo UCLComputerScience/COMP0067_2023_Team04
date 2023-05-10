@@ -28,7 +28,7 @@ app.use((req, res, next) => {
 // Set up session middleware
 app.use(
   session({
-    secret: 'secret-secret-ive-got-a-secret',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: 'auto'},
@@ -83,5 +83,5 @@ app.get('/getEmail', verifyToken, (req, res) => {
 scheduleJobs();
 
 // Listen on pc port
-const PORT = process.env.PORT || 8080; //env variable not actually used
-app.listen(8080, () => console.log(`Server running on PORT 8080`)); //${PORT}
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => console.log(`Server running on PORT 8080`)); //${PORT}

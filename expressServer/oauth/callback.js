@@ -97,7 +97,7 @@ const callback = async (req, res) => {
   const destination = user.role === 'admin' ? 'Schedule' : 'userDevices';
 
   // Send the JWT token back to the mobile app
-  res.redirect(`exp://100.66.0.16:19000/--/${destination}?token=${jwtToken}`);
+  res.redirect(`exp://100.66.0.216:19000/--/${destination}?token=${jwtToken}`);
 };
 
 module.exports = callback;
