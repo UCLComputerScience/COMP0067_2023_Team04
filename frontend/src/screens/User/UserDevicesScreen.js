@@ -38,7 +38,7 @@ const AvailableDevices = () => {
   const handleicon = () => {
     Alert.alert(
       "Contact information",
-      "Email: uclcsdevice@ucl.ac.uk\nPhone: +44 07412356987\nAddress: MP Engineering Building",
+      `${contact}`,
       [
         {
           text: "YES",
@@ -82,7 +82,63 @@ const AvailableDevices = () => {
     getJwtToken();
   }, []);
 
-  const getAvailableDevices = async () => {
+  useFocusEffect(
+    React.useCallback(() => {
+      const getAvailableDevices = async () => {
+        async function getJwtToken() {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          try {
+            const jwtToken = await SecureStore.getItemAsync("jwtToken");
+            if (jwtToken) {
+              console.log("JWT token fetched:", jwtToken);
+              return jwtToken;
+            } else {
+              console.log("Cannot find JWT token");
+              return null;
+            }
+          } catch (error) {
+            console.log("JWT token fetched failed:", error);
+            return null;
+          }
+        }
+        try {
+          const jwtToken = await getJwtToken();
+          const response = await axios.get(
+            `${API_BASE_URL}/nameAvailabilityUser`,
+            {
+              headers: { Authorization: `Bearer ${jwtToken}` },
+            }
+          );
+          setDevices(
+            response.data
+              .filter((device) => device.num_available > 0)
+              .map((device) => ({
+                name: device.name,
+                launchYr: device.launchYr,
+                num_available: device.num_available,
+                category: device.category,
+              }))
+          );
+          setInitialDevices(
+            response.data
+              .filter((device) => device.num_available > 0)
+              .map((device) => ({
+                name: device.name,
+                launchYr: device.launchYr,
+                num_available: device.num_available,
+                category: device.category,
+              }))
+          );
+        } catch (error) {
+          console.log("Error fetching data:", error);
+        }
+      };
+      getAvailableDevices();
+    }, [])
+  );
+
+  const [contact, setContact] = useState({});
+  const fetchContactData = async () => {
     async function getJwtToken() {
       await new Promise((resolve) => setTimeout(resolve, 500));
       try {
@@ -101,35 +157,17 @@ const AvailableDevices = () => {
     }
     try {
       const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/nameAvailabilityUser`, {
+      const response = await axios.get(`${API_BASE_URL}/readAdminContactInfo`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      setDevices(
-        response.data
-          .filter((device) => device.num_available > 0)
-          .map((device) => ({
-            name: device.name,
-            launchYr: device.launchYr,
-            num_available: device.num_available,
-            category: device.category,
-          }))
-      );
-      setInitialDevices(
-        response.data
-          .filter((device) => device.num_available > 0)
-          .map((device) => ({
-            name: device.name,
-            launchYr: device.launchYr,
-            num_available: device.num_available,
-            category: device.category,
-          }))
-      );
+      console.log("Receised contact data from API:", response.data);
+      setContact(response.data);
     } catch (error) {
-      console.log("Error fetching data:", error);
+      console.error("Error fetching data:", error);
     }
   };
   useEffect(() => {
-    getAvailableDevices();
+    fetchContactData();
   }, []);
 
   const sortDevicesByLoaned = (order) => {

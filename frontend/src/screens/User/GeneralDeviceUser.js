@@ -93,21 +93,15 @@ const GeneralDeviceUserScreen = () => {
 
       if (!response.ok) {
         throw new Error(
-          responseData.message || "Failed to change contact information."
+          responseData.message ||
+            "Failed to reserve the device, please try it later."
         );
       }
 
-      Alert.alert("Success", "Issue submitted successfully.");
+      Alert.alert("Success", "Device reserved successfully.");
+      navigation.navigate("userDevices");
     } catch (err) {
       Alert.alert("Error", err.message || "An error occurred.");
-    }
-    if (Available > 1) {
-      fetchDeviceData();
-    } else {
-      Alert.alert(
-        "Caution",
-        "This is the last device, the page will not be refreshed but you cannot reserve a same new device."
-      );
     }
   };
 
@@ -121,7 +115,7 @@ const GeneralDeviceUserScreen = () => {
       const response = await axios.get(`${API_BASE_URL}/readManagerSchedule`, {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
-      console.log("Received data from API:", response.data);
+      console.log("ReceisetTimeSlotved data from API:", response.data);
       setTimeSlot(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -140,7 +134,7 @@ const GeneralDeviceUserScreen = () => {
         headers: { Authorization: `Bearer ${jwtToken}` },
       });
       //console.log("Received data from API:", response.data);
-      setUserTerm(JSON.stringify(response.data));
+      setUserTerm(response.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -169,9 +163,7 @@ const GeneralDeviceUserScreen = () => {
   const showAvailableDatesAlert = () => {
     Alert.alert(
       "Time slots",
-      `\nPlease come and collect the device on this week, with in the weekly slots: \n${timeSlot
-        .map((day) => `${day}\n`)
-        .join("")}`,
+      `\nPlease come and collect the device on this week, with in the weekly slots: \n${timeSlot}`,
       [
         {
           text: "Reserve",

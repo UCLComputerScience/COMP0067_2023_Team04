@@ -167,7 +167,7 @@ const LoginTabScreen = () => {
         }}
       >
         By accessing your account, you agree to{"\n"}
-        the APP's Term & Conditions and Privacy Policy.
+        the App's Term & Conditions and Privacy Policy.
       </Text>
     </SafeAreaView>
   );

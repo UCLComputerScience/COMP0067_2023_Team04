@@ -9,7 +9,11 @@ import {
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import {
+  useNavigation,
+  useRoute,
+  useFocusEffect,
+} from "@react-navigation/native";
 import GeneralDeviceUserScreen from "./GeneralDeviceUser";
 import * as Linking from "expo-linking";
 import moment from "moment";
@@ -44,23 +48,29 @@ const UserAppointmentScreen = () => {
     }
   }
 
-  const fetchData = async () => {
-    try {
-      const jwtToken = await getJwtToken();
-      const response = await axios.get(`${API_BASE_URL}/reservedUser`, {
-        headers: { Authorization: `Bearer ${jwtToken}` },
-      });
-      const devicesData = response.data.map((device) => ({
-        key: device.deviceId,
-        name: device.name,
-        state: device.state === "Reserved" ? "Pick up" : "Return",
-        loanId: device.loanId,
-      }));
-      setDevice(devicesData);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchData = async () => {
+        try {
+          const jwtToken = await getJwtToken();
+          const response = await axios.get(`${API_BASE_URL}/reservedUser`, {
+            headers: { Authorization: `Bearer ${jwtToken}` },
+          });
+          const devicesData = response.data.map((device) => ({
+            key: device.deviceId,
+            name: device.name,
+            state: device.state === "Reserved" ? "Pick up" : "Return",
+            loanId: device.loanId,
+          }));
+          setDevice(response.data);
+          console.log(devicesData);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+      fetchData();
+    }, [])
+  );
 
   const cancelLoan = async (loanId) => {
     try {
@@ -87,10 +97,6 @@ const UserAppointmentScreen = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
   const handleCanel = (loanId) => {
     Alert.alert(
       "Cancel Reservation",
@@ -104,7 +110,6 @@ const UserAppointmentScreen = () => {
           text: "Yes",
           onPress: () => {
             cancelLoan(loanId);
-            Alert.alert("Success", "The reservation is successfully cancelled");
           },
         },
       ],
