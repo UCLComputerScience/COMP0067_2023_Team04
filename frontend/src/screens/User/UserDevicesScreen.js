@@ -184,9 +184,9 @@ const AvailableDevices = () => {
   const sortDevicesByAvailable = (order) => {
     const sortedDevices = [...devices].sort((a, b) => {
       if (order === "asc") {
-        return a.available - b.available;
+        return a.num_available - b.num_available;
       } else {
-        return b.available - a.available;
+        return b.num_available - a.num_available;
       }
     });
     setDevices(sortedDevices);

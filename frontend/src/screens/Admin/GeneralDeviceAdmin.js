@@ -75,27 +75,24 @@ const GeneralDeviceAdminScreen = () => {
 
   const [devices, setDevices] = useState({});
 
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchDevicesData = async () => {
-        try {
-          const jwtToken = await getJwtToken();
-          const response = await axios.get(
-            `${API_BASE_URL}/idByName/${deviceName}`,
-            {
-              headers: { Authorization: `Bearer ${jwtToken}` },
-            }
-          );
-          //console.log("Received data from API:", response.data);
-          setDevices(response.data);
-        } catch (error) {
-          console.error("Error fetching data:", error);
+  const fetchDevicesData = async () => {
+    try {
+      const jwtToken = await getJwtToken();
+      const response = await axios.get(
+        `${API_BASE_URL}/idByName/${deviceName}`,
+        {
+          headers: { Authorization: `Bearer ${jwtToken}` },
         }
-      };
-      fetchDevicesData();
-    }, [])
-  );
-
+      );
+      //console.log("Received data from API:", response.data);
+      setDevices(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  useEffect(() => {
+    fetchDevicesData();
+  }, []);
   const [history, setHistory] = useState({});
   const fetchHistoryData = async () => {
     try {

@@ -94,6 +94,15 @@ const AllDevices = () => {
               category: device.category,
             }))
           );
+          setFilteredDevices(
+            response.data.map((device) => ({
+              name: device.name,
+              launchYr: device.launchYr,
+              num_available: device.num_available,
+              num_loaned: device.num_loaned,
+              category: device.category,
+            }))
+          );
           setInitialDevices(
             response.data.map((device) => ({
               name: device.name,
@@ -119,7 +128,7 @@ const AllDevices = () => {
         return b.num_loaned - a.num_loaned;
       }
     });
-    setDevices(sortedDevices);
+    setFilteredDevices(sortedDevices);
   };
 
   const sortDevicesByAvailable = (order) => {
@@ -130,7 +139,7 @@ const AllDevices = () => {
         return b.num_available - a.num_available;
       }
     });
-    setDevices(sortedDevices);
+    setFilteredDevices(sortedDevices);
   };
 
   const handleLoanedSort = () => {
@@ -275,7 +284,7 @@ const AllDevices = () => {
 
         <View style={{ paddingBottom: 80 }}>
           <FlatList
-            data={devices}
+            data={filteredDevices}
             renderItem={({ item }) => {
               if (
                 input === "" ||
